@@ -1,0 +1,323 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #ffffff;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+input, select, textarea, button {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* Custom thin scrollbar for main content */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+}
+.custom-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 99px;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: #c7cfd8;
+}
+
+/* Gradient button */
+.btn-gradient {
+  background: linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%);
+  color: white;
+  -webkit-text-fill-color: white !important;
+}
+.btn-gradient:hover { opacity: 0.9; }
+
+/* Force white text — overrides any dark-mode -webkit-text-fill-color cascade */
+button.force-white-text,
+[data-dark="true"] button.force-white-text {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+/* Gradient text — brighter in dark mode so it's readable */
+[data-dark="true"] .text-gradient {
+  background: linear-gradient(88.09deg, #A78BFA 0.11%, #E879F9 63.8%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* Upload card outer glow pulse after popup dismiss */
+@keyframes uploadPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(92,46,212,0); border-color: rgba(92,46,212,0.1); }
+  40%  { box-shadow: 0 0 0 8px rgba(92,46,212,0.14), 0 0 28px rgba(166,20,195,0.2); border-color: rgba(166,20,195,0.6); }
+  60%  { box-shadow: 0 0 0 8px rgba(92,46,212,0.14), 0 0 28px rgba(166,20,195,0.2); border-color: rgba(166,20,195,0.6); }
+  100% { box-shadow: 0 0 0 0 rgba(92,46,212,0); border-color: rgba(92,46,212,0.1); }
+}
+.upload-pulse {
+  animation: uploadPulse 1.2s ease-in-out 2;
+}
+
+
+/* Add Another button hover — transparent gradient */
+.add-another-btn:hover {
+  background: linear-gradient(88.09deg, rgba(92,46,212,0.08) 0.11%, rgba(166,20,195,0.08) 63.8%);
+}
+
+/* Gradient border pill */
+.badge-gradient {
+  background: linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%);
+}
+
+/* Sidebar nav thin scrollbar */
+.sidebar-nav {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.sidebar-nav:hover {
+  scrollbar-color: #e2e8f0 transparent;
+}
+.sidebar-nav::-webkit-scrollbar {
+  width: 3px;
+}
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 99px;
+}
+.sidebar-nav:hover::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+}
+[data-dark="true"] .sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+}
+[data-dark="true"] .sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ============================================================
+   DARK MODE — [data-dark="true"] overrides
+   ============================================================ */
+
+/* Base text */
+[data-dark="true"] .text-navy,
+[data-dark="true"] .text-gray-800,
+[data-dark="true"] .text-gray-700,
+[data-dark="true"] .text-gray-600 {
+  color: #F9FAFB !important;
+}
+[data-dark="true"] .text-gray-500,
+[data-dark="true"] .text-gray-400 {
+  color: #9CA3AF !important;
+}
+
+/* Section/card backgrounds */
+[data-dark="true"] .bg-gray-50 {
+  background-color: #1F2543 !important;
+}
+[data-dark="true"] .bg-gray-100 {
+  background-color: #252948 !important;
+}
+[data-dark="true"] .bg-white {
+  background-color: #1A1E38 !important;
+}
+
+/* Borders */
+[data-dark="true"] .border-gray-100,
+[data-dark="true"] .border-gray-200,
+[data-dark="true"] .border-gray-300 {
+  border-color: rgba(255,255,255,0.08) !important;
+}
+[data-dark="true"] .divide-gray-100 > * + * {
+  border-color: rgba(255,255,255,0.08) !important;
+}
+
+/* Inputs, selects, textareas */
+[data-dark="true"] input,
+[data-dark="true"] select,
+[data-dark="true"] textarea {
+  background-color: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: #F9FAFB !important;
+}
+[data-dark="true"] input::placeholder,
+[data-dark="true"] textarea::placeholder {
+  color: #6B7280 !important;
+}
+[data-dark="true"] select option {
+  background-color: #252948;
+  color: #F9FAFB;
+}
+
+/* Radio / button group items (not selected) */
+[data-dark="true"] button.border-gray-200 {
+  border-color: rgba(255,255,255,0.18) !important;
+  color: #FFFFFF !important;
+  background: transparent !important;
+}
+[data-dark="true"] button.border-gray-200:hover {
+  border-color: rgba(166,20,195,0.6) !important;
+  background: linear-gradient(88.09deg, rgba(92,46,212,0.15) 0%, rgba(166,20,195,0.15) 100%) !important;
+  color: #FFFFFF !important;
+}
+
+/* Labels */
+[data-dark="true"] label {
+  color: #9CA3AF !important;
+}
+[data-dark="true"] label.font-semibold,
+[data-dark="true"] label .font-semibold {
+  color: #D1D5DB !important;
+}
+
+/* Selected radio button text → white in dark mode */
+[data-dark="true"] button[class*="text-[#5C2ED4]"],
+[data-dark="true"] button[class*="text-[#A614C3]"],
+[data-dark="true"] button[class*="border-[#5C2ED4]"],
+[data-dark="true"] button[class*="border-[#A614C3]"] {
+  color: #FFFFFF !important;
+}
+
+/* "Add another" dashed button */
+[data-dark="true"] .add-another-btn {
+  border-color: rgba(166,20,195,0.55) !important;
+  color: #E879F9 !important;
+}
+[data-dark="true"] .add-another-btn svg {
+  color: #E879F9 !important;
+}
+[data-dark="true"] .add-another-btn:hover {
+  background: rgba(167,139,250,0.15) !important;
+  border-color: rgba(216,180,254,0.5) !important;
+}
+
+/* Print Submission / outline action buttons in dark */
+[data-dark="true"] .btn-outline-action {
+  border-color: rgba(216,180,254,0.35) !important;
+  background: rgba(167,139,250,0.08) !important;
+}
+[data-dark="true"] .btn-outline-action:hover {
+  background: rgba(167,139,250,0.15) !important;
+}
+
+/* Warning/info banners */
+[data-dark="true"] .bg-\[\#F3F0FF\],
+[data-dark="true"] .bg-brand-light {
+  background-color: rgba(92,46,212,0.15) !important;
+}
+
+/* Warning/info banners with gradient bg — boost visibility in dark */
+[data-dark="true"] .warning-banner {
+  background: rgba(167,139,250,0.08) !important;
+  border-color: rgba(167,139,250,0.3) !important;
+}
+
+/* Same-as-applicant / address copy button in dark */
+[data-dark="true"] .addr-copy-btn {
+  background: #252948 !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+[data-dark="true"] .addr-copy-btn p {
+  color: #D1D5DB !important;
+}
+
+/* Scrollbar in dark */
+[data-dark="true"] .custom-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+}
+[data-dark="true"] .custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Fix focus ring color in dark mode */
+[data-dark="true"] input:focus,
+[data-dark="true"] select:focus,
+[data-dark="true"] textarea:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(166,20,195,0.25) !important;
+  border-color: rgba(166,20,195,0.65) !important;
+}
+
+/* Screen-only / print-only helpers */
+.print-only { display: none !important; }
+
+@media print {
+  @page { size: A4 portrait; margin: 0.35in; }
+
+  /* Hide everything, then reveal only the print area */
+  body * { visibility: hidden !important; }
+  #submission-print-area,
+  #submission-print-area * { visibility: visible !important; }
+  #submission-print-area {
+    position: fixed !important;
+    inset: 0 !important;
+    overflow: visible !important;
+    background: white !important;
+    padding: 18px 22px !important;
+    font-family: 'Montserrat', sans-serif !important;
+  }
+
+  /* Show print-only elements */
+  #submission-print-area .print-only { display: flex !important; }
+
+  /* Hide screen-only elements inside print area */
+  #submission-print-area .screen-only { display: none !important; }
+}
+
+/* ── Gradient button white text — highest-priority fix ─────────────────────
+   Must come last in the file to beat all [data-dark] .text-gradient rules.
+   Uses html element + attribute + element + class for max specificity (0,2,2).
+   ──────────────────────────────────────────────────────────────────────── */
+html[data-dark="true"] button.btn-gradient,
+html[data-dark="true"] .btn-gradient,
+html button.btn-gradient,
+html .btn-gradient {
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* ── Print button text — absolute last word in the cascade ─────────────────
+   No background-clip trick. Just a solid color that nothing can override.
+   ──────────────────────────────────────────────────────────────────────── */
+html body .print-btn-text {
+  color: #7C3AED !important;
+  -webkit-text-fill-color: #7C3AED !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+html[data-dark="true"] body .print-btn-text {
+  color: #E879F9 !important;
+  -webkit-text-fill-color: #E879F9 !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+
