@@ -109,6 +109,17 @@ input, select, textarea, button {
   border-color: rgba(255,255,255,0.08) !important;
 }
 
+/* Preview modal header icon — 12% brand gradient is invisible in dark mode,
+   bump to 35% so the document badge actually reads. */
+[data-dark="true"] .bop-page div[style*="rgba(92, 46, 212, 0.12) 0%, rgba(166, 20, 195, 0.12)"] {
+  background: linear-gradient(88.09deg, rgba(92,46,212,0.45) 0%, rgba(166,20,195,0.45) 100%) !important;
+}
+/* Preview modal close button — keep it visible without using pure white */
+[data-dark="true"] .bop-page button[aria-label="Close"][style*="background: white"] {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+
 /* Select dropdown panel — fixed-position, lives outside .bop-page in the DOM */
 [data-dark="true"] .bop-select-dropdown {
   background: #252948 !important;
