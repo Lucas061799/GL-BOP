@@ -116,13 +116,17 @@ function PackageCard({ pkg, selected, onSelect }) {
         </div>
 
         {/* Items */}
-        <div className="px-6 pb-6 flex-1">
-          <div className="space-y-3">
+        <div className="px-6 pb-4 flex-1">
+          <div>
             {pkg.items.map((it, i) => (
-              <div key={i} className="flex items-start justify-between gap-3 text-[13px]">
-                <span className="text-gray-500 leading-snug">{it.label}</span>
+              <div
+                key={i}
+                className="flex items-center justify-between gap-3 text-[13px] py-2.5 border-b last:border-b-0"
+                style={{ borderColor: '#F3F4F6', minHeight: 48 }}
+              >
+                <span className="text-gray-500 leading-tight">{it.label}</span>
                 <span
-                  className="font-semibold text-right shrink-0 leading-snug"
+                  className="font-semibold text-right shrink-0 leading-tight"
                   style={{ color: it.dim ? '#9CA3AF' : '#1F2937', fontStyle: it.dim ? 'italic' : 'normal' }}
                 >
                   {it.value}
