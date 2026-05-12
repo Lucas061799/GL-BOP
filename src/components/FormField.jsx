@@ -353,13 +353,39 @@ export function Textarea({ label, required, placeholder, rows = 4, value, onChan
 // Select / Dropdown — custom styled, no native <select>
 export function Select({ label, required, options = [], value, onChange, placeholder = 'Select...', className = '', error = false }) {
   const [open, setOpen] = useState(false)
+  const [dropdownStyle, setDropdownStyle] = useState({})
   const ref = useRef(null)
+  const triggerRef = useRef(null)
 
   useEffect(() => {
     const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
+
+  // Recalculate dropdown position on open / scroll / resize so it floats above
+  // overflow:hidden ancestors (carrier cards, modals, etc.).
+  useEffect(() => {
+    if (!open || !triggerRef.current) return
+    const recalc = () => {
+      if (!triggerRef.current) return
+      const r = triggerRef.current.getBoundingClientRect()
+      setDropdownStyle({
+        position: 'fixed',
+        top: r.bottom + 4,
+        left: r.left,
+        width: r.width,
+        zIndex: 9999,
+      })
+    }
+    recalc()
+    window.addEventListener('scroll', recalc, true)
+    window.addEventListener('resize', recalc)
+    return () => {
+      window.removeEventListener('scroll', recalc, true)
+      window.removeEventListener('resize', recalc)
+    }
+  }, [open])
 
   const optVal = (opt) => opt.value ?? opt
   const optLabel = (opt) => opt.label ?? opt
@@ -375,6 +401,7 @@ export function Select({ label, required, options = [], value, onChange, placeho
 
       {/* Trigger */}
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(v => !v)}
         className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg border text-sm text-left transition-all"
@@ -395,11 +422,11 @@ export function Select({ label, required, options = [], value, onChange, placeho
         </svg>
       </button>
 
-      {/* Dropdown panel */}
+      {/* Dropdown panel — fixed positioning so it's never clipped by overflow:hidden parents */}
       {open && (
         <div
-          className="absolute left-0 right-0 top-full mt-1 z-50 rounded-xl overflow-hidden"
-          style={{ background: 'white', border: '1px solid #E5E7EB', boxShadow: 'none' }}
+          className="rounded-xl overflow-hidden bop-select-dropdown"
+          style={{ ...dropdownStyle, background: 'white', border: '1px solid #E5E7EB', boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
         >
           <div className="overflow-y-auto" style={{ maxHeight: '200px' }}>
             {options.map(opt => {

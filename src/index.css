@@ -108,6 +108,20 @@ input, select, textarea, button {
 [data-dark="true"] .bop-page .border {
   border-color: rgba(255,255,255,0.08) !important;
 }
+
+/* Select dropdown panel — fixed-position, lives outside .bop-page in the DOM */
+[data-dark="true"] .bop-select-dropdown {
+  background: #252948 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+}
+[data-dark="true"] .bop-select-dropdown button {
+  color: #E5E7EB !important;
+}
+[data-dark="true"] .bop-select-dropdown button[style*="color: rgb(166, 20, 195)"],
+[data-dark="true"] .bop-select-dropdown button[style*="color: #A614C3"] {
+  color: #F0ABFC !important;
+}
 /* Inputs / selects keep white text on dark background */
 [data-dark="true"] .bop-page input,
 [data-dark="true"] .bop-page select,
