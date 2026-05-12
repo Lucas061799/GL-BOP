@@ -420,7 +420,7 @@ function App() {
           style={{ background: darkMode ? '#131629' : 'white' }}
         >
 
-          <div className="max-w-5xl 2xl:max-w-6xl mx-auto px-4 md:px-10 py-6 md:py-8 space-y-6 md:space-y-8">
+          <div className={`mx-auto px-4 md:px-10 py-6 md:py-8 space-y-6 md:space-y-8 ${inQuoteFlow ? 'max-w-7xl' : 'max-w-5xl 2xl:max-w-6xl'}`}>
 
             {/* Mobile-only upload + form review — matches RightPanel style exactly */}
             <div className="lg:hidden space-y-3">

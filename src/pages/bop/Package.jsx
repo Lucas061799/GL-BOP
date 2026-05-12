@@ -101,25 +101,25 @@ function PackageCard({ pkg, selected, onSelect }) {
         }}
       >
         {/* Header */}
-        <div className="px-5 pt-5 pb-3">
-          <div className="text-base font-bold text-gray-900 mb-0.5">{pkg.name}</div>
-          <div className="text-[11px] text-gray-500 leading-snug min-h-[28px]">{pkg.tagline}</div>
+        <div className="px-6 pt-6 pb-3">
+          <div className="text-lg font-bold text-gray-900 mb-1">{pkg.name}</div>
+          <div className="text-xs text-gray-500 leading-relaxed min-h-[40px]">{pkg.tagline}</div>
         </div>
 
         {/* Price */}
-        <div className="px-5 pb-4 text-center">
+        <div className="px-6 pb-5 text-center">
           <div className="flex items-baseline justify-center gap-1">
-            <span className="text-3xl font-bold text-gray-900">{money(pkg.price)}</span>
+            <span className="text-4xl font-bold text-gray-900">{money(pkg.price)}</span>
             <span className="text-xs text-gray-400">/{pkg.period}</span>
           </div>
-          <div className="text-[11px] text-gray-400 mt-0.5">{money(pkg.monthly)}/mo</div>
+          <div className="text-xs text-gray-400 mt-1">{money(pkg.monthly)}/mo</div>
         </div>
 
         {/* Items */}
-        <div className="px-5 pb-4 flex-1">
-          <div className="space-y-1.5">
+        <div className="px-6 pb-6 flex-1">
+          <div className="space-y-3">
             {pkg.items.map((it, i) => (
-              <div key={i} className="flex items-start justify-between gap-2 text-[12px]">
+              <div key={i} className="flex items-start justify-between gap-3 text-[13px]">
                 <span className="text-gray-500 leading-snug">{it.label}</span>
                 <span
                   className="font-semibold text-right shrink-0 leading-snug"
@@ -136,7 +136,7 @@ function PackageCard({ pkg, selected, onSelect }) {
         <button
           type="button"
           onClick={onSelect}
-          className="w-full py-3 text-sm font-bold transition hover:opacity-95"
+          className="w-full py-3.5 text-sm font-bold transition hover:opacity-95"
           style={
             selected
               ? { background: BRAND_GRADIENT, color: '#fff' }
@@ -169,7 +169,7 @@ export default function Package({ formData, updateFormData, onBack, onContinue }
         {carrier && <> · <span className="font-semibold text-gray-700">{carrier}</span></>}
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 pt-3">
         {PACKAGES.map(pkg => (
           <PackageCard
             key={pkg.id}
