@@ -26,6 +26,252 @@ const CONSENTS = [
 const money = (n) => '$' + Math.round(n).toLocaleString()
 const money2 = (n) => '$' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
+const US_STATES = [
+  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+  'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+  'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY',
+]
+
+// =============================================================================
+// Input 1 Payments modal — mock of the company's real payment processor popup
+// =============================================================================
+function PayField({ label, value, onChange, placeholder, required = true }) {
+  return (
+    <div>
+      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-600 mb-1">
+        {label}
+      </label>
+      <input
+        type="text"
+        value={value || ''}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-[#0EA5E9]/20 transition"
+        style={{ border: '1px solid #D1D5DB', background: 'white' }}
+      />
+    </div>
+  )
+}
+
+function Input1Modal({ open, amount, onClose, onComplete }) {
+  const [step, setStep] = useState(1)
+  const [payor, setPayor] = useState({
+    firstName: '', lastName: '', address1: '', address2: '', city: '', state: '', zip: '',
+  })
+  const [card, setCard] = useState({ number: '', expiry: '', cvc: '' })
+  const [submitting, setSubmitting] = useState(false)
+
+  const setP = (k) => (v) => setPayor(p => ({ ...p, [k]: v }))
+  const setC = (k) => (v) => setCard(c => ({ ...c, [k]: v }))
+
+  const payorReady = !!(payor.firstName && payor.lastName && payor.address1 && payor.city && payor.state && payor.zip)
+  const cardReady = !!(card.number && card.expiry && card.cvc)
+
+  if (!open) return null
+
+  const submit = () => {
+    setSubmitting(true)
+    setTimeout(() => {
+      setSubmitting(false)
+      onComplete()
+    }, 900)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      style={{ background: 'rgba(15, 23, 42, 0.55)' }}
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[92vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div
+          className="flex items-center justify-between px-5 py-3.5 sticky top-0 z-10"
+          style={{ background: '#F5F3FF', borderBottom: '1px solid #E5E7EB' }}
+        >
+          <div className="flex items-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+            <span className="text-sm font-semibold text-gray-800">
+              Complete Fee Payment — {money2(amount)}
+            </span>
+          </div>
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700 transition">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-2.5 pt-6 pb-4">
+          <div
+            className="relative w-12 h-12 rounded-full flex items-center justify-center"
+            style={{
+              background: 'radial-gradient(circle at 30% 30%, #7DD3FC 0%, #0EA5E9 70%, #0369A1 100%)',
+              boxShadow: 'inset -2px -3px 6px rgba(0,0,0,0.18), 0 2px 4px rgba(0,0,0,0.08)',
+            }}
+          >
+            <span className="text-white font-bold italic" style={{ fontFamily: 'Georgia, serif', fontSize: 18 }}>i1</span>
+          </div>
+          <div>
+            <div className="text-2xl font-bold italic text-gray-900 leading-none" style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.02em' }}>
+              INPUT 1
+            </div>
+            <div className="text-[10px] font-semibold tracking-[0.3em] text-right" style={{ color: '#0EA5E9' }}>
+              PAYMENTS
+            </div>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div className="px-5 pb-5">
+          <div
+            className="rounded-lg p-4"
+            style={{ border: '1px solid #E5E7EB' }}
+          >
+            {/* Step 1: Payor */}
+            {step === 1 && (
+              <>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: '#374151' }}>1</span>
+                  <span className="text-lg font-bold text-gray-800">Payor Information</span>
+                  {!payorReady && (
+                    <span className="ml-auto text-xs font-semibold" style={{ color: '#DC2626' }}>
+                      Missing Payor Information
+                    </span>
+                  )}
+                </div>
+                <div className="border-b mb-4" style={{ borderColor: '#E5E7EB' }} />
+
+                <div className="space-y-3">
+                  <PayField label="Payor First Name" value={payor.firstName} onChange={setP('firstName')} />
+                  <PayField label="Payor Last Name"  value={payor.lastName}  onChange={setP('lastName')} />
+                  <PayField label="Address 1"        value={payor.address1}  onChange={setP('address1')} />
+                  <PayField label="Address 2"        value={payor.address2}  onChange={setP('address2')} required={false} />
+                  <PayField label="City"             value={payor.city}      onChange={setP('city')} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-600 mb-1">State</label>
+                      <select
+                        value={payor.state}
+                        onChange={e => setP('state')(e.target.value)}
+                        className="w-full rounded px-3 py-2 text-sm text-gray-800 outline-none focus:ring-2 focus:ring-[#0EA5E9]/20 transition"
+                        style={{ border: '1px solid #D1D5DB', background: 'white' }}
+                      >
+                        <option value="">—</option>
+                        {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <PayField label="Zip" value={payor.zip} onChange={setP('zip')} />
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  disabled={!payorReady}
+                  onClick={() => setStep(2)}
+                  className="w-full mt-5 py-2.5 rounded text-sm font-semibold text-white transition disabled:cursor-not-allowed"
+                  style={{
+                    background: payorReady ? '#0EA5E9' : '#D1D5DB',
+                  }}
+                >
+                  Continue to Payment
+                </button>
+              </>
+            )}
+
+            {/* Step 2: Card */}
+            {step === 2 && (
+              <>
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="w-7 h-7 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ background: '#374151' }}>2</span>
+                  <span className="text-lg font-bold text-gray-800">Payment Method</span>
+                </div>
+                <div className="border-b mb-4" style={{ borderColor: '#E5E7EB' }} />
+
+                <div className="space-y-3">
+                  <PayField
+                    label="Card Number"
+                    value={card.number}
+                    onChange={v => setC('number')(v.replace(/[^0-9 ]/g, '').slice(0, 19))}
+                    placeholder="1234 5678 9012 3456"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <PayField
+                      label="Expiry"
+                      value={card.expiry}
+                      onChange={v => {
+                        const d = v.replace(/\D/g, '').slice(0, 4)
+                        setC('expiry')(d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d)
+                      }}
+                      placeholder="MM/YY"
+                    />
+                    <PayField
+                      label="CVC"
+                      value={card.cvc}
+                      onChange={v => setC('cvc')(v.replace(/\D/g, '').slice(0, 4))}
+                      placeholder="123"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mt-2 pt-3 mb-3 border-t" style={{ borderColor: '#E5E7EB' }}>
+                  <span className="text-sm text-gray-600">Amount due</span>
+                  <span className="text-lg font-bold text-gray-900">{money2(amount)}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="px-4 py-2.5 rounded text-sm font-semibold transition"
+                    style={{ border: '1px solid #D1D5DB', color: '#374151', background: 'white' }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!cardReady || submitting}
+                    onClick={submit}
+                    className="flex-1 py-2.5 rounded text-sm font-semibold text-white transition disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                    style={{
+                      background: cardReady && !submitting ? '#0EA5E9' : '#D1D5DB',
+                    }}
+                  >
+                    {submitting ? (
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="animate-spin">
+                          <path strokeLinecap="round" d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                        </svg>
+                        Processing…
+                      </>
+                    ) : (
+                      <>Pay {money2(amount)}</>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Secure footer */}
+          <div className="flex items-center justify-center gap-1.5 mt-3 text-[11px] text-gray-400">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Secured by Input 1 Payments · PCI DSS compliant
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function FieldRow({ label, value, bold, muted }) {
   return (
     <div className="flex items-center justify-between py-1 text-sm">
@@ -71,6 +317,7 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
   const [brokerFee, setBrokerFee] = useState(0)
   const [bound, setBound] = useState(false)
   const [disclosuresOpen, setDisclosuresOpen] = useState(false)
+  const [showPayment, setShowPayment] = useState(false)
 
   const contact = formData.bindContact || {}
   const setContact = (id) => (val) => updateFormData('bindContact', { [id]: val })
@@ -495,7 +742,7 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
         </p>
         <button
           type="button"
-          onClick={() => setBound(true)}
+          onClick={() => setShowPayment(true)}
           disabled={!canBind}
           className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed"
           style={{
@@ -509,6 +756,17 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
           </svg>
         </button>
       </div>
+
+      {/* Input 1 Payments modal */}
+      <Input1Modal
+        open={showPayment}
+        amount={totalFees}
+        onClose={() => setShowPayment(false)}
+        onComplete={() => {
+          setShowPayment(false)
+          setBound(true)
+        }}
+      />
     </div>
   )
 }
