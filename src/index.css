@@ -41,6 +41,97 @@ input, select, textarea, button {
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: #c7cfd8;
 }
+[data-dark="true"] .custom-scroll {
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
+}
+[data-dark="true"] .custom-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+}
+[data-dark="true"] .custom-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.32);
+}
+
+/* ── BOP pages: dark mode overrides ────────────────────────────── */
+/* Field group card backgrounds (light gray #F9FAFB → dark panel) */
+[data-dark="true"] .bop-page div[style*="rgb(249, 250, 251)"],
+[data-dark="true"] .bop-page div[style*="#F9FAFB"] {
+  background: #1E2138 !important;
+  border-color: #2A2D45 !important;
+}
+/* Inner white cards in BOP (e.g. coverage rows, premium card) → dark */
+[data-dark="true"] .bop-page div[style*="background: white"],
+[data-dark="true"] .bop-page div[style*="background: rgb(255, 255, 255)"] {
+  background: #252948 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+/* Buttons with white bg (Select trigger, Yes/No toggles, etc.) */
+[data-dark="true"] .bop-page button[style*="background: white"],
+[data-dark="true"] .bop-page button[style*="background: rgb(255, 255, 255)"] {
+  background: #252948 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #F9FAFB !important;
+}
+/* Spans with white bg (e.g. badge chips) */
+[data-dark="true"] .bop-page span[style*="background: white"],
+[data-dark="true"] .bop-page span[style*="background: rgb(255, 255, 255)"] {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+/* Inputs / selects keep white text on dark background */
+[data-dark="true"] .bop-page input,
+[data-dark="true"] .bop-page select,
+[data-dark="true"] .bop-page textarea {
+  background: #13162A !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  color: #F9FAFB !important;
+}
+[data-dark="true"] .bop-page input::placeholder,
+[data-dark="true"] .bop-page textarea::placeholder {
+  color: rgba(255,255,255,0.3) !important;
+}
+/* Subtitle text in BOP pages */
+[data-dark="true"] .bop-page .text-gray-500,
+[data-dark="true"] .bop-page .text-gray-400 {
+  color: #9CA3AF !important;
+}
+/* Labels — text-gray-600 / 700 */
+[data-dark="true"] .bop-page .text-gray-600,
+[data-dark="true"] .bop-page .text-gray-700 {
+  color: #D1D5DB !important;
+}
+/* Headings */
+[data-dark="true"] .bop-page .text-gray-900,
+[data-dark="true"] .bop-page .text-gray-800 {
+  color: #F9FAFB !important;
+}
+/* "Answers ready" banner — dark navy text → light */
+[data-dark="true"] .bop-page p[style*="color: rgb(27, 7, 80)"],
+[data-dark="true"] .bop-page p[style*="#1B0750"] {
+  color: #F9FAFB !important;
+}
+[data-dark="true"] .bop-page p[style*="color: rgb(107, 33, 168)"],
+[data-dark="true"] .bop-page p[style*="#6B21A8"] {
+  color: #C4B5FD !important;
+}
+/* Norbie quick-fill banner — light gradient bg → subtle dark gradient */
+[data-dark="true"] .bop-page div[style*="248, 246, 255"] {
+  background: linear-gradient(135deg, rgba(92,46,212,0.15) 0%, rgba(166,20,195,0.10) 100%) !important;
+  border-color: rgba(124,58,237,0.32) !important;
+}
+/* PSection / preview modal section title (#121723 dark navy → light) */
+[data-dark="true"] .bop-page h3[style*="rgb(18, 23, 35)"],
+[data-dark="true"] .bop-page h3[style*="#121723"] {
+  color: #F9FAFB !important;
+}
+/* PYNRow "No" pill — light gray bg → translucent in dark mode */
+[data-dark="true"] .bop-page span[style*="rgba(156, 163, 175"] {
+  background: rgba(255,255,255,0.06) !important;
+  color: #D1D5DB !important;
+}
+/* Section header titles (h2 from SectionHeader) */
+[data-dark="true"] section h2 {
+  color: #F9FAFB !important;
+}
 
 /* Gradient button */
 .btn-gradient {

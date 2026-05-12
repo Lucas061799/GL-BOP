@@ -275,7 +275,6 @@ function App() {
       setInQuoteFlow(false)
     } else if (stepId === 6) {
       setInQuoteFlow(true)
-      // If currently on bind, reset to compare slide
       if (quoteStep === 'bind') setQuoteStep('compare')
     } else if (stepId === 7) {
       setInQuoteFlow(true)
@@ -283,11 +282,23 @@ function App() {
     }
     setActiveStep(stepId)
 
-    // Defer scroll so sections rerender first
+    // Defer scroll so sections rerender after state changes
     setTimeout(() => {
-      if (scrollContainerRef.current) {
+      if (!scrollContainerRef.current) return
+      isScrollingToRef.current = true
+      if (goingToForm) {
+        // Scroll to the specific form section
+        const el = sectionRefs.current[stepId]
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        } else {
+          scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+      } else {
+        // Quote/Bind page — full-page view, scroll to top
         scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
       }
+      setTimeout(() => { isScrollingToRef.current = false }, 800)
     }, 50)
   }, [SUBMISSION_STEP_ID, quoteStep])
 
@@ -482,7 +493,7 @@ function App() {
                 key={section.id}
                 ref={el => sectionRefs.current[section.id] = el}
                 id={`section-${section.id}`}
-                className="rounded-2xl"
+                className="rounded-2xl bop-page"
                 style={{
                   background: 'transparent',
                   border: 'none',

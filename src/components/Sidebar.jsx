@@ -7,8 +7,29 @@ const DARK_JUNGLE_OPACITY = 0.6    // jungle bg opacity in dark mode
 const DARK_BORDER_RIGHT   = '1px solid rgba(255,255,255,0.12)' // sidebar right border in dark mode
 // ────────────────────────────────────────────────────────────
 
-function getSectionCompletion(_formData) {
-  return {}
+function getSectionCompletion(formData) {
+  const results = {}
+  // 1: Class Code Search
+  results[1] = !!formData.smartStart?.classId
+  // 2: Business Information — require name, entity, effective date, employees, phone, email, revenue
+  const b = formData.business || {}
+  results[2] = !!(b.name && b.entityType && b.effectiveDate && b.annualRevenue && b.annualPayroll && b.numberOfEmployees && b.phone && b.email)
+  // 3: Location
+  const l = formData.location || {}
+  results[3] = !!(l.address && l.city && l.state && l.zip)
+  // 4: Coverage Limits — user touched coverage OR passed through to underwriting
+  const hasCoverageInput = !!formData.coverage && Object.keys(formData.coverage).length > 0
+  const hasUwInput = !!formData.underwriting && Object.keys(formData.underwriting).some(k => formData.underwriting[k] !== undefined && formData.underwriting[k] !== null && formData.underwriting[k] !== '')
+  results[4] = hasCoverageInput || hasUwInput
+  // 5: Underwriting Questions — all 7 answered
+  const uw = formData.underwriting || {}
+  const requiredUw = ['prior_losses', 'pending_claims', 'declined_coverage', 'criminal_bankruptcy', 'manufactures_goods', 'subcontracts', 'tangible_goods']
+  results[5] = requiredUw.every(k => uw[k] !== undefined && uw[k] !== null && uw[k] !== '')
+  // 6: Compare — carrier selected
+  results[6] = !!formData.bind?.selectedCarrier
+  // 7: Bind & Pay — bound
+  results[7] = !!formData.bind?.bound
+  return results
 }
 
 export default function Sidebar({ steps, activeStep, onStepClick, formData = {}, onCheckErrors, showSubmission, isDark, onToggleDark }) {
