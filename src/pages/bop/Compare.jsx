@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Select } from '../../components/FormField'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
@@ -155,18 +156,12 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
             <div className="rounded-xl p-4" style={{ background: '#F9FAFB', border: '1px solid #EAEAEA' }}>
               <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-2.5">Customize Coverage</div>
 
-              <label className="block text-[11px] font-semibold text-gray-600 mb-1.5">General Liability — Per Occurrence</label>
-              <select
-                className="w-full rounded-lg px-3 py-2 text-sm bg-white outline-none"
-                style={{ border: '1px solid #E5E7EB', color: '#111827' }}
+              <Select
+                label="General Liability — Per Occurrence"
+                options={GL_OPTIONS}
                 value={pendingGl ?? q.glLimit}
-                onChange={e => onGlChange(Number(e.target.value))}
-                disabled={requoting}
-              >
-                {GL_OPTIONS.map(o => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-              </select>
+                onChange={(v) => onGlChange(Number(v))}
+              />
               <div className="flex items-center justify-between mt-2 mb-3 text-[11px]">
                 <span className="text-gray-500">Aggregate (auto)</span>
                 <span className="font-semibold text-gray-700">{money((pendingGl ?? q.glLimit) * 2)}</span>
