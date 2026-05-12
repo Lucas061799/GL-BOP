@@ -257,7 +257,25 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
 
       {/* Consents */}
       <div>
-        <label className="block text-[13px] font-semibold text-gray-600 mb-2.5 tracking-wide">Confirmation</label>
+        <div className="flex items-center justify-between mb-2.5">
+          <label className="block text-[13px] font-semibold text-gray-600 tracking-wide">Confirmation</label>
+          <button
+            type="button"
+            onClick={() => {
+              const next = !allConsented
+              CONSENTS.forEach(c => setConsent(c.key, next))
+            }}
+            className="text-xs font-semibold transition hover:underline"
+            style={{
+              background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            {allConsented ? 'Deselect all' : 'Select all'}
+          </button>
+        </div>
         <div className="space-y-2.5 rounded-lg p-4" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
           {CONSENTS.map(c => (
             <Checkbox
