@@ -502,7 +502,7 @@ export function Checkbox({ label, checked, onChange, className = '' }) {
 
 // Two-column grid
 export function FormGrid({ children, cols = 2, className = '' }) {
-  const colClass = cols === 3 ? 'grid-cols-3' : cols === 1 ? 'grid-cols-1' : 'grid-cols-2'
+  const colClass = cols === 3 ? 'grid-cols-1 sm:grid-cols-3' : cols === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'
   return (
     <div className={`grid ${colClass} gap-x-6 gap-y-5 ${className}`}>
       {children}

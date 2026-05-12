@@ -63,16 +63,20 @@ export default function PageZero({ onStart }) {
               </button>
 
               {/* Carriers */}
-              <div className="text-center">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-300 mb-3">Trusted Carrier Partners</p>
+              <div className="text-center mt-6">
+                <div className="flex items-center justify-center gap-4 mb-6">
+                  <span className="h-px flex-1 max-w-[140px] bg-gray-200" />
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-gray-300 whitespace-nowrap">Trusted Carrier Partners</p>
+                  <span className="h-px flex-1 max-w-[140px] bg-gray-200" />
+                </div>
                 <div className="flex items-center justify-center gap-2 flex-wrap">
                   {CARRIERS.map(c => (
                     <span
                       key={c}
-                      className="text-[13px] font-bold px-4 py-1.5 rounded-full text-gradient"
-                      style={{ border: '1px solid rgba(92,46,212,0.12)', background: 'rgba(92,46,212,0.04)' }}
+                      className="text-[13px] font-bold px-4 py-1.5 rounded-full inline-block"
+                      style={{ border: '1px solid rgba(92,46,212,0.25)', background: '#ffffff' }}
                     >
-                      {c}
+                      <span className="text-gradient">{c}</span>
                     </span>
                   ))}
                 </div>

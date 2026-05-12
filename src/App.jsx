@@ -5,30 +5,26 @@ import btisLogo from './assets/btislogo.png'
 import btisLogoDark from './assets/btislogo-dark.png'
 import Sidebar from './components/Sidebar'
 import RightPanel from './components/RightPanel'
-import ApplicantInformation from './pages/ApplicantInformation'
-import VehicleInformation from './pages/VehicleInformation'
-import DriverInformation from './pages/DriverInformation'
-import EligibilityInformation from './pages/EligibilityInformation'
-import CoverageInformation from './pages/CoverageInformation'
-import AdditionalInsured from './pages/AdditionalInsured'
-import LossPayee from './pages/LossPayee'
-import PriorHistory from './pages/PriorHistory'
-import ClaimHistory from './pages/ClaimHistory'
-import PaymentPlan from './pages/PaymentPlan'
+import Business from './pages/bop/Business'
+import Coverage from './pages/bop/Coverage'
+import Underwriting from './pages/bop/Underwriting'
+import Location from './pages/bop/Location'
+import SmartStart from './pages/bop/SmartStart'
+import Compare from './pages/bop/Compare'
+import Package from './pages/bop/Package'
+import AddOns from './pages/bop/AddOns'
+import Bind from './pages/bop/Bind'
 import Submission from './pages/Submission'
 import PageZero from './pages/PageZero'
 
 const STEPS = [
-  { id: 1, label: 'Applicant',          key: 'applicant' },
-  { id: 2, label: 'Vehicles',           key: 'vehicles' },
-  { id: 3, label: 'Driver',             key: 'driver' },
-  { id: 4, label: 'Eligibility',        key: 'eligibility' },
-  { id: 5, label: 'Coverage',           key: 'coverage' },
-  { id: 6, label: 'Additional Insured', key: 'additionalInsured' },
-  { id: 7, label: 'Loss Payee',         key: 'lossPayee' },
-  { id: 8, label: 'Prior History',      key: 'priorHistory' },
-  { id: 9, label: 'Claims',             key: 'claims' },
-  { id: 10, label: 'Payment Plan',      key: 'paymentPlan' },
+  { id: 1, label: 'Class Code',   key: 'smartStart' },
+  { id: 2, label: 'Business',     key: 'business' },
+  { id: 3, label: 'Location',     key: 'location' },
+  { id: 4, label: 'Coverage',     key: 'coverage' },
+  { id: 5, label: 'Underwriting Questions', key: 'underwriting' },
+  { id: 6, label: 'Compare',      key: 'compare' },
+  { id: 7, label: 'Bind & Pay',   key: 'bind' },
 ]
 
 const FILE_ICONS = {
@@ -253,6 +249,10 @@ function App() {
   }, [darkMode])
   const [pulseUpload, setPulseUpload] = useState(false)
   const [errorFields, setErrorFields] = useState([])
+  const [quoting, setQuoting] = useState(false)
+  const [quotesReady, setQuotesReady] = useState(false)
+  const [quoteStep, setQuoteStep] = useState('compare') // 'compare' | 'package' | 'addons'
+  const [inQuoteFlow, setInQuoteFlow] = useState(false)
   const sectionRefs = useRef({})
   const scrollContainerRef = useRef(null)
   const isScrollingToRef = useRef(false)
@@ -263,55 +263,54 @@ function App() {
     if (errorFields.length > 0) setErrorFields([])
   }
 
+  const SUBMISSION_STEP_ID = STEPS.length + 1
   const goToStep = useCallback((stepId) => {
-    if (stepId === 11) {
+    if (stepId === SUBMISSION_STEP_ID) {
       setSubmitted(true)
       return
     }
-    const el = sectionRefs.current[stepId]
-    if (!el || !scrollContainerRef.current) return
-    isScrollingToRef.current = true
+    // Sidebar tabs 1-5 → form view; 6 → compare slides; 7 → bind page
+    const goingToForm = stepId >= 1 && stepId <= 5
+    if (goingToForm) {
+      setInQuoteFlow(false)
+    } else if (stepId === 6) {
+      setInQuoteFlow(true)
+      // If currently on bind, reset to compare slide
+      if (quoteStep === 'bind') setQuoteStep('compare')
+    } else if (stepId === 7) {
+      setInQuoteFlow(true)
+      setQuoteStep('bind')
+    }
     setActiveStep(stepId)
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    setTimeout(() => { isScrollingToRef.current = false }, 800)
+
+    // Defer scroll so sections rerender first
+    setTimeout(() => {
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    }, 50)
+  }, [SUBMISSION_STEP_ID, quoteStep])
+
+  // Check errors: placeholder until BOP forms are wired in
+  const handleCheckErrors = useCallback(() => {
+    setErrorFields([])
   }, [])
 
-  // Check errors: find all required empty fields and scroll to first
-  const handleCheckErrors = useCallback(() => {
-    const errors = []
-
-    const a = formData.applicant || {}
-    if (!a.namedInsured) errors.push({ section: 1, field: 'applicant-namedInsured' })
-    if (!a.entity) errors.push({ section: 1, field: 'applicant-entity' })
-    if (!a.effectiveDate) errors.push({ section: 1, field: 'applicant-effectiveDate' })
-    if (!a.email) errors.push({ section: 1, field: 'applicant-email' })
-    if (!a.phone) errors.push({ section: 1, field: 'applicant-phone' })
-
-    const vs = formData.vehicles?.vehicles || []
-    if (vs.length === 0) errors.push({ section: 2, field: 'vehicles' })
-
-    const ds = formData.drivers?.drivers || []
-    if (ds.length === 0) errors.push({ section: 3, field: 'drivers' })
-
-    const c = formData.coverage || {}
-    if (!c.liabilityLimit) errors.push({ section: 5, field: 'coverage-liabilityLimit' })
-
-    if (!formData.payment?.plan) errors.push({ section: 10, field: 'payment-plan' })
-
-    setErrorFields(errors.map(e => e.field))
-
-    if (errors.length > 0) {
-      // Scroll to first error section
-      const firstSection = errors[0].section
-      const el = sectionRefs.current[firstSection]
-      if (el && scrollContainerRef.current) {
-        isScrollingToRef.current = true
-        setActiveStep(firstSection)
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        setTimeout(() => { isScrollingToRef.current = false }, 800)
+  const handleGetQuotes = useCallback(() => {
+    if (quoting) return
+    setQuoting(true)
+    setQuoteStep('compare')
+    setTimeout(() => {
+      setQuoting(false)
+      setQuotesReady(true)
+      setInQuoteFlow(true)
+      setActiveStep(6)
+      // Scroll to top of new quote page
+      if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
       }
-    }
-  }, [formData])
+    }, 1500)
+  }, [quoting])
 
   const handleMainScroll = useCallback(() => {
     if (isScrollingToRef.current) return
@@ -367,9 +366,9 @@ function App() {
           <img src={darkMode ? norbielinkLogoDark : norbielinkLogo} alt="NorbieLink" className="h-8" />
         </div>
         {/* Right: powered by btis — pushed to far right */}
-        <div className="flex items-center gap-2 px-8">
-          <span className="text-xs text-gray-400 tracking-wide">POWERED BY</span>
-          <img src={darkMode ? btisLogoDark : btisLogo} alt="btis" className="h-7" />
+        <div className="flex items-center gap-2 px-3 md:px-8">
+          <span className="hidden sm:inline text-xs text-gray-400 tracking-wide whitespace-nowrap">POWERED BY</span>
+          <img src={darkMode ? btisLogoDark : btisLogo} alt="btis" className="h-6 md:h-7" />
         </div>
       </header>
 
@@ -387,7 +386,11 @@ function App() {
         <div className={`fixed md:relative inset-y-0 left-0 z-40 h-full shrink-0 transition-transform duration-300 ease-in-out ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
           style={{ top: 0 }}>
           <Sidebar
-            steps={STEPS}
+            steps={STEPS.filter(s => {
+              if (s.id === 6) return quotesReady
+              if (s.id === 7) return !!formData.bind?.packageId && !!formData.bind?.addonsConfirmed
+              return true
+            })}
             activeStep={activeStep}
             onStepClick={(id) => { goToStep(id); setMobileSidebarOpen(false) }}
             formData={formData}
@@ -460,43 +463,26 @@ function App() {
             </div>
 
             {[
-              { id: 1, title: 'Applicant Information',  el: <ApplicantInformation formData={formData} updateFormData={updateFormData} errorFields={errorFields} /> },
-              { id: 2, title: 'Vehicle Information',    el: <VehicleInformation formData={formData} updateFormData={updateFormData} errorFields={errorFields} /> },
-              { id: 3, title: 'Driver Information',     el: <DriverInformation formData={formData} updateFormData={updateFormData} isDark={darkMode} /> },
-              { id: 4, title: 'Eligibility Information',el: <EligibilityInformation formData={formData} updateFormData={updateFormData} isDark={darkMode} /> },
-              { id: 5, title: 'Coverage Information',   el: <CoverageInformation formData={formData} updateFormData={updateFormData} errorFields={errorFields} isDark={darkMode} /> },
-              { id: 6, title: 'Additional Insured',     el: <AdditionalInsured formData={formData} updateFormData={updateFormData} isDark={darkMode} /> },
-              { id: 7, title: 'Loss Payee Information', el: <LossPayee formData={formData} updateFormData={updateFormData} isDark={darkMode} /> },
-              { id: 8, title: 'Prior History',          el: <PriorHistory formData={formData} updateFormData={updateFormData} isDark={darkMode} /> },
-              { id: 9, title: 'Claim History',          el: <ClaimHistory formData={formData} updateFormData={updateFormData} isDark={darkMode} /> },
-              { id: 10, title: 'Payment Plan',          el: <PaymentPlan formData={formData} updateFormData={updateFormData} onSubmit={async () => {
-                setSubmitted(true)
-                // Send confirmation email (fire-and-forget)
-                const applicant = formData.applicant || {}
-                if (applicant.email) {
-                  try {
-                    await fetch('/api/send-confirmation', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        email: applicant.email,
-                        firstName: applicant.namedInsured?.split(' ')[0],
-                        namedInsured: applicant.namedInsured,
-                        submissionId: 'CA0094894',
-                        effectiveDate: applicant.effectiveDate,
-                      }),
-                    })
-                  } catch (e) {
-                    console.warn('Email send failed (non-blocking):', e)
-                  }
-                }
-              }} errorFields={errorFields} isDark={darkMode} /> },
-            ].map(section => (
+              { id: 1, title: 'Class Code Search',      el: <SmartStart formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
+              { id: 2, title: 'Business Information',   el: <Business formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
+              { id: 3, title: 'Location Information',   el: <Location formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
+              { id: 4, title: 'Coverage Limits',         el: <Coverage formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
+              { id: 5, title: 'Underwriting Questions', el: <Underwriting formData={formData} updateFormData={updateFormData} isDark={darkMode} onGetQuotes={handleGetQuotes} quoting={quoting} quotesReady={quotesReady} />, show: !inQuoteFlow },
+              { id: 6,
+                title: quoteStep === 'package' ? 'Choose your package' : quoteStep === 'addons' ? 'Add-on Coverages' : 'Compare Quotes',
+                el: quoteStep === 'package'
+                  ? <Package formData={formData} updateFormData={updateFormData} isDark={darkMode} onBack={() => setQuoteStep('compare')} onContinue={() => setQuoteStep('addons')} />
+                  : quoteStep === 'addons'
+                    ? <AddOns formData={formData} updateFormData={updateFormData} isDark={darkMode} onBack={() => setQuoteStep('package')} onContinue={() => { updateFormData('bind', { addonsConfirmed: true }); setQuoteStep('bind'); setActiveStep(7); if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' }) }} />
+                    : <Compare formData={formData} updateFormData={updateFormData} isDark={darkMode} quotesReady={quotesReady} onSelectCarrier={() => setQuoteStep('package')} onGoToStep={goToStep} />,
+                show: inQuoteFlow && quotesReady && quoteStep !== 'bind' },
+              { id: 7, title: 'Bind & Pay',             el: <Bind formData={formData} updateFormData={updateFormData} isDark={darkMode} onGoToStep={goToStep} />, show: inQuoteFlow && quoteStep === 'bind' },
+            ].filter(s => s.show).map(section => (
               <section
                 key={section.id}
                 ref={el => sectionRefs.current[section.id] = el}
                 id={`section-${section.id}`}
-                className="rounded-2xl overflow-hidden"
+                className="rounded-2xl"
                 style={{
                   background: 'transparent',
                   border: 'none',
