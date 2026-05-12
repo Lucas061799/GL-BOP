@@ -580,14 +580,34 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
         {/* ============ RIGHT COLUMN ============ */}
         <div className="space-y-5">
           {/* Fraud warning */}
-          <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+          <div
+            className="rounded-xl p-5 relative overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)',
+              border: '1px solid rgba(124,58,237,0.18)',
+            }}
+          >
+            <div
+              className="absolute left-0 top-0 bottom-0 w-1"
+              style={{ background: BRAND_GRADIENT }}
+            />
             <div className="flex items-center gap-2 mb-3">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="8" x2="12" y2="12"/>
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
-              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Colorado Fraud Warning</span>
+              <span
+                className="text-[11px] font-bold uppercase tracking-wider"
+                style={{
+                  background: BRAND_GRADIENT,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Colorado Fraud Warning
+              </span>
             </div>
             <p className="text-[13px] leading-relaxed text-gray-600">
               It is unlawful to knowingly provide false, incomplete, or misleading facts or information to an insurance
