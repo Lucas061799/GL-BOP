@@ -65,25 +65,25 @@ function CoverageCard({ cov, currentPackageName, selected, onToggle, dirty }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-gray-900 mb-1.5">{cov.name}</div>
-
-          {isAlways && (
-            <span
-              className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-2"
-              style={{ background: 'rgba(52,211,153,0.16)', color: '#059669' }}
-            >
-              Included
-            </span>
-          )}
-          {isPackage && (
-            <span
-              className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-2"
-              style={{ background: 'rgba(92,46,212,0.12)', color: '#5C2ED4' }}
-            >
-              Included in {currentPackageName}
-            </span>
-          )}
-
+          <div className="flex items-center gap-2 flex-wrap mb-1.5">
+            <span className="text-sm font-semibold text-gray-900">{cov.name}</span>
+            {isAlways && (
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap"
+                style={{ background: 'rgba(52,211,153,0.16)', color: '#059669' }}
+              >
+                Included
+              </span>
+            )}
+            {isPackage && (
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap"
+                style={{ background: 'rgba(92,46,212,0.12)', color: '#5C2ED4' }}
+              >
+                Included in {currentPackageName}
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gray-500 leading-snug">{cov.description}</p>
         </div>
 

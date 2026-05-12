@@ -154,10 +154,53 @@ input, select, textarea, button {
 [data-dark="true"] .bop-page h3[style*="#121723"] {
   color: #F9FAFB !important;
 }
+/* Brand purple text (#5C2ED4) too dark on dark bg → bright lavender */
+[data-dark="true"] .bop-page [style*="color: rgb(92, 46, 212)"],
+[data-dark="true"] .bop-page [style*="color: #5C2ED4"] {
+  color: #C4B5FD !important;
+}
+/* Brand magenta text (#A614C3) → bright pink in dark */
+[data-dark="true"] .bop-page [style*="color: rgb(166, 20, 195)"],
+[data-dark="true"] .bop-page [style*="color: #A614C3"] {
+  color: #F0ABFC !important;
+}
+/* Brand outline pills (purple-tinted bg) — strengthen in dark mode */
+[data-dark="true"] .bop-page span[style*="rgba(92, 46, 212, 0.08)"],
+[data-dark="true"] .bop-page span[style*="rgba(92, 46, 212, 0.12)"] {
+  background: rgba(124, 58, 237, 0.22) !important;
+  border-color: rgba(167, 139, 250, 0.5) !important;
+}
 /* PYNRow "No" pill — light gray bg → translucent in dark mode */
 [data-dark="true"] .bop-page span[style*="rgba(156, 163, 175"] {
   background: rgba(255,255,255,0.06) !important;
   color: #D1D5DB !important;
+}
+/* Package Select / inactive plan tier buttons (bg #F9FAFB + dark text) */
+[data-dark="true"] .bop-page button[style*="background: rgb(249, 250, 251)"] {
+  background: rgba(255,255,255,0.04) !important;
+  color: #D1D5DB !important;
+  border-top-color: rgba(255,255,255,0.08) !important;
+}
+/* Dark navy text colors inline (both rgb and hex variants) → light */
+[data-dark="true"] .bop-page [style*="color: rgb(31, 41, 55)"],
+[data-dark="true"] .bop-page [style*="color:#1F2937"],
+[data-dark="true"] .bop-page [style*="color: #1F2937"] {
+  color: #E5E7EB !important;
+}
+[data-dark="true"] .bop-page [style*="color: rgb(55, 65, 81)"],
+[data-dark="true"] .bop-page [style*="color:#374151"],
+[data-dark="true"] .bop-page [style*="color: #374151"] {
+  color: #D1D5DB !important;
+}
+[data-dark="true"] .bop-page [style*="color: rgb(17, 24, 39)"],
+[data-dark="true"] .bop-page [style*="color:#111827"],
+[data-dark="true"] .bop-page [style*="color: #111827"] {
+  color: #F9FAFB !important;
+}
+/* Green "Included" badge — strengthen in dark mode for contrast */
+[data-dark="true"] .bop-page span[style*="rgba(52, 211, 153"] {
+  background: rgba(52, 211, 153, 0.18) !important;
+  color: #6EE7B7 !important;
 }
 /* Section header titles (h2 from SectionHeader) */
 [data-dark="true"] section h2 {
