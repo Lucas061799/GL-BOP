@@ -1,0 +1,463 @@
+import { useState, useEffect, useMemo } from 'react'
+import norbielinkLogo from '../../assets/norbielink-logo.png'
+import norbielinkLogoDark from '../../assets/norbielink-logo-dark.png'
+import btisLogo from '../../assets/btislogo.png'
+import btisLogoDark from '../../assets/btislogo-dark.png'
+import norbieface from '../../assets/norbieface.png'
+import sidebarBg from '../../assets/sidebar-bg.png'
+
+const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
+
+const STEP_LABELS = [
+  'Class Code Search',
+  'Business Information',
+  'Location Information',
+  'Coverage Limits',
+  'Underwriting Questions',
+  'Compare Quotes',
+  'Bind & Pay',
+]
+
+// =============================================================================
+// Confetti — copied from the Commercial Auto Submission page so the celebration
+// feel is identical across products.
+// =============================================================================
+function Confetti() {
+  const pieces = Array.from({ length: 60 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    delay: Math.random() * 1.5,
+    duration: 2 + Math.random() * 2,
+    color: ['#5C2ED4', '#A614C3', '#ACD697', '#75C9B7', '#FFD700', '#FF6B6B', '#4ECDC4'][i % 7],
+    size: 6 + Math.random() * 8,
+    rotate: Math.random() * 360,
+  }))
+  return (
+    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+      {pieces.map(p => (
+        <div
+          key={p.id}
+          style={{
+            position: 'absolute',
+            left: `${p.left}%`,
+            top: '-20px',
+            width: p.size,
+            height: p.size,
+            background: p.color,
+            borderRadius: p.id % 3 === 0 ? '50%' : '2px',
+            animation: `confettiFall ${p.duration}s ease-in ${p.delay}s forwards`,
+            transform: `rotate(${p.rotate}deg)`,
+            opacity: 0,
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes confettiFall {
+          0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+          100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+        }
+      `}</style>
+    </div>
+  )
+}
+
+// =============================================================================
+// Read-only summary primitives — match the section card style of the rest of
+// the BOP form so the summary feels of-a-piece.
+// =============================================================================
+function SectionCard({ title, icon, children }) {
+  return (
+    <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b" style={{ borderColor: '#F3F4F6' }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {icon}
+        </svg>
+        <span
+          className="text-[12px] font-bold uppercase tracking-wider"
+          style={{
+            background: BRAND_GRADIENT,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}
+        >
+          {title}
+        </span>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function Field({ label, value, full }) {
+  return (
+    <div className={full ? 'sm:col-span-2' : ''}>
+      <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">{label}</div>
+      <div className="text-sm text-gray-800">{value || <span className="text-gray-300">—</span>}</div>
+    </div>
+  )
+}
+
+const ICONS = {
+  briefcase: <><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></>,
+  pin:       <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></>,
+  shield:    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>,
+  check:     <><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>,
+  card:      <><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></>,
+}
+
+// =============================================================================
+// Page
+// =============================================================================
+export default function BopSubmission({ formData, summary, onBack, isDark = false, onToggleDark }) {
+  const [showConfetti, setShowConfetti] = useState(true)
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowConfetti(false), 4500)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Stable quote id for the session
+  const quoteId = useMemo(() => 'SGL' + Math.floor(20000000 + Math.random() * 80000000), [])
+  const generatedAt = useMemo(
+    () => new Date().toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
+    [],
+  )
+
+  const business  = formData.business || {}
+  const location  = formData.location || {}
+  const cls       = formData.smartStart || {}
+  const coverage  = formData.coverage || {}
+  const bind      = formData.bind || {}
+  const contact   = formData.bindContact || {}
+
+  const carrier   = summary?.carrier || bind.selectedCarrier
+  const dueToday  = summary?.dueToday
+  const premium   = summary?.premium
+  const totalFees = summary?.totalFees
+  const packageId = summary?.packageId || bind.packageId
+
+  const money = (n) => (n == null ? '—' : '$' + Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 }))
+
+  return (
+    <div className="flex flex-col h-screen font-montserrat overflow-hidden" style={{ background: isDark ? '#131629' : 'white' }}>
+      {showConfetti && <Confetti />}
+
+      {/* Top header */}
+      <header
+        className="no-print flex items-center justify-between shrink-0 z-10"
+        style={{
+          height: '56px',
+          background: isDark ? '#191D35' : 'white',
+          borderBottom: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid #F3F4F6',
+        }}
+      >
+        <div className="flex items-center h-full px-4 md:px-5 md:w-64 md:shrink-0 gap-2">
+          <button onClick={onBack} className="md:hidden p-1.5 rounded-lg focus:outline-none" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <button onClick={onBack} className="focus:outline-none">
+            <img src={isDark ? norbielinkLogoDark : norbielinkLogo} alt="NorbieLink" className="h-7 md:h-8" />
+          </button>
+        </div>
+        <div className="flex items-center gap-2 px-4 md:px-8">
+          <span className="text-xs text-gray-400 tracking-wide">POWERED BY</span>
+          <img src={isDark ? btisLogoDark : btisLogo} alt="btis" className="h-7" />
+        </div>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar — all steps marked done */}
+        <aside
+          className="no-print hidden md:flex w-64 2xl:w-72 flex-col h-full shrink-0 relative overflow-hidden"
+          style={{
+            background: isDark ? '#191D35' : 'white',
+            borderRight: isDark ? '1px solid rgba(255,255,255,0.12)' : '1px solid #F3F4F6',
+          }}
+        >
+          <div className="px-5 pt-5 pb-3 relative z-10">
+            <h2 className="text-base font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : undefined }}>GL-BOP</h2>
+            <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>Quote Number: {quoteId}</p>
+            <div className="mt-3" style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
+          </div>
+
+          <nav className="flex-1 py-1 px-3 overflow-y-auto sidebar-nav relative z-10">
+            {[...STEP_LABELS, 'Application Summary'].map((label, i) => {
+              const isLast = i === STEP_LABELS.length
+              return (
+                <div key={label} className="relative mb-0.5">
+                  {isLast && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-full z-20" style={{ background: 'linear-gradient(180deg, #5C2ED4 0%, #A614C3 100%)' }} />
+                  )}
+                  <div
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl"
+                    style={isLast
+                      ? isDark
+                        ? { background: 'linear-gradient(180deg, rgba(42,28,70,0.28) 0%, rgba(166,20,195,0.68) 100%)', border: '1.5px solid rgba(166,20,195,0.65)', boxShadow: '0 4px 24px rgba(166,20,195,0.25)' }
+                        : { background: '#ffffff', border: '1.5px solid #7C3AED', boxShadow: '0 2px 12px rgba(92,46,212,0.12)' }
+                      : { border: '1.5px solid transparent' }}
+                  >
+                    <span
+                      className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
+                      style={{ background: isLast
+                        ? isDark ? 'rgba(255,255,255,0.2)' : BRAND_GRADIENT
+                        : isDark ? 'rgba(166,20,195,0.28)' : 'rgba(166,20,195,0.10)' }}
+                    >
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 14 14" fill="none">
+                        <defs>
+                          <linearGradient id={`cgs${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#5C2ED4"/>
+                            <stop offset="100%" stopColor="#A614C3"/>
+                          </linearGradient>
+                        </defs>
+                        <path d="M2.5 7l3 3 6-6" stroke={isLast ? '#FFFFFF' : (isDark ? '#D8A8F0' : `url(#cgs${i})`)} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                    <span
+                      className={`text-xs truncate ${isLast ? 'font-semibold' : 'font-medium'}`}
+                      style={isLast
+                        ? isDark
+                          ? { color: '#FFFFFF' }
+                          : { background: BRAND_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }
+                        : { color: isDark ? '#9CA3AF' : '#6B7280' }
+                      }
+                    >
+                      {label}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </nav>
+
+          {/* Norbie */}
+          <div className="px-3 pb-2 relative z-10">
+            <div className="flex items-center gap-3 rounded-xl px-4 py-3" style={{ background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)', border: isDark ? '1.5px solid transparent' : '1.5px solid #E5E7EB' }}>
+              <img src={norbieface} alt="Norbie" className="w-8 h-8 rounded-full shrink-0 object-cover" />
+              <div>
+                <p className="text-sm font-normal" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>Chat with Norbie</p>
+                <p className="text-xs" style={{ color: '#9CA3AF' }}>AI Assistant</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Dark mode */}
+          <div className="px-3 pb-4 relative z-10">
+            <button onClick={onToggleDark} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all" style={{ background: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)', border: isDark ? '1.5px solid transparent' : '1.5px solid #E5E7EB' }}>
+              <div className="w-10 h-5 rounded-full relative transition-all shrink-0" style={{ background: isDark ? '#E8622A' : '#D1D5DB' }}>
+                <div className="absolute top-0.5 w-4 h-4 rounded-full shadow transition-all flex items-center justify-center" style={{ left: isDark ? '22px' : '2px', background: 'white' }}>
+                  {isDark ? (
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="#6B7280" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                    </svg>
+                  ) : (
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="#6B7280" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="5"/>
+                      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <span style={{ fontSize: '14.5px', fontWeight: 400, color: isDark ? '#F9FAFB' : '#6B7280' }}>Dark Mode</span>
+            </button>
+          </div>
+
+          <div className="absolute bottom-0 left-0 right-0 h-full pointer-events-none select-none">
+            <img src={sidebarBg} alt="" className="absolute bottom-0 left-0 w-full h-full object-cover object-bottom" style={{ opacity: isDark ? 0.6 : 0.58, clipPath: 'inset(0 1px 0 0)' }} />
+          </div>
+        </aside>
+
+        {/* Main */}
+        <main className="flex-1 overflow-y-auto custom-scroll bop-page" style={{ background: isDark ? '#131629' : '#FAFAFB' }}>
+          <div className="max-w-5xl 2xl:max-w-6xl mx-auto px-4 md:px-10 py-6 md:py-8 space-y-5">
+
+            {/* Title header */}
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-4 flex-1 min-w-0">
+                <img src={isDark ? btisLogoDark : btisLogo} alt="btis" className="h-9 shrink-0" />
+                <div>
+                  <h1 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
+                    General Liability Application Summary
+                  </h1>
+                  <div className="flex items-center gap-3 mt-1 flex-wrap">
+                    <span
+                      className="text-sm font-bold"
+                      style={{
+                        background: BRAND_GRADIENT,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      {quoteId}
+                    </span>
+                    <span
+                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                      style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
+                    >
+                      Quoted
+                    </span>
+                    <span className="text-xs text-gray-400">Generated {generatedAt}</span>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition hover:opacity-95"
+                style={{
+                  background: BRAND_GRADIENT,
+                  boxShadow: '0 4px 14px rgba(92,46,212,0.25)',
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                  <rect x="6" y="14" width="12" height="8"/>
+                </svg>
+                Print / Download PDF
+              </button>
+            </div>
+
+            {/* Bound summary banner */}
+            {carrier && (
+              <div
+                className="rounded-xl p-5 flex items-center gap-4 flex-wrap"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
+                  border: '1px solid rgba(124,58,237,0.22)',
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: BRAND_GRADIENT }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-900">Policy bound with {carrier}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    {packageId ? <>Package: <span className="font-semibold capitalize">{packageId}</span> · </> : null}
+                    Annual premium {money(premium)} · Fees {money(totalFees)}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charged today</div>
+                  <div className="text-xl font-bold text-gray-900">{money(dueToday)}</div>
+                </div>
+              </div>
+            )}
+
+            {/* Business details */}
+            <SectionCard title="Business Details" icon={ICONS.briefcase}>
+              <Field label="Business Name"      value={business.name} />
+              <Field label="Entity Type"        value={business.entityType} />
+              <Field label="Year Established"   value={business.yearEstablished} />
+              <Field label="Annual Revenue"     value={business.annualRevenue ? '$' + Number(business.annualRevenue).toLocaleString() : null} />
+              <Field label="Annual Payroll"     value={business.annualPayroll ? '$' + Number(business.annualPayroll).toLocaleString() : null} />
+              <Field label="Full-Time Employees" value={business.numberOfEmployees} />
+              <Field label="Part-Time Employees" value={business.partTimeEmployees || 0} />
+              <Field label="Phone"              value={business.phone} />
+              <Field label="Email"              value={business.email} />
+              <Field
+                full
+                label="Class Code"
+                value={cls.classId ? `${cls.classId} — ${cls.description}` : null}
+              />
+            </SectionCard>
+
+            {/* Location */}
+            <SectionCard title="Location & Premises" icon={ICONS.pin}>
+              <Field
+                full
+                label="Address"
+                value={[location.address, location.city, location.state, location.zip].filter(Boolean).join(', ')}
+              />
+              <Field label="Premises Type"     value={location.locationType} />
+              <Field label="Square Feet"       value={location.squareFeet ? Number(location.squareFeet).toLocaleString() + ' sq ft' : null} />
+            </SectionCard>
+
+            {/* Coverage */}
+            <SectionCard title="Coverage Selection" icon={ICONS.shield}>
+              <Field label="GL Each Occurrence"   value={coverage.eachOccurrence || coverage.glLimit} />
+              <Field label="GL Aggregate"         value={coverage.aggregate} />
+              <Field label="Products / Completed" value={coverage.productsAggregate} />
+              <Field label="Personal Injury"      value={coverage.personalInjury} />
+              <Field label="Deductible"           value={coverage.deductible} />
+              <Field label="Effective Date"       value={business.effectiveDate} />
+            </SectionCard>
+
+            {/* Bind & Payment */}
+            <SectionCard title="Bind & Payment" icon={ICONS.card}>
+              <Field label="Selected Carrier" value={carrier} />
+              <Field label="Coverage Tier"    value={packageId ? packageId.charAt(0).toUpperCase() + packageId.slice(1) : null} />
+              <Field label="Annual Premium"   value={money(premium)} />
+              <Field label="Total Fees"       value={money(totalFees)} />
+              <Field label="Insured Contact"  value={[contact.firstName, contact.lastName].filter(Boolean).join(' ')} />
+              <Field label="Contact Email"    value={contact.email} />
+            </SectionCard>
+
+            {/* What's next */}
+            <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+              <div className="flex items-center gap-2 mb-4">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  {ICONS.check}
+                </svg>
+                <span
+                  className="text-[12px] font-bold uppercase tracking-wider"
+                  style={{
+                    background: BRAND_GRADIENT,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  What's Next
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { n: 1, t: 'Confirmation email', d: 'A receipt and policy documents will land in your inbox shortly.' },
+                  { n: 2, t: 'Policy issuance',    d: 'Your policy is in force as of the effective date you selected.' },
+                  { n: 3, t: 'Add more coverage',  d: 'Bundle workers comp or commercial auto to save more.' },
+                ].map(step => (
+                  <div key={step.n} className="rounded-lg p-4" style={{ background: '#FAFAFB', border: '1px solid #F3F4F6' }}>
+                    <div
+                      className="w-7 h-7 rounded-full text-sm font-bold flex items-center justify-center mb-2"
+                      style={{ background: 'rgba(92,46,212,0.10)' }}
+                    >
+                      <span style={{ background: BRAND_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                        {step.n}
+                      </span>
+                    </div>
+                    <p className="text-sm font-semibold text-gray-800">{step.t}</p>
+                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">{step.d}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-center pt-2 pb-6">
+              <button
+                type="button"
+                onClick={onBack}
+                className="text-xs font-semibold transition hover:underline"
+                style={{ color: '#5C2ED4' }}
+              >
+                ← Start a new submission
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  )
+}

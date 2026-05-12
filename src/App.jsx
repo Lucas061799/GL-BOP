@@ -15,6 +15,7 @@ import Package from './pages/bop/Package'
 import AddOns from './pages/bop/AddOns'
 import Bind from './pages/bop/Bind'
 import Submission from './pages/Submission'
+import BopSubmission from './pages/bop/BopSubmission'
 import PageZero from './pages/PageZero'
 
 const STEPS = [
@@ -240,6 +241,7 @@ function App() {
   const [formData, setFormData] = useState({})
   const [activeStep, setActiveStep] = useState(1)
   const [submitted, setSubmitted] = useState(pageParam === 'submission')
+  const [bindSummary, setBindSummary] = useState(null)
   const [pageZeroDone, setPageZeroDone] = useState(pageParam === 'main' || pageParam === 'submission')
   const [darkMode, setDarkMode] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
@@ -346,7 +348,23 @@ function App() {
   }
 
   if (submitted) {
-    return <Submission formData={formData} onBack={() => setSubmitted(false)} isDark={darkMode} onToggleDark={() => setDarkMode(d => !d)} />
+    return (
+      <BopSubmission
+        formData={formData}
+        summary={bindSummary}
+        onBack={() => {
+          setSubmitted(false)
+          setBindSummary(null)
+          setInQuoteFlow(false)
+          setQuoteStep('compare')
+          setQuotesReady(false)
+          setFormData({})
+          setActiveStep(1)
+        }}
+        isDark={darkMode}
+        onToggleDark={() => setDarkMode(d => !d)}
+      />
+    )
   }
 
   return (
@@ -487,7 +505,7 @@ function App() {
                     ? <AddOns formData={formData} updateFormData={updateFormData} isDark={darkMode} onBack={() => setQuoteStep('package')} onContinue={() => { updateFormData('bind', { addonsConfirmed: true }); setQuoteStep('bind'); setActiveStep(7); if (scrollContainerRef.current) scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' }) }} />
                     : <Compare formData={formData} updateFormData={updateFormData} isDark={darkMode} quotesReady={quotesReady} onSelectCarrier={() => setQuoteStep('package')} onGoToStep={goToStep} />,
                 show: inQuoteFlow && quotesReady && quoteStep !== 'bind' },
-              { id: 7, title: 'Bind & Pay',             el: <Bind formData={formData} updateFormData={updateFormData} isDark={darkMode} onGoToStep={goToStep} />, show: inQuoteFlow && quoteStep === 'bind' },
+              { id: 7, title: 'Bind & Pay',             el: <Bind formData={formData} updateFormData={updateFormData} isDark={darkMode} onGoToStep={goToStep} onBound={(s) => { setBindSummary(s); setSubmitted(true) }} />, show: inQuoteFlow && quoteStep === 'bind' },
             ].filter(s => s.show).map(section => (
               <section
                 key={section.id}
