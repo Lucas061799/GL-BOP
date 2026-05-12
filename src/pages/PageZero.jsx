@@ -114,7 +114,7 @@ export default function PageZero({ onStart }) {
                 src={heroImg}
                 alt="Norbie"
                 className="w-full h-full select-none pointer-events-none"
-                style={{ objectFit: 'cover', transform: 'scale(1.6)', transformOrigin: 'center' }}
+                style={{ objectFit: 'cover', transform: 'scale(1.45)', transformOrigin: 'center' }}
               />
             </div>
           </div>
