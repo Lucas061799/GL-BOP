@@ -1,6 +1,6 @@
 import norbielinkLogo from '../assets/norbielink-logo.png'
 import btisLogo from '../assets/btislogo.png'
-import norbieCircleImg from '../assets/norbie-circle-00.png'
+import heroImg from '../assets/heroimg.png'
 import jungleImg from '../assets/jungle.png'
 
 const CARRIERS = ['Coterie', 'Hiscox', 'CNA', 'Great American']
@@ -90,12 +90,34 @@ export default function PageZero({ onStart }) {
         <div className="hidden md:flex relative overflow-hidden shrink-0 items-center justify-center"
           style={{ width: '50%', background: 'white' }}>
           <img src={jungleImg} alt="" className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" style={{ opacity: 0.25 }} />
-          <img
-            src={norbieCircleImg}
-            alt="Norbie"
+          <div
             className="relative z-10 select-none pointer-events-none"
-            style={{ width: '500px', height: '500px', objectFit: 'contain' }}
-          />
+            style={{
+              width: '500px',
+              height: '500px',
+              borderRadius: '50%',
+              padding: '6px',
+              background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
+              boxShadow: '0 10px 40px rgba(92,46,212,0.18)',
+            }}
+          >
+            <div
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                background: 'white',
+              }}
+            >
+              <img
+                src={heroImg}
+                alt="Norbie"
+                className="w-full h-full select-none pointer-events-none"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+          </div>
         </div>
 
       </div>
