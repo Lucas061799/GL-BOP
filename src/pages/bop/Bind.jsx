@@ -412,18 +412,12 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
         <div className="space-y-5">
           {/* Carrier + price */}
           <div className="rounded-xl p-6 text-center" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-            <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="flex items-center justify-center mb-4">
               <span
                 className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
                 style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
               >
                 {carrier}
-              </span>
-              <span
-                className="px-3 py-1 rounded-full text-[11px] font-semibold"
-                style={{ background: 'rgba(59,130,246,0.10)', color: '#3B82F6' }}
-              >
-                Admitted
               </span>
             </div>
             <div className="flex items-baseline justify-center gap-1 mb-3">
@@ -586,18 +580,16 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
         {/* ============ RIGHT COLUMN ============ */}
         <div className="space-y-5">
           {/* Fraud warning */}
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+            <div className="flex items-center gap-2 mb-3">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
-              <span className="text-sm font-semibold" style={{ color: '#D97706' }}>Colorado Fraud Warning</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Colorado Fraud Warning</span>
             </div>
-            <div
-              className="rounded-lg p-4 text-[13px] leading-relaxed text-gray-700"
-              style={{ background: '#FEF9E7', border: '1px solid #FDE68A' }}
-            >
+            <p className="text-[13px] leading-relaxed text-gray-600">
               It is unlawful to knowingly provide false, incomplete, or misleading facts or information to an insurance
               company for the purpose of defrauding or attempting to defraud the company. Penalties may include
               imprisonment, fines, denial of insurance, and civil damages. Any insurance company or agent of an
@@ -605,7 +597,7 @@ export default function Bind({ formData, updateFormData, onGoToStep }) {
               policyholder or claimant for the purpose of defrauding or attempting to defraud the policyholder or
               claimant with regard to a settlement or award payable from insurance proceeds shall be reported to the
               Colorado Division of Insurance within the Department of Regulatory Agencies.
-            </div>
+            </p>
           </div>
 
           {/* Insured Contact */}
