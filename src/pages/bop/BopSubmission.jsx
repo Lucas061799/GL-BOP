@@ -275,7 +275,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
         </aside>
 
         {/* Main */}
-        <main className="flex-1 overflow-y-auto custom-scroll bop-page" style={{ background: isDark ? '#131629' : '#FAFAFB' }}>
+        <main className="flex-1 overflow-y-auto custom-scroll bop-page" style={{ background: isDark ? '#131629' : 'white' }}>
           <div className="max-w-5xl 2xl:max-w-6xl mx-auto px-4 md:px-10 py-6 md:py-8 space-y-5">
 
             {/* Submission Complete card — mirrors Commercial Auto */}
