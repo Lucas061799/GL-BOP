@@ -48,12 +48,19 @@ export default function Sidebar({ steps, activeStep, onStepClick, formData = {},
       }}
     >
 
-      {/* Title */}
-      <div className="px-5 pt-5 pb-3 relative z-10">
-        <h2 className="text-base font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : undefined }}>Business Owners Policy</h2>
-        <p className="text-xs mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>Submission Number: BO0094894</p>
-        <div className="mt-3" style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}` }} />
-      </div>
+      {/* Title — product-aware (GL vs BOP) */}
+      {(() => {
+        const productType = formData.pageZero?.productType || 'bop'
+        const productName = productType === 'gl' ? 'General Liability' : 'Business Owners Policy'
+        const submissionId = productType === 'gl' ? 'GL0094894' : 'BO0094894'
+        return (
+          <div className="px-5 pt-5 pb-3 relative z-10">
+            <h2 className="text-base font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : undefined }}>{productName}</h2>
+            <p className="text-xs mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>Submission Number: {submissionId}</p>
+            <div className="mt-3" style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}` }} />
+          </div>
+        )
+      })()}
 
       {/* Step Navigation */}
       <nav className="flex-1 py-1 px-3 overflow-y-auto sidebar-nav relative z-10">
