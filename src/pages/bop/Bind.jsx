@@ -747,7 +747,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 <div className="flex-1 min-w-0">
                   <h2 className="text-lg font-bold text-gray-900 leading-snug">Confirm Payment Authorization</h2>
                   <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                    You'll see <span className="font-semibold text-gray-700">two separate charges</span> on the card on file. The premium is processed separately from the fees.
+                    Please confirm by selecting <span className="font-semibold text-gray-700">Continue</span> for the <span className="font-semibold text-gray-700">two separate charges</span> below to your card.
                   </p>
                 </div>
                 <button
@@ -801,10 +801,6 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                   </div>
                 </div>
               </div>
-
-              <p className="text-[11px] text-gray-400 italic mt-3 leading-relaxed">
-                By continuing, you authorize both charges to be placed on the card on file. The two amounts will appear as separate transactions on your statement.
-              </p>
             </div>
 
             {/* Footer actions — Cancel on left, primary CTA on right */}
