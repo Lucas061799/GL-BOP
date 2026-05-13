@@ -90,6 +90,11 @@ function SkeletonRow({ isDark = false }) {
         .skel { background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 50%, #EEF2F7 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        .rp-dot { display: inline-block; opacity: 0; animation: rpDotBlink 1.2s infinite; }
+        .rp-dot-1 { animation-delay: 0s }
+        .rp-dot-2 { animation-delay: 0.2s }
+        .rp-dot-3 { animation-delay: 0.4s }
+        @keyframes rpDotBlink { 0%, 80%, 100% { opacity: 0 } 40% { opacity: 1 } }
       `}</style>
     </div>
   )
@@ -343,16 +348,19 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
                       ) : (
-                        /* Quotes are still loading — small purple spinner */
-                        <div className="shrink-0 flex items-center justify-center" title="Fetching quote…">
-                          <svg
-                            width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="#5C2ED4" strokeWidth="2.4" strokeLinecap="round"
-                            className="animate-spin"
-                            style={{ opacity: 0.7 }}
-                          >
-                            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                          </svg>
+                        /* Quotes are still loading — show "$ . . ." with
+                           the dots animating one after the other. Reads
+                           as 'price is being calculated' instead of
+                           looking like a stuck loading spinner. */
+                        <div
+                          className="shrink-0 flex items-baseline text-sm font-bold text-gray-400 tabular-nums"
+                          title="Calculating quote…"
+                          aria-label="Calculating quote"
+                        >
+                          <span style={{ color: '#5C2ED4' }}>$</span>
+                          <span className="rp-dot rp-dot-1">.</span>
+                          <span className="rp-dot rp-dot-2">.</span>
+                          <span className="rp-dot rp-dot-3">.</span>
                         </div>
                       )}
                     </Wrapper>
@@ -506,11 +514,12 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                 </div>
               )}
 
-              {/* Steps — same numbered-circle pattern we use on the
-                  submission page's 'What's Next'. Done = filled gradient
-                  with a white check, current = filled gradient with a
-                  white number, upcoming = soft-tinted gradient with the
-                  number rendered in gradient text. */}
+              {/* Steps — soft-tinted gradient circles for every state
+                  (matches the success-header chip style on the
+                  submission page). Done shows a gradient check; current
+                  and upcoming show the step number in gradient text;
+                  current adds a soft focus ring + bold label so it
+                  stands apart without going to a heavier filled circle. */}
               <div className="mb-6">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-4 pl-0.5">
                   Where you are
@@ -519,31 +528,28 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   {QUOTE_STEPS.map((step, idx) => {
                     const isCurrent = idx === currentIdx
                     const isDone    = idx < currentIdx
-
-                    // Filled (gradient) circle when done OR current; soft
-                    // tinted circle for upcoming steps.
-                    const circleStyle = (isDone || isCurrent)
-                      ? {
-                          background: BRAND_GRADIENT,
-                          color: 'white',
-                          ...(isCurrent ? { boxShadow: '0 0 0 4px rgba(124,58,237,0.12)' } : {}),
-                        }
-                      : {
-                          background: 'linear-gradient(88.09deg, rgba(92,46,212,0.18) 0%, rgba(166,20,195,0.18) 100%)',
-                        }
+                    const gradId    = `rpStepCheck-${step.id}`
 
                     return (
                       <div key={step.id} className="flex items-center gap-4">
                         <span
                           className="w-9 h-9 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
-                          style={circleStyle}
+                          style={{
+                            background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+                            ...(isCurrent ? { boxShadow: '0 0 0 3px rgba(124,58,237,0.14)' } : {}),
+                            opacity: !isCurrent && !isDone ? 0.6 : 1,
+                          }}
                         >
                           {isDone ? (
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12"/>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24">
+                              <defs>
+                                <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+                                  <stop offset="0%"   stopColor="#5C2ED4"/>
+                                  <stop offset="100%" stopColor="#A614C3"/>
+                                </linearGradient>
+                              </defs>
+                              <path d="M5 13l4 4L19 7" stroke={`url(#${gradId})`} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
-                          ) : isCurrent ? (
-                            step.n
                           ) : (
                             <span
                               style={{
