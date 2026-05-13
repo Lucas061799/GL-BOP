@@ -204,7 +204,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                Confirm your details below. We'll send them to 4 carriers.
+                Confirm your details below. We'll send them to our carriers.
               </p>
               <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#5C2ED4' }}>
                 Need a copy first? Tap the printer icon.
@@ -579,7 +579,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
           {quoting ? (
             <>
               <span className="w-4 h-4 rounded-full border-2 border-white/30 animate-spin" style={{ borderTopColor: '#fff' }} />
-              Quoting 4 carriers...
+              Quoting...
             </>
           ) : quotesReady ? (
             <>
@@ -590,7 +590,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
             </>
           ) : (
             <>
-              Get Quotes from 4 Carriers
+              Get Quotes
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M13 7l5 5m0 0l-5 5m5-5H6"/>
               </svg>
