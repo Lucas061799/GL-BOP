@@ -416,7 +416,8 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           const carrierPremium  = Number(formData.bind?.carrierPremium || 0)
           const packageId       = formData.bind?.packageId
           const packagePremium  = Number(formData.bind?.packagePremium || 0)
-          const totalPremium    = carrierPremium + packagePremium
+          const addonsPremium   = Number(formData.bind?.addonsPremium  || 0)
+          const totalPremium    = carrierPremium + packagePremium + addonsPremium
           const PACKAGE_LABEL   = { base: 'Base', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' }
           const packageLabel    = packageId ? PACKAGE_LABEL[packageId] : null
 
@@ -464,8 +465,8 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   </div>
                   <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
 
-                  {/* Carrier + package breakdown (only when a package is chosen) */}
-                  {packageLabel && (
+                  {/* Carrier + package (+ add-ons) breakdown */}
+                  {(packageLabel || addonsPremium > 0) && (
                     <div
                       className="w-full mt-4 pt-3 text-[11px] text-gray-500 space-y-1"
                       style={{ borderTop: '1px solid #F3F4F6' }}
@@ -474,10 +475,18 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                         <span>{carrierName} base</span>
                         <span className="font-semibold text-gray-700">{money(carrierPremium)}</span>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span>{packageLabel} package</span>
-                        <span className="font-semibold text-gray-700">+{money(packagePremium)}</span>
-                      </div>
+                      {packageLabel && (
+                        <div className="flex items-center justify-between">
+                          <span>{packageLabel} package</span>
+                          <span className="font-semibold text-gray-700">+{money(packagePremium)}</span>
+                        </div>
+                      )}
+                      {addonsPremium > 0 && (
+                        <div className="flex items-center justify-between">
+                          <span>Add-ons</span>
+                          <span className="font-semibold text-gray-700">+{money(addonsPremium)}</span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
