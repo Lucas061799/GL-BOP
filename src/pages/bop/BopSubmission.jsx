@@ -912,14 +912,51 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
 
             {/* Body — the printable content */}
             <div className="px-6 py-5 overflow-y-auto space-y-3">
-              {/* Heading strip */}
-              <div className="text-center pb-3 mb-1" style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#E5E7EB'}` }}>
-                <h3 className="text-base font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
-                  General Liability Application Summary
-                </h3>
-                <p className="text-[11px] mt-0.5" style={{ color: '#9CA3AF' }}>
-                  {quoteId} · Generated {generatedAt}
-                </p>
+              {/* Document header — matches Commercial Auto Submission print pattern */}
+              <div className="flex flex-col mb-3">
+                {/* Branding row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingBottom: 8,
+                    marginBottom: 8,
+                    borderBottom: `1.5px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+                  }}
+                >
+                  <img src={isDark ? norbielinkLogoDark : norbielinkLogo} alt="NorbieLink" style={{ height: 22, objectFit: 'contain' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ fontSize: 8, color: '#9CA3AF', letterSpacing: '0.08em', fontWeight: 600 }}>POWERED BY</span>
+                    <img src={isDark ? btisLogoDark : btisLogo} alt="btis" style={{ height: 18, objectFit: 'contain' }} />
+                  </div>
+                </div>
+                {/* Applicant + product info row */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: isDark ? '#F9FAFB' : '#111827' }}>{business.name || '—'}</p>
+                    <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>
+                      {[business.entityType, business.effectiveDate ? `Eff. ${business.effectiveDate}` : null, business.phone, business.email].filter(Boolean).join('  ·  ')}
+                    </p>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 700,
+                        background: BRAND_GRADIENT,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      General Liability Application
+                    </p>
+                    <p style={{ fontSize: 8, color: '#9CA3AF', marginTop: 2 }}>
+                      #{quoteId} · {generatedAt}
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {carrier && (
