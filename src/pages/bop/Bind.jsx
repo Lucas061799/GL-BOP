@@ -130,8 +130,12 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
             type="button"
             disabled={submitting}
             onClick={submit}
-            className="w-full py-3 rounded text-sm font-semibold text-white transition disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
-            style={{ background: submitting ? '#7DD3FC' : '#0EA5E9' }}
+            className="w-full py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+            style={{
+              background: BRAND_GRADIENT,
+              boxShadow: submitting ? 'none' : '0 4px 14px rgba(92,46,212,0.25)',
+              opacity: submitting ? 0.7 : 1,
+            }}
           >
             {submitting ? (
               <>
