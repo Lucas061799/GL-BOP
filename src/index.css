@@ -167,7 +167,8 @@ input, select, textarea, button {
 [data-dark="true"] .bop-page .placeholder-gray-300::placeholder { color: rgba(255,255,255,0.25) !important; }
 /* "Answers ready" banner — dark navy text → light */
 [data-dark="true"] .bop-page p[style*="color: rgb(27, 7, 80)"],
-[data-dark="true"] .bop-page p[style*="#1B0750"] {
+[data-dark="true"] .bop-page p[style*="#1B0750"],
+[data-dark="true"] .bop-page .text-\[\#1B0750\] {
   color: #F9FAFB !important;
 }
 [data-dark="true"] .bop-page p[style*="color: rgb(107, 33, 168)"],

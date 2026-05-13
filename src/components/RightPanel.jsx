@@ -71,16 +71,24 @@ function CarrierMark({ name, logo, size = 'sm' }) {
   )
 }
 
-function SkeletonRow() {
+function SkeletonRow({ isDark = false }) {
+  const skelClass = isDark ? 'skel-dark' : 'skel'
   return (
-    <div className="rounded-xl px-3 py-3 flex items-center gap-3" style={{ background: '#FAFAFB', border: '1px solid #F3F4F6' }}>
-      <div className="skel w-9 h-9 rounded-xl shrink-0" />
+    <div
+      className="rounded-xl px-3 py-3 flex items-center gap-3"
+      style={{
+        background: isDark ? 'rgba(255,255,255,0.03)' : '#FAFAFB',
+        border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
+      }}
+    >
+      <div className={`${skelClass} w-9 h-9 rounded-xl shrink-0`} />
       <div className="flex-1 flex items-center justify-between gap-2">
-        <div className="skel h-3 rounded w-14" />
-        <div className="skel h-3 rounded w-12" />
+        <div className={`${skelClass} h-3 rounded w-14`} />
+        <div className={`${skelClass} h-3 rounded w-12`} />
       </div>
       <style>{`
         .skel { background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 50%, #EEF2F7 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
+        .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
       `}</style>
     </div>
@@ -208,11 +216,14 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           {showSkeleton ? (
             <div
               className="rounded-2xl px-5 py-6 mb-3 flex flex-col items-center gap-3"
-              style={{ background: '#FAFAFB', border: '1px solid #F3F4F6' }}
+              style={{
+                background: isDark ? 'rgba(255,255,255,0.03)' : '#FAFAFB',
+                border: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
+              }}
             >
-              <div className="skel w-14 h-14 rounded-xl" />
-              <div className="skel h-8 w-32 rounded" />
-              <div className="skel h-3 w-20 rounded" />
+              <div className={`${isDark ? 'skel-dark' : 'skel'} w-14 h-14 rounded-xl`} />
+              <div className={`${isDark ? 'skel-dark' : 'skel'} h-8 w-32 rounded`} />
+              <div className={`${isDark ? 'skel-dark' : 'skel'} h-3 w-20 rounded`} />
             </div>
           ) : (() => {
             const top = quotes[0]
@@ -274,7 +285,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           {/* Remaining carriers */}
           <div className="space-y-2">
             {showSkeleton
-              ? Array.from({ length: 3 }).map((_, i) => <SkeletonRow key={i} />)
+              ? Array.from({ length: 3 }).map((_, i) => <SkeletonRow key={i} isDark={isDark} />)
               : quotes.slice(1).map(q => {
                   const isSelected = selectedCarrier === q.id
                   return (
