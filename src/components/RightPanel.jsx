@@ -71,19 +71,20 @@ function CarrierMark({ name, logo, size = 'sm' }) {
   )
 }
 
-// Loading price placeholder — a small skeleton bar with the same
-// left-to-right shimmer used everywhere else in the rail. Standard
-// 'still loading' pattern; the row already shows the carrier logo
-// and name, so this just stands in for the price.
-function LoadingPriceTicker({ isDark = false }) {
+// Loading price placeholder — italic "Calculating" word followed by
+// three dots that cycle through opacity in a staggered wave. Reads
+// literally as 'we're computing this'.
+function LoadingPriceTicker() {
   return (
     <div
-      className="shrink-0 flex items-center"
-      style={{ minWidth: 56, justifyContent: 'flex-end' }}
+      className="shrink-0 flex items-baseline gap-0.5"
       title="Calculating quote…"
       aria-label="Calculating quote"
     >
-      <div className={`${isDark ? 'skel-dark' : 'skel'} h-3.5 w-14 rounded`} />
+      <span className="text-[11px] italic" style={{ color: '#9CA3AF' }}>Calculating</span>
+      <span className="rp-calc-dot rp-calc-dot-1" style={{ color: '#5C2ED4' }}>.</span>
+      <span className="rp-calc-dot rp-calc-dot-2" style={{ color: '#5C2ED4' }}>.</span>
+      <span className="rp-calc-dot rp-calc-dot-3" style={{ color: '#5C2ED4' }}>.</span>
     </div>
   )
 }
@@ -107,6 +108,11 @@ function SkeletonRow({ isDark = false }) {
         .skel { background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 50%, #EEF2F7 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        .rp-calc-dot { display: inline-block; font-weight: 700; opacity: 0; animation: rpCalcDot 1.2s infinite; }
+        .rp-calc-dot-1 { animation-delay: 0s }
+        .rp-calc-dot-2 { animation-delay: 0.15s }
+        .rp-calc-dot-3 { animation-delay: 0.3s }
+        @keyframes rpCalcDot { 0%, 70%, 100% { opacity: 0 } 35% { opacity: 1 } }
       `}</style>
     </div>
   )
@@ -360,9 +366,9 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
                       ) : (
-                        /* Quotes are still loading — small shimmer
-                           bar where the price will land. */
-                        <LoadingPriceTicker isDark={isDark} />
+                        /* Quotes are still loading — italic
+                           'Calculating ...' with the dots cycling. */
+                        <LoadingPriceTicker />
                       )}
                     </Wrapper>
                   )
