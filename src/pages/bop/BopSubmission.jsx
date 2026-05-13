@@ -69,37 +69,42 @@ function Confetti() {
 // Read-only summary primitives — match the section card style of the rest of
 // the BOP form so the summary feels of-a-piece.
 // =============================================================================
-function SectionCard({ title, icon, children }) {
+// Compact section card — matches Commercial Auto's SummarySection
+function SectionCard({ title, icon, isDark = false, children }) {
   return (
-    <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-      <div className="flex items-center gap-2 mb-4 pb-3 border-b" style={{ borderColor: '#F3F4F6' }}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          {icon}
-        </svg>
-        <span
-          className="text-[12px] font-bold uppercase tracking-wider"
-          style={{
-            background: BRAND_GRADIENT,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}
+    <div
+      className="rounded-xl p-4"
+      style={{
+        background: isDark ? '#252948' : 'white',
+        border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #E5E7EB',
+      }}
+    >
+      <div className="flex items-center gap-2 mb-3">
+        <div
+          className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+          style={{ background: 'rgba(115,201,183,0.12)' }}
         >
-          {title}
-        </span>
+          <svg className="w-3.5 h-3.5" fill="none" stroke="#73C9B7" strokeWidth={1.5} viewBox="0 0 24 24">
+            {icon}
+          </svg>
+        </div>
+        <h3 className="text-xs font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{title}</h3>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-        {children}
-      </div>
+      <div>{children}</div>
     </div>
   )
 }
 
-function Field({ label, value, full }) {
+// Inline label-value row with a thin bottom divider — matches SummaryRow
+function Field({ label, value, isDark = false }) {
+  if (!value && value !== 0) return null
   return (
-    <div className={full ? 'sm:col-span-2' : ''}>
-      <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">{label}</div>
-      <div className="text-sm text-gray-800">{value || <span className="text-gray-300">—</span>}</div>
+    <div
+      className="flex items-center justify-between py-1.5"
+      style={{ borderBottom: isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid #F3F4F6' }}
+    >
+      <span className="text-[10px]" style={{ color: '#9CA3AF' }}>{label}</span>
+      <span className="text-[10px] font-semibold text-right" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{value}</span>
     </div>
   )
 }
@@ -488,52 +493,44 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 mb-3">
 
                     {/* Business Details */}
-                    <SectionCard title="Business Details" icon={ICONS.briefcase}>
-                      <Field label="Business Name"      value={business.name} />
-                      <Field label="Entity Type"        value={business.entityType} />
-                      <Field label="Year Established"   value={business.yearEstablished} />
-                      <Field label="Annual Revenue"     value={business.annualRevenue ? '$' + Number(business.annualRevenue).toLocaleString() : null} />
-                      <Field label="Annual Payroll"     value={business.annualPayroll ? '$' + Number(business.annualPayroll).toLocaleString() : null} />
-                      <Field label="Full-Time Employees" value={business.numberOfEmployees} />
-                      <Field label="Part-Time Employees" value={business.partTimeEmployees || 0} />
-                      <Field label="Phone"              value={business.phone} />
-                      <Field label="Email"              value={business.email} />
-                      <Field
-                        full
-                        label="Class Code"
-                        value={cls.classId ? `${cls.classId} — ${cls.description}` : null}
-                      />
+                    <SectionCard title="Business Details" icon={ICONS.briefcase} isDark={isDark}>
+                      <Field isDark={isDark} label="Business Name"       value={business.name} />
+                      <Field isDark={isDark} label="Entity Type"         value={business.entityType} />
+                      <Field isDark={isDark} label="Year Established"    value={business.yearEstablished} />
+                      <Field isDark={isDark} label="Annual Revenue"      value={business.annualRevenue ? '$' + Number(business.annualRevenue).toLocaleString() : null} />
+                      <Field isDark={isDark} label="Annual Payroll"      value={business.annualPayroll ? '$' + Number(business.annualPayroll).toLocaleString() : null} />
+                      <Field isDark={isDark} label="Full-Time Employees" value={business.numberOfEmployees} />
+                      <Field isDark={isDark} label="Part-Time Employees" value={business.partTimeEmployees} />
+                      <Field isDark={isDark} label="Phone"               value={business.phone} />
+                      <Field isDark={isDark} label="Email"               value={business.email} />
+                      <Field isDark={isDark} label="Class Code"          value={cls.classId ? `${cls.classId} — ${cls.description}` : null} />
                     </SectionCard>
 
                     {/* Location */}
-                    <SectionCard title="Location & Premises" icon={ICONS.pin}>
-                      <Field
-                        full
-                        label="Address"
-                        value={[location.address, location.city, location.state, location.zip].filter(Boolean).join(', ')}
-                      />
-                      <Field label="Premises Type"     value={location.locationType} />
-                      <Field label="Square Feet"       value={location.squareFeet ? Number(location.squareFeet).toLocaleString() + ' sq ft' : null} />
+                    <SectionCard title="Location & Premises" icon={ICONS.pin} isDark={isDark}>
+                      <Field isDark={isDark} label="Address"        value={[location.address, location.city, location.state, location.zip].filter(Boolean).join(', ')} />
+                      <Field isDark={isDark} label="Premises Type"  value={location.locationType} />
+                      <Field isDark={isDark} label="Square Feet"    value={location.squareFeet ? Number(location.squareFeet).toLocaleString() + ' sq ft' : null} />
                     </SectionCard>
 
                     {/* Coverage */}
-                    <SectionCard title="Coverage Selection" icon={ICONS.shield}>
-                      <Field label="GL Each Occurrence"   value={coverage.eachOccurrence || coverage.glLimit} />
-                      <Field label="GL Aggregate"         value={coverage.aggregate} />
-                      <Field label="Products / Completed" value={coverage.productsAggregate} />
-                      <Field label="Personal Injury"      value={coverage.personalInjury} />
-                      <Field label="Deductible"           value={coverage.deductible} />
-                      <Field label="Effective Date"       value={business.effectiveDate} />
+                    <SectionCard title="Coverage Selection" icon={ICONS.shield} isDark={isDark}>
+                      <Field isDark={isDark} label="GL Each Occurrence"   value={coverage.eachOccurrence || coverage.glLimit} />
+                      <Field isDark={isDark} label="GL Aggregate"         value={coverage.aggregate} />
+                      <Field isDark={isDark} label="Products / Completed" value={coverage.productsAggregate} />
+                      <Field isDark={isDark} label="Personal Injury"      value={coverage.personalInjury} />
+                      <Field isDark={isDark} label="Deductible"           value={coverage.deductible} />
+                      <Field isDark={isDark} label="Effective Date"       value={business.effectiveDate} />
                     </SectionCard>
 
                     {/* Bind & Payment */}
-                    <SectionCard title="Bind & Payment" icon={ICONS.card}>
-                      <Field label="Selected Carrier" value={carrier} />
-                      <Field label="Coverage Tier"    value={packageId ? packageId.charAt(0).toUpperCase() + packageId.slice(1) : null} />
-                      <Field label="Annual Premium"   value={money(premium)} />
-                      <Field label="Total Fees"       value={money(totalFees)} />
-                      <Field label="Insured Contact"  value={[contact.firstName, contact.lastName].filter(Boolean).join(' ')} />
-                      <Field label="Contact Email"    value={contact.email} />
+                    <SectionCard title="Bind & Payment" icon={ICONS.card} isDark={isDark}>
+                      <Field isDark={isDark} label="Selected Carrier" value={carrier} />
+                      <Field isDark={isDark} label="Coverage Tier"    value={packageId ? packageId.charAt(0).toUpperCase() + packageId.slice(1) : null} />
+                      <Field isDark={isDark} label="Annual Premium"   value={money(premium)} />
+                      <Field isDark={isDark} label="Total Fees"       value={money(totalFees)} />
+                      <Field isDark={isDark} label="Insured Contact"  value={[contact.firstName, contact.lastName].filter(Boolean).join(' ')} />
+                      <Field isDark={isDark} label="Contact Email"    value={contact.email} />
                     </SectionCard>
 
                   </div>
