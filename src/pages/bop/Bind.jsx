@@ -203,6 +203,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
   const [brokerFee, setBrokerFee] = useState(0)
   const [disclosuresOpen, setDisclosuresOpen] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
+  const [termsOpen, setTermsOpen] = useState(false)
 
   const contact = formData.bindContact || {}
   const setContact = (id) => (val) => updateFormData('bindContact', { [id]: val })
@@ -481,38 +482,101 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
             </div>
           </div>
 
-          {/* Terms & Acknowledgments */}
-          <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Terms &amp; Acknowledgments</div>
-              <button
-                type="button"
-                onClick={() => {
-                  const next = !allConsented
-                  CONSENTS.forEach(c => setConsent(c.key, next))
-                }}
-                className="text-xs font-semibold transition hover:underline"
-                style={{
-                  background: BRAND_GRADIENT,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                {allConsented ? 'Deselect all' : 'Select all'}
-              </button>
-            </div>
-            <div className="space-y-2.5">
-              {CONSENTS.map(c => (
-                <ConsentRow
-                  key={c.key}
-                  label={c.label}
-                  checked={!!consents[c.key]}
-                  onChange={(val) => setConsent(c.key, val)}
-                />
-              ))}
-            </div>
-          </div>
+          {/* Terms & Acknowledgments — collapsed by default */}
+          {(() => {
+            const acceptedCount = CONSENTS.filter(c => !!consents[c.key]).length
+            const allDone = acceptedCount === CONSENTS.length
+            return (
+              <div>
+                <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2.5">
+                  Terms &amp; Acknowledgments
+                </div>
+                <div
+                  className="rounded-xl overflow-hidden"
+                  style={{
+                    background: 'white',
+                    border: `1.5px solid ${allDone ? '#7C3AED' : '#E5E7EB'}`,
+                    boxShadow: allDone ? '0 2px 12px rgba(92,46,212,0.10)' : 'none',
+                  }}
+                >
+                  {/* Collapsed header — summary + expand caret */}
+                  <button
+                    type="button"
+                    onClick={() => setTermsOpen(o => !o)}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-gray-50"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span
+                        className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                        style={{
+                          background: allDone ? BRAND_GRADIENT : 'rgba(124,58,237,0.10)',
+                          color: allDone ? 'white' : '#5C2ED4',
+                        }}
+                      >
+                        {allDone ? (
+                          <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
+                            <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        ) : (
+                          <span className="text-[10px] font-bold">{acceptedCount}</span>
+                        )}
+                      </span>
+                      <div className="text-left min-w-0">
+                        <div className="text-[13px] font-semibold text-gray-800 truncate">
+                          {allDone ? 'All acknowledgments accepted' : `${acceptedCount} of ${CONSENTS.length} accepted`}
+                        </div>
+                        <div className="text-[11px] text-gray-400 truncate">
+                          {allDone ? "You're good to bind." : 'Tap to review and accept.'}
+                        </div>
+                      </div>
+                    </div>
+                    <svg
+                      width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                      className="shrink-0 transition-transform"
+                      style={{ transform: termsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    >
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  </button>
+
+                  {/* Expanded body */}
+                  {termsOpen && (
+                    <div className="px-4 pb-4 pt-1 border-t" style={{ borderColor: '#F3F4F6' }}>
+                      <div className="flex justify-end mb-2.5 -mt-0.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = !allConsented
+                            CONSENTS.forEach(c => setConsent(c.key, next))
+                          }}
+                          className="text-xs font-semibold transition hover:underline"
+                          style={{
+                            background: BRAND_GRADIENT,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                          }}
+                        >
+                          {allConsented ? 'Deselect all' : 'Select all'}
+                        </button>
+                      </div>
+                      <div className="space-y-2.5">
+                        {CONSENTS.map(c => (
+                          <ConsentRow
+                            key={c.key}
+                            label={c.label}
+                            checked={!!consents[c.key]}
+                            onChange={(val) => setConsent(c.key, val)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })()}
 
           {/* Footer disclaimers */}
           <div className="space-y-2 text-[12px] text-gray-500 leading-relaxed">
