@@ -165,10 +165,7 @@ export default function PageZero({ onStart }) {
                   }}
                   icon={(
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A614C3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      {/* Umbrella — the classic 'protection / coverage' metaphor */}
-                      <path d="M12 2v2"/>
-                      <path d="M3 11a9 9 0 0 1 18 0H3z"/>
-                      <path d="M12 11v8a3 3 0 0 0 6 0"/>
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
                   )}
                 />
