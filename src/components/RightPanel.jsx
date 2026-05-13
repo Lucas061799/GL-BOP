@@ -47,17 +47,13 @@ function estimatePremium(formData) {
 
 const money = (n) => '$' + Math.round(n).toLocaleString()
 
-// Short broker-facing tips that rotate while the user is filling in
-// the form and quotes haven't come in yet.
-const PRO_TIPS = [
-  "Class code accuracy directly impacts every carrier's quote — double-check before submitting.",
-  "Higher payroll usually means higher GL premiums. Quote a few carriers to see who's most competitive at your client's size.",
-  "Most carriers reward 3+ years in business with better pricing.",
-  "Tell your client the proposal numbers can move — final premium depends on UW review and any state-rate changes.",
-  "Some carriers prefer no claims in the last 3 years. Capture prior losses early to avoid surprises at bind.",
-  "BOP usually beats standalone GL + Property when both are needed — bundle when possible.",
-  "Hiscox tends to like consultants and small offices. Coterie is fast on retail and food service.",
-  "If a carrier returns 'Not a fit,' the decline reasons are a goldmine for placing the next risk.",
+// Numbered steps shown while the agent fills the form and quotes
+// haven't come back yet. Same visual pattern as BopSubmission's
+// 'What's Next' section so the experience feels consistent.
+const NEXT_STEPS = [
+  { n: 1, t: 'Tell us about the business', d: 'Add revenue, payroll, and employee count so carriers can rate the risk.' },
+  { n: 2, t: 'Compare live quotes',         d: "We'll fetch real-time prices across every carrier on the list." },
+  { n: 3, t: 'Bind in minutes',              d: 'Pick the carrier that fits, review the terms, and pay to issue the policy.' },
 ]
 
 // Carrier logo chip — square white tile holding the partner logo
@@ -117,14 +113,6 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
   }
 
   const [refreshing, setRefreshing] = useState(false)
-  // Rotating pro-tip while quotes are loading.
-  const [tipIdx, setTipIdx] = useState(() => Math.floor(Math.random() * PRO_TIPS.length))
-  useEffect(() => {
-    const t = setInterval(() => {
-      setTipIdx(i => (i + 1) % PRO_TIPS.length)
-    }, 6000)
-    return () => clearInterval(t)
-  }, [])
 
   const completion = useMemo(() => getSectionCompletion(formData), [formData])
   const completedCount = Object.values(completion).filter(Boolean).length
@@ -378,37 +366,38 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
             </p>
           )}
 
-          {/* Pro tip — rotates every few seconds while the agent fills in
-              the form and quotes haven't landed yet. Hidden once we're
-              showing real prices. */}
+          {/* Numbered steps — only render while quotes haven't landed yet.
+              Same visual pattern as the BopSubmission 'What's Next' block
+              (gradient-tinted number pill + bold title + gray description). */}
           {readyToQuote && !showPrices && (
-            <div
-              className="rounded-xl px-3.5 py-3 mt-3 flex items-start gap-2.5"
-              style={{
-                background: isDark ? 'rgba(124,58,237,0.10)' : 'rgba(124,58,237,0.05)',
-                border: `1px solid ${isDark ? 'rgba(167,139,250,0.25)' : 'rgba(124,58,237,0.15)'}`,
-              }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
-                <path d="M9 18h6"/>
-                <path d="M10 22h4"/>
-                <path d="M12 2a7 7 0 0 0-4 12.7c.5.5.8 1.1.8 1.8V18h6.4v-1.5c0-.7.3-1.3.8-1.8A7 7 0 0 0 12 2z"/>
-              </svg>
-              <div className="min-w-0">
-                <p
-                  className="text-[9.5px] font-bold uppercase tracking-[0.12em] mb-0.5"
-                  style={{
-                    background: BRAND_GRADIENT,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  Pro tip
-                </p>
-                <p className="text-[11px] leading-relaxed" style={{ color: isDark ? '#D1D5DB' : '#4B5563' }}>
-                  {PRO_TIPS[tipIdx]}
-                </p>
+            <div className="mt-5">
+              <h3 className="text-sm font-bold mb-4" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                What happens next
+              </h3>
+              <div className="space-y-5">
+                {NEXT_STEPS.map(step => (
+                  <div key={step.n} className="flex gap-3">
+                    <span
+                      className="w-8 h-8 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
+                      style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)' }}
+                    >
+                      <span
+                        style={{
+                          background: BRAND_GRADIENT,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        {step.n}
+                      </span>
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-semibold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{step.t}</p>
+                      <p className="text-[11px] mt-0.5 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>{step.d}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
