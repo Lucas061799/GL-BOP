@@ -1,6 +1,6 @@
 import norbielinkLogo from '../assets/norbielink-logo.png'
 import btisLogo from '../assets/btislogo.png'
-import heroImg from '../assets/heroimg.png'
+import heroImg from '../assets/norbie-heroimg.png'
 import jungleImg from '../assets/jungle.png'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
@@ -179,34 +179,17 @@ export default function PageZero({ onStart }) {
         <div className="hidden md:flex relative overflow-hidden shrink-0 items-center justify-center"
           style={{ width: '50%', background: 'white' }}>
           <img src={jungleImg} alt="" className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" style={{ opacity: 0.25 }} />
-          <div
+          <img
+            src={heroImg}
+            alt="Norbie"
             className="relative z-10 select-none pointer-events-none"
             style={{
               width: '500px',
               height: '500px',
-              borderRadius: '50%',
-              padding: '6px',
-              background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
-              boxShadow: '0 10px 40px rgba(92,46,212,0.18)',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 10px 40px rgba(92,46,212,0.18))',
             }}
-          >
-            <div
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                overflow: 'hidden',
-                background: 'white',
-              }}
-            >
-              <img
-                src={heroImg}
-                alt="Norbie"
-                className="w-full h-full select-none pointer-events-none"
-                style={{ objectFit: 'cover', transform: 'translate(-20px, 30px) scale(1.45)', transformOrigin: 'center' }}
-              />
-            </div>
-          </div>
+          />
         </div>
 
       </div>
