@@ -404,12 +404,17 @@ export default function Compare({ formData, updateFormData, quotesReady, onGoToS
   const select = (c) => {
     // Remember the carrier's premium too, so the right-rail summary
     // and the Package/Add-Ons pages can reflect the live price without
-    // re-deriving it.
+    // re-deriving it. Also reset every downstream price field so the
+    // running total doesn't carry forward stale package / add-on
+    // amounts from a previous carrier.
     const q = quotes.find(x => x.carrier === c)
     updateFormData('bind', {
       selectedCarrier: c,
       carrierPremium: q?.premium || 0,
       packageId: undefined,
+      packagePremium: 0,
+      optionalAddons: [],
+      addonsPremium: 0,
       addonsConfirmed: false,
     })
     if (onSelectCarrier) setTimeout(() => onSelectCarrier(), 150)

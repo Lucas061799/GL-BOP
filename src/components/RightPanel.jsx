@@ -415,8 +415,11 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           const carrierLogo     = CARRIERS.find(c => c.name === carrierName)?.logo
           const carrierPremium  = Number(formData.bind?.carrierPremium || 0)
           const packageId       = formData.bind?.packageId
-          const packagePremium  = Number(formData.bind?.packagePremium || 0)
-          const addonsPremium   = Number(formData.bind?.addonsPremium  || 0)
+          // Only fold package/add-on premiums into the total once a
+          // package is actually picked. Stale values from a previous
+          // run shouldn't show before the user reaches that step.
+          const packagePremium  = packageId ? Number(formData.bind?.packagePremium || 0) : 0
+          const addonsPremium   = packageId ? Number(formData.bind?.addonsPremium  || 0) : 0
           const totalPremium    = carrierPremium + packagePremium + addonsPremium
           const PACKAGE_LABEL   = { base: 'Base', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' }
           const packageLabel    = packageId ? PACKAGE_LABEL[packageId] : null
@@ -465,8 +468,11 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   </div>
                   <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
 
-                  {/* Carrier + package (+ add-ons) breakdown */}
-                  {(packageLabel || addonsPremium > 0) && (
+                  {/* Carrier + package (+ add-ons) breakdown — only once
+                      the user has reached the Package step. Before that
+                      the carrier premium IS the annual premium, so the
+                      breakdown rows would just repeat the headline. */}
+                  {packageLabel && (
                     <div
                       className="w-full mt-4 pt-3 text-[11px] text-gray-500 space-y-1"
                       style={{ borderTop: '1px solid #F3F4F6' }}
@@ -475,12 +481,10 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                         <span>{carrierName} base</span>
                         <span className="font-semibold text-gray-700">{money(carrierPremium)}</span>
                       </div>
-                      {packageLabel && (
-                        <div className="flex items-center justify-between">
-                          <span>{packageLabel} package</span>
-                          <span className="font-semibold text-gray-700">+{money(packagePremium)}</span>
-                        </div>
-                      )}
+                      <div className="flex items-center justify-between">
+                        <span>{packageLabel} package</span>
+                        <span className="font-semibold text-gray-700">+{money(packagePremium)}</span>
+                      </div>
                       {addonsPremium > 0 && (
                         <div className="flex items-center justify-between">
                           <span>Add-ons</span>
