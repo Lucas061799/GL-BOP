@@ -580,47 +580,27 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                 </div>
               </div>
 
-              {/* Download Quote Proposal — only unlocks at the Bind & Pay
-                  step. Before that the quote isn't final, so showing a
-                  download CTA would let the user grab a half-baked PDF. */}
-              {(() => {
-                const downloadReady = quoteStep === 'bind' && !!carrierName
-                return (
-                  <>
-                    <button
-                      type="button"
-                      disabled={!downloadReady}
-                      onClick={() => { /* hook up real proposal download here */ }}
-                      className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
-                      style={downloadReady
-                        ? {
-                            background: BRAND_GRADIENT,
-                            color: 'white',
-                            boxShadow: '0 4px 14px rgba(92,46,212,0.22)',
-                          }
-                        : {
-                            background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
-                            color: isDark ? '#6B7280' : '#9CA3AF',
-                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
-                          }
-                      }
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                        <line x1="12" y1="11" x2="12" y2="17"/>
-                        <polyline points="9 14 12 17 15 14"/>
-                      </svg>
-                      Download Quote Proposal
-                    </button>
-                    {!downloadReady && (
-                      <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
-                        Available at the Bind &amp; Pay step.
-                      </p>
-                    )}
-                  </>
-                )
-              })()}
+              {/* Download Application Summary — same button as the
+                  form-page right rail. Always live in the quote flow
+                  since a carrier is already selected by this point. */}
+              <button
+                type="button"
+                onClick={() => { /* hook up real application-summary download here */ }}
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition"
+                style={{
+                  background: BRAND_GRADIENT,
+                  color: 'white',
+                  boxShadow: '0 4px 14px rgba(92,46,212,0.22)',
+                }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+                  <rect x="9" y="3" width="6" height="4" rx="1"/>
+                  <line x1="9" y1="13" x2="15" y2="13"/>
+                  <line x1="9" y1="17" x2="13" y2="17"/>
+                </svg>
+                Download Application Summary
+              </button>
             </div>
           )
         })()}
