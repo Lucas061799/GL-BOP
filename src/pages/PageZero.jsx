@@ -1,11 +1,134 @@
+import { useState } from 'react'
 import norbielinkLogo from '../assets/norbielink-logo.png'
 import btisLogo from '../assets/btislogo.png'
 import heroImg from '../assets/heroimg.png'
 import jungleImg from '../assets/jungle.png'
 
+const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
+
 const CARRIERS = ['Coterie', 'Hiscox', 'CNA', 'Great American']
 
+// External GL portal — opens in a new tab if the user picks GL.
+// Swap this URL when the real GL application is wired up.
+const GL_APP_URL = 'https://www.btisinc.com/general-liability'
+
+function CarrierChip({ name }) {
+  return (
+    <span
+      className="text-[11px] font-bold px-3 py-1 rounded-full inline-block"
+      style={{ border: '1px solid rgba(92,46,212,0.22)', background: 'white' }}
+    >
+      <span
+        style={{
+          background: BRAND_GRADIENT,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}
+      >
+        {name}
+      </span>
+    </span>
+  )
+}
+
+function CoverageTypeModal({ open, onClose, onPickBop, onPickGl }) {
+  if (!open) return null
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(15,18,40,0.55)', backdropFilter: 'blur(3px)' }}
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-3xl rounded-2xl overflow-hidden flex flex-col"
+        style={{ maxHeight: '90vh', background: 'white', boxShadow: '0 32px 80px rgba(0,0,0,0.22)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="px-6 pt-6 pb-2 shrink-0">
+          <h2 className="text-2xl font-bold text-gray-900 leading-tight">What type of coverage?</h2>
+          <p className="text-sm text-gray-500 mt-1">Choose the policy that fits your client's needs.</p>
+        </div>
+
+        {/* Two cards */}
+        <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* BOP card */}
+          <button
+            type="button"
+            onClick={onPickBop}
+            className="rounded-2xl p-5 text-left transition hover:-translate-y-px hover:shadow-md"
+            style={{ background: 'white', border: '1.5px solid #E5E7EB' }}
+          >
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+              style={{ background: 'rgba(124,58,237,0.10)' }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
+            <h3 className="text-base font-bold text-gray-900 mb-1">Business Owners Policy</h3>
+            <p className="text-[13px] text-gray-500 leading-relaxed mb-4">
+              Property + Liability bundled. Covers your building, equipment, and general liability in one policy.
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {['Coterie', 'Hiscox', 'CNA', 'Great American'].map(c => <CarrierChip key={c} name={c} />)}
+            </div>
+          </button>
+
+          {/* GL card */}
+          <button
+            type="button"
+            onClick={onPickGl}
+            className="rounded-2xl p-5 text-left transition hover:-translate-y-px hover:shadow-md"
+            style={{ background: 'white', border: '1.5px solid #E5E7EB' }}
+          >
+            <div
+              className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+              style={{ background: 'rgba(115,201,183,0.18)' }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <h3 className="text-base font-bold text-gray-900 mb-1">General Liability</h3>
+            <p className="text-[13px] text-gray-500 leading-relaxed mb-4">
+              Liability only. Covers third-party bodily injury and property damage claims against your business.
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {['Coterie', 'Hiscox'].map(c => <CarrierChip key={c} name={c} />)}
+            </div>
+          </button>
+        </div>
+
+        {/* Cancel */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="w-full py-3.5 text-sm font-semibold text-gray-500 hover:bg-gray-50 transition border-t"
+          style={{ borderColor: '#F3F4F6' }}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function PageZero({ onStart }) {
+  const [coverageModalOpen, setCoverageModalOpen] = useState(false)
+
+  const pickBop = () => {
+    setCoverageModalOpen(false)
+    onStart({})
+  }
+  const pickGl = () => {
+    setCoverageModalOpen(false)
+    window.open(GL_APP_URL, '_blank', 'noopener,noreferrer')
+  }
+
   return (
     <div className="min-h-screen bg-white font-montserrat flex flex-col">
 
@@ -49,7 +172,7 @@ export default function PageZero({ onStart }) {
 
               {/* CTA button */}
               <button
-                onClick={() => onStart({})}
+                onClick={() => setCoverageModalOpen(true)}
                 className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold text-white transition-all hover:opacity-90 hover:-translate-y-px mb-10"
                 style={{ background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)', boxShadow: '0 4px 20px rgba(92,46,212,0.3)' }}
               >
@@ -118,6 +241,13 @@ export default function PageZero({ onStart }) {
         </div>
 
       </div>
+
+      <CoverageTypeModal
+        open={coverageModalOpen}
+        onClose={() => setCoverageModalOpen(false)}
+        onPickBop={pickBop}
+        onPickGl={pickGl}
+      />
     </div>
   )
 }
