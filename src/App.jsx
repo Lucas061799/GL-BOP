@@ -19,10 +19,10 @@ import BopSubmission from './pages/bop/BopSubmission'
 import PageZero from './pages/PageZero'
 
 const STEPS = [
-  { id: 1, label: 'Class Code',   key: 'smartStart' },
-  { id: 2, label: 'Business',     key: 'business' },
-  { id: 3, label: 'Location',     key: 'location' },
-  { id: 4, label: 'Coverage',     key: 'coverage' },
+  { id: 1, label: 'Class Code Search',     key: 'smartStart' },
+  { id: 2, label: 'Business Information',  key: 'business' },
+  { id: 3, label: 'Location Information',  key: 'location' },
+  { id: 4, label: 'Coverage Limits',       key: 'coverage' },
   { id: 5, label: 'Underwriting Questions', key: 'underwriting' },
   { id: 6, label: 'Compare',      key: 'compare' },
   { id: 7, label: 'Bind & Pay',   key: 'bind' },
