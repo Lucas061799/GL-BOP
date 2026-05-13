@@ -32,9 +32,6 @@ function ProductCard({ accent, icon, title, tagline, bullets, ctaLabel, onClick 
       onMouseEnter={e => { e.currentTarget.style.boxShadow = hoverShadow }}
       onMouseLeave={e => { e.currentTarget.style.boxShadow = restingShadow }}
     >
-      {/* Top accent bar — sits flush with the rounded corners */}
-      <div className="h-1.5" style={{ background: accent.bar }} />
-
       <div className="px-5 pt-5 pb-5 flex flex-col flex-1">
         {/* Icon */}
         <div
@@ -148,7 +145,6 @@ export default function PageZero({ onStart }) {
                   accent={{
                     bg: 'rgba(124,58,237,0.10)',
                     stroke: '#5C2ED4',
-                    bar: BRAND_GRADIENT,
                   }}
                   icon={(
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -164,12 +160,11 @@ export default function PageZero({ onStart }) {
                   ctaLabel="Start GL Quote"
                   onClick={startGl}
                   accent={{
-                    bg: 'rgba(16,185,129,0.10)',
-                    stroke: '#10B981',
-                    bar: 'linear-gradient(88.09deg, #10B981 0%, #5EEAD4 100%)',
+                    bg: 'rgba(115,201,183,0.18)',
+                    stroke: '#73C9B7',
                   }}
                   icon={(
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#73C9B7" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
                   )}
