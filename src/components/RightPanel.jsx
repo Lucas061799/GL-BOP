@@ -465,8 +465,8 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                 <div
                   className="rounded-2xl px-5 py-5 mb-5 flex flex-col items-center text-center relative"
                   style={{
-                    background: 'white',
-                    border: '1.5px solid #7C3AED',
+                    background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+                    border: `1.5px solid ${isDark ? 'rgba(124,58,237,0.55)' : '#7C3AED'}`,
                     boxShadow: '0 4px 20px rgba(92,46,212,0.10)',
                   }}
                 >
@@ -490,7 +490,12 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                       {money(totalPremium)}
                     </span>
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
+                  <p
+                    className="text-[11px] mt-0.5"
+                    style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
+                  >
+                    Annual Premium
+                  </p>
 
                   {/* Carrier + package (+ add-ons) breakdown — only once
                       the user has reached the Package step. Before that
@@ -498,21 +503,24 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                       breakdown rows would just repeat the headline. */}
                   {packageLabel && (
                     <div
-                      className="w-full mt-4 pt-3 text-[11px] text-gray-500 space-y-1"
-                      style={{ borderTop: '1px solid #F3F4F6' }}
+                      className="w-full mt-4 pt-3 text-[11px] space-y-1"
+                      style={{
+                        borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}`,
+                        color: isDark ? '#9CA3AF' : '#6B7280',
+                      }}
                     >
                       <div className="flex items-center justify-between">
                         <span>{carrierName} base</span>
-                        <span className="font-semibold text-gray-700">{money(carrierPremium)}</span>
+                        <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>{money(carrierPremium)}</span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span>{packageLabel} package</span>
-                        <span className="font-semibold text-gray-700">+{money(packagePremium)}</span>
+                        <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>+{money(packagePremium)}</span>
                       </div>
                       {addonsPremium > 0 && (
                         <div className="flex items-center justify-between">
                           <span>Add-ons</span>
-                          <span className="font-semibold text-gray-700">+{money(addonsPremium)}</span>
+                          <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>+{money(addonsPremium)}</span>
                         </div>
                       )}
                     </div>

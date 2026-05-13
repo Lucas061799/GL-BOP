@@ -80,19 +80,29 @@ function BrandText({ children, className = '' }) {
   )
 }
 
-function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendingGl, onGlChange, onRequote, requoting }) {
+function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendingGl, onGlChange, onRequote, requoting, isDark = false }) {
   const isReferred = q.status === 'Referred'
   const isDeclined = q.status === 'Declined'
   const isQuoted   = !isReferred && !isDeclined
   const totalCost  = isQuoted ? q.premium + (q.fees?.service ?? 0) + (q.fees?.tax ?? 0) + (q.fees?.stamping ?? 0) : null
   const glChanged  = isQuoted && pendingGl !== undefined && pendingGl !== q.glLimit
 
+  // Dark-mode-aware tokens. Reused throughout the row + expanded panel.
+  const rowBg     = isDark
+    ? (isDeclined ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.04)')
+    : (isDeclined ? '#FAFAFB' : 'white')
+  const rowBorder = isBest ? '#7C3AED' : (isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB')
+  const nameColor = isDeclined
+    ? (isDark ? '#9CA3AF' : '#6B7280')
+    : (isDark ? '#F9FAFB' : '#1F2937')
+  const subText   = isDark ? '#9CA3AF' : '#6B7280'
+
   return (
     <div
       className="rounded-lg transition overflow-hidden"
       style={{
-        background: isDeclined ? '#FAFAFB' : 'white',
-        border: `1.5px solid ${isBest ? '#7C3AED' : '#E5E7EB'}`,
+        background: rowBg,
+        border: `1.5px solid ${rowBorder}`,
         boxShadow: isBest ? '0 2px 12px rgba(92,46,212,0.12)' : 'none',
       }}
     >
@@ -112,7 +122,7 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
             />
             <span
               className="text-sm font-semibold truncate"
-              style={{ color: isDeclined ? '#6B7280' : '#1F2937' }}
+              style={{ color: nameColor }}
             >
               {q.carrier}
             </span>
@@ -155,12 +165,12 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
         {/* Row 2 — Price (or referral / decline note) + action button */}
         <div className="flex items-center justify-between gap-3 flex-wrap">
           {isReferred && (
-            <span className="text-xs text-gray-500 flex-1 min-w-0">{q.reason}</span>
+            <span className="text-xs flex-1 min-w-0" style={{ color: subText }}>{q.reason}</span>
           )}
           {isDeclined && (
-            <span className="text-xs flex-1 min-w-0" style={{ color: '#6B7280' }}>
+            <span className="text-xs flex-1 min-w-0" style={{ color: subText }}>
               {q.carrier} isn't quoting this risk today.
-              <span style={{ color: '#5C2ED4' }} className="font-semibold ml-1">
+              <span style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }} className="font-semibold ml-1">
                 {expanded ? 'Hide details' : 'See why →'}
               </span>
             </span>
@@ -168,10 +178,10 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
           {isQuoted && (
             <div>
               <div className="flex items-baseline gap-1">
-                <span className="text-xl font-bold text-gray-800">{money(q.premium)}</span>
-                <span className="text-xs text-gray-400">/yr</span>
+                <span className="text-xl font-bold" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>{money(q.premium)}</span>
+                <span className="text-xs" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>/yr</span>
               </div>
-              <div className="text-[11px] text-gray-400">
+              <div className="text-[11px]" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>
                 {money(q.premium / 12)}/mo · Total {money(totalCost)}
               </div>
             </div>
@@ -196,39 +206,45 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
 
       {/* Declined — expandable "Why" panel */}
       {expanded && isDeclined && (
-        <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#EAEAEA' }}>
-          <div className="rounded-xl p-4" style={{ background: 'white', border: '1px solid #EAEAEA' }}>
+        <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#EAEAEA' }}>
+          <div
+            className="rounded-xl p-4"
+            style={{
+              background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#EAEAEA'}`,
+            }}
+          >
             <div className="flex items-start gap-3 mb-3">
               <div
                 className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(124,58,237,0.08)' }}
+                style={{ background: 'rgba(124,58,237,0.18)' }}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="12" y1="16" x2="12" y2="12"/>
                   <line x1="12" y1="8" x2="12.01" y2="8"/>
                 </svg>
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-bold text-gray-800 leading-snug">
+                <p className="text-sm font-bold leading-snug" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>
                   Why {q.carrier} didn't quote
                 </p>
-                <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5">
+                <p className="text-[11px] leading-relaxed mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
                   Knowing this carrier's appetite helps you place future clients faster. Use these signals to pre-screen your next submission.
                 </p>
               </div>
             </div>
 
             {q.reason && (
-              <p className="text-[12px] text-gray-700 mb-3">{q.reason}</p>
+              <p className="text-[12px] mb-3" style={{ color: isDark ? '#D1D5DB' : '#374151' }}>{q.reason}</p>
             )}
 
             {Array.isArray(q.factors) && q.factors.length > 0 && (
               <>
-                <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-2">Contributing factors</div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.1em] mb-2" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>Contributing factors</div>
                 <ul className="space-y-1.5">
                   {q.factors.map(f => (
-                    <li key={f} className="flex items-start gap-2 text-[12px] text-gray-700 leading-snug">
+                    <li key={f} className="flex items-start gap-2 text-[12px] leading-snug" style={{ color: isDark ? '#D1D5DB' : '#374151' }}>
                       <span className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5" style={{ background: '#9CA3AF' }} />
                       <span>{f}</span>
                     </li>
@@ -237,13 +253,13 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
               </>
             )}
 
-            <div className="border-t mt-4 pt-3 flex items-center justify-between" style={{ borderColor: '#F3F4F6' }}>
-              <span className="text-[11px] text-gray-400">Have questions about {q.carrier}'s appetite?</span>
+            <div className="border-t mt-4 pt-3 flex items-center justify-between" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6' }}>
+              <span className="text-[11px]" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>Have questions about {q.carrier}'s appetite?</span>
               <a
                 href="#"
                 onClick={(e) => e.stopPropagation()}
                 className="text-[11px] font-semibold hover:underline"
-                style={{ color: '#5C2ED4' }}
+                style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
               >
                 Contact underwriting →
               </a>
@@ -314,7 +330,7 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
   )
 }
 
-export default function Compare({ formData, updateFormData, quotesReady, onGoToStep, onSelectCarrier }) {
+export default function Compare({ formData, updateFormData, quotesReady, onGoToStep, onSelectCarrier, isDark = false }) {
   const [expanded, setExpanded] = useState({})
   const [quotes, setQuotes] = useState(SAMPLE_QUOTES)
   const [pendingGl, setPendingGl] = useState({})
@@ -427,6 +443,7 @@ export default function Compare({ formData, updateFormData, quotesReady, onGoToS
           onGlChange={(gl) => setGl(q.carrier, gl)}
           onRequote={() => requote(q.carrier)}
           requoting={!!requoting[q.carrier]}
+          isDark={isDark}
         />
       ))}
     </div>
