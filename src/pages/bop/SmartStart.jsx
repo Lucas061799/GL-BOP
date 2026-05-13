@@ -125,7 +125,15 @@ export default function SmartStart({ formData, updateFormData }) {
           <input
             type="text"
             value={query}
-            onChange={e => setQuery(e.target.value)}
+            onChange={e => {
+              setQuery(e.target.value)
+              // If the user starts typing while a class is already
+              // selected, drop the selection so the fresh search
+              // results show below.
+              if (e.target.value && selectedClass) {
+                clearClass()
+              }
+            }}
             placeholder="Search by class code or business type (e.g. 722511 or restaurant)"
             className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
             autoFocus
