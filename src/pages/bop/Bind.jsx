@@ -234,41 +234,57 @@ function FieldRow({ label, value, bold, muted }) {
 // Consent row with a checkbox + label/summary + an expand chevron for
 // the full legal text. Clicking the checkbox area toggles consent;
 // clicking the chevron expands the details panel.
-function ConsentRow({ item, checked, onChange, open, onToggle }) {
+function ConsentRow({ item, checked, onChange, open, onToggle, isDark = false }) {
+  // Brighter accents in dark mode so icons + text don't sink into the bg
+  const accent      = isDark ? '#C4B5FD' : '#5C2ED4'
+  const accentBright= isDark ? '#E879F9' : '#A614C3'
+  const titleColor  = isDark ? '#F9FAFB' : '#1F2937'
+  const subColor    = isDark ? '#9CA3AF' : '#6B7280'
+  const bodyColor   = isDark ? '#D1D5DB' : '#4B5563'
   return (
     <div
       className="rounded-lg overflow-hidden transition"
       style={{
-        background: 'white',
+        background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
         // Soft purple-tinted border once accepted, plain gray before
-        border: `1px solid ${checked ? 'rgba(124,58,237,0.30)' : '#E5E7EB'}`,
+        border: `1px solid ${
+          checked
+            ? 'rgba(124,58,237,0.45)'
+            : (isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB')
+        }`,
       }}
     >
       <div className="flex items-stretch">
         <button
           type="button"
           onClick={() => onChange(!checked)}
-          className="flex-1 flex items-center gap-3 px-3.5 py-3 transition hover:bg-black/[0.02] text-left min-w-0"
+          className="flex-1 flex items-center gap-3 px-3.5 py-3 transition text-left min-w-0"
+          style={{ background: 'transparent' }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
         >
           {/* Status icon — soft tinted chip throughout. Alert ! before
-              the user accepts, gradient-stroked check after. Same chip
-              style we use on the right-rail stepper. */}
+              the user accepts, gradient-stroked check after. */}
           <span
             className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
+            style={{
+              background: isDark
+                ? 'linear-gradient(88.09deg, rgba(167,139,250,0.22) 0%, rgba(232,121,249,0.22) 100%)'
+                : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+            }}
           >
             {checked ? (
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
                 <defs>
                   <linearGradient id={`bindConsentG-${item.key}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%"   stopColor="#5C2ED4"/>
-                    <stop offset="100%" stopColor="#A614C3"/>
+                    <stop offset="0%"   stopColor={accent}/>
+                    <stop offset="100%" stopColor={accentBright}/>
                   </linearGradient>
                 </defs>
                 <path d="M5 13l4 4L19 7" stroke={`url(#bindConsentG-${item.key})`} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             ) : (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="8" x2="12" y2="12"/>
                 <line x1="12" y1="16" x2="12.01" y2="16"/>
@@ -276,9 +292,9 @@ function ConsentRow({ item, checked, onChange, open, onToggle }) {
             )}
           </span>
           <div className="min-w-0">
-            <div className="text-[13px] font-semibold text-gray-800 leading-tight">{item.label}</div>
+            <div className="text-[13px] font-semibold leading-tight" style={{ color: titleColor }}>{item.label}</div>
             {item.summary && (
-              <div className="text-[11px] text-gray-500 leading-tight mt-0.5 truncate">{item.summary}</div>
+              <div className="text-[11px] leading-tight mt-0.5 truncate" style={{ color: subColor }}>{item.summary}</div>
             )}
           </div>
         </button>
@@ -287,12 +303,21 @@ function ConsentRow({ item, checked, onChange, open, onToggle }) {
             type="button"
             onClick={onToggle}
             aria-label={open ? 'Hide details' : 'Show details'}
-            className="px-3 flex items-center justify-center transition hover:bg-black/[0.02]"
-            style={{ borderLeft: `1px solid ${checked ? 'rgba(124,58,237,0.18)' : '#F3F4F6'}` }}
+            className="px-3 flex items-center justify-center transition"
+            style={{
+              background: 'transparent',
+              borderLeft: `1px solid ${
+                checked
+                  ? 'rgba(124,58,237,0.30)'
+                  : (isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6')
+              }`,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
           >
             <svg
               width="13" height="13" viewBox="0 0 24 24" fill="none"
-              stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              stroke={isDark ? '#9CA3AF' : '#9CA3AF'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               className="shrink-0 transition-transform"
               style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
             >
@@ -304,16 +329,20 @@ function ConsentRow({ item, checked, onChange, open, onToggle }) {
       {open && item.details && (
         <div
           className="px-3.5 pb-3 pt-2.5 border-t"
-          style={{ borderColor: checked ? 'rgba(124,58,237,0.18)' : '#F3F4F6' }}
+          style={{
+            borderColor: checked
+              ? 'rgba(124,58,237,0.30)'
+              : (isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'),
+          }}
         >
-          <p className="text-[12px] leading-relaxed text-gray-600">{item.details}</p>
+          <p className="text-[12px] leading-relaxed" style={{ color: bodyColor }}>{item.details}</p>
         </div>
       )}
     </div>
   )
 }
 
-export default function Bind({ formData, updateFormData, onGoToStep, onBound }) {
+export default function Bind({ formData, updateFormData, onGoToStep, onBound, isDark = false }) {
   const carrier = formData.bind?.selectedCarrier
   const quote = SAMPLE_PREMIUMS[carrier] || SAMPLE_PREMIUMS.Coterie
 
@@ -393,23 +422,32 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
         {/* ============ PRICING ============ */}
 
         {/* Carrier + price + single proposal action */}
-        <div className="rounded-xl p-6 text-center" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+        <div
+          className="rounded-xl p-6 text-center"
+          style={{
+            background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+          }}
+        >
           <div className="flex items-center justify-center mb-4">
             <span
               className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
-              style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
+              style={{
+                background: isDark ? 'rgba(167,139,250,0.18)' : 'rgba(124,58,237,0.08)',
+                color: isDark ? '#C4B5FD' : '#5C2ED4',
+              }}
             >
               {carrier}
             </span>
           </div>
           <div className="flex items-baseline justify-center gap-1 mb-3">
-            <span className="text-4xl font-bold text-gray-900">{money(annualPremium)}</span>
+            <span className="text-4xl font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{money(annualPremium)}</span>
             <span className="text-sm text-gray-400">/year</span>
           </div>
           <button
             type="button"
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
-            style={{ color: '#5C2ED4' }}
+            style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -506,21 +544,28 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 bold title and gray subtitle. */}
             <div
               className="flex items-center gap-3 px-3.5 py-2.5 mb-4 rounded-lg"
-              style={{ border: '1px solid #E5E7EB', background: 'white' }}
+              style={{
+                border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+                background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+              }}
             >
               <span
                 className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-                style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
+                style={{
+                  background: isDark
+                    ? 'linear-gradient(88.09deg, rgba(167,139,250,0.22) 0%, rgba(232,121,249,0.22) 100%)'
+                    : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+                }}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/>
                   <line x1="12" y1="8" x2="12" y2="12"/>
                   <line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>
               </span>
               <div className="min-w-0">
-                <div className="text-[13px] font-semibold text-gray-800 leading-tight">Two Separate Charges</div>
-                <div className="text-[11px] text-gray-500 leading-tight mt-0.5">Both will be made to your card on file</div>
+                <div className="text-[13px] font-semibold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>Two Separate Charges</div>
+                <div className="text-[11px] leading-tight mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>Both will be made to your card on file</div>
               </div>
             </div>
 
@@ -620,8 +665,14 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
             <div
               className="rounded-xl overflow-hidden"
               style={{
-                background: allDone ? 'rgba(124,58,237,0.06)' : 'white',
-                border: `1.5px solid ${allDone ? '#7C3AED' : '#E5E7EB'}`,
+                background: allDone
+                  ? (isDark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.06)')
+                  : (isDark ? 'rgba(255,255,255,0.04)' : 'white'),
+                border: `1.5px solid ${
+                  allDone
+                    ? (isDark ? '#A78BFA' : '#7C3AED')
+                    : (isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB')
+                }`,
                 boxShadow: allDone ? '0 2px 12px rgba(92,46,212,0.10)' : 'none',
               }}
             >
@@ -629,13 +680,16 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 <button
                   type="button"
                   onClick={toggleAll}
-                  className="flex-1 flex items-center gap-3 px-4 py-3 transition hover:bg-gray-50 text-left min-w-0"
+                  className="flex-1 flex items-center gap-3 px-4 py-3 transition text-left min-w-0"
+                  style={{ background: 'transparent' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                 >
                   <span
                     className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition"
                     style={{
-                      background: allDone ? BRAND_GRADIENT : 'white',
-                      border: `1.5px solid ${allDone ? 'transparent' : '#D1D5DB'}`,
+                      background: allDone ? BRAND_GRADIENT : (isDark ? 'rgba(255,255,255,0.04)' : 'white'),
+                      border: `1.5px solid ${allDone ? 'transparent' : (isDark ? 'rgba(255,255,255,0.20)' : '#D1D5DB')}`,
                     }}
                   >
                     {allDone && (
@@ -645,12 +699,12 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                     )}
                   </span>
                   <div className="text-left min-w-0">
-                    <div className="text-[13px] font-semibold text-gray-800 truncate">
+                    <div className="text-[13px] font-semibold truncate" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>
                       {allDone
                         ? 'All Acknowledgments Accepted'
                         : `Accept All ${CONSENTS.length} Acknowledgments`}
                     </div>
-                    <div className="text-[11px] text-gray-400 truncate">
+                    <div className="text-[11px] truncate" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>
                       {allDone
                         ? "You're good to bind."
                         : acceptedCount > 0
@@ -663,8 +717,17 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                   type="button"
                   onClick={() => setTermsOpen(o => !o)}
                   aria-label={termsOpen ? 'Hide details' : 'Show details'}
-                  className="px-3 flex items-center justify-center transition hover:bg-gray-50"
-                  style={{ borderLeft: '1px solid #F3F4F6' }}
+                  className="px-3 flex items-center justify-center transition"
+                  style={{
+                    background: 'transparent',
+                    borderLeft: `1px solid ${
+                      allDone
+                        ? (isDark ? 'rgba(167,139,250,0.30)' : 'rgba(124,58,237,0.18)')
+                        : (isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6')
+                    }`,
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
                 >
                   <svg
                     width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -677,7 +740,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 </button>
               </div>
               {termsOpen && (
-                <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#F3F4F6' }}>
+                <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6' }}>
                   <div className="space-y-2.5">
                     {CONSENTS.map(c => (
                       <ConsentRow
@@ -687,6 +750,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                         onChange={(val) => setConsent(c.key, val)}
                         open={!!openConsentDetails[c.key]}
                         onToggle={() => setOpenConsentDetails(prev => ({ ...prev, [c.key]: !prev[c.key] }))}
+                        isDark={isDark}
                       />
                     ))}
                   </div>
