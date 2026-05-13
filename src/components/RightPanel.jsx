@@ -90,11 +90,8 @@ function SkeletonRow({ isDark = false }) {
         .skel { background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 50%, #EEF2F7 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        .rp-dot { display: inline-block; opacity: 0; animation: rpDotBlink 1.2s infinite; }
-        .rp-dot-1 { animation-delay: 0s }
-        .rp-dot-2 { animation-delay: 0.2s }
-        .rp-dot-3 { animation-delay: 0.4s }
-        @keyframes rpDotBlink { 0%, 80%, 100% { opacity: 0 } 40% { opacity: 1 } }
+        .rp-dollar-pulse { display: inline-block; animation: rpDollarPulse 1.4s ease-in-out infinite; }
+        @keyframes rpDollarPulse { 0%, 100% { opacity: 0.35 } 50% { opacity: 1 } }
       `}</style>
     </div>
   )
@@ -348,19 +345,17 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
                       ) : (
-                        /* Quotes are still loading — show "$ . . ." with
-                           the dots animating one after the other. Reads
-                           as 'price is being calculated' instead of
-                           looking like a stuck loading spinner. */
+                        /* Quotes are still loading — a gently pulsing
+                           "$" placeholder where the price will land.
+                           Same visual weight as the eventual price
+                           number, so the row doesn't jump when the
+                           value arrives. */
                         <div
-                          className="shrink-0 flex items-baseline text-sm font-bold text-gray-400 tabular-nums"
+                          className="shrink-0 flex items-baseline text-sm font-bold tabular-nums"
                           title="Calculating quote…"
                           aria-label="Calculating quote"
                         >
-                          <span style={{ color: '#5C2ED4' }}>$</span>
-                          <span className="rp-dot rp-dot-1">.</span>
-                          <span className="rp-dot rp-dot-2">.</span>
-                          <span className="rp-dot rp-dot-3">.</span>
+                          <span className="rp-dollar-pulse" style={{ color: '#5C2ED4' }}>$</span>
                         </div>
                       )}
                     </Wrapper>
