@@ -64,7 +64,7 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
               <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
             </svg>
             <span className="text-sm font-semibold text-gray-800">
-              Complete Fee Payment — {money2(amount)}
+              Card payment
             </span>
           </div>
           <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700 transition">
@@ -116,21 +116,15 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
               Input 1 Payments interface
             </p>
             <p className="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
-              The real Input 1 payment form is embedded here in production.
-              For this demo, click below to simulate a successful payment.
+              The real Input 1 card form is embedded here in production. Click below to simulate the payment.
             </p>
-          </div>
-
-          <div className="flex items-center justify-between mt-4 mb-3">
-            <span className="text-sm text-gray-600">Amount due</span>
-            <span className="text-lg font-bold text-gray-900">{money2(amount)}</span>
           </div>
 
           <button
             type="button"
             disabled={submitting}
             onClick={submit}
-            className="w-full py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+            className="w-full py-3 mt-4 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
             style={{
               background: BRAND_GRADIENT,
               boxShadow: submitting ? 'none' : '0 4px 14px rgba(92,46,212,0.25)',
@@ -145,7 +139,7 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
                 Processing…
               </>
             ) : (
-              <>Complete Payment · {money2(amount)}</>
+              <>Complete Payment</>
             )}
           </button>
 
