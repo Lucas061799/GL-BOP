@@ -310,6 +310,16 @@ button.force-white-text,
 [data-dark="true"] [style*="linear-gradient(88.09deg, #5C2ED4"][style*="-webkit-text-fill-color: transparent"] {
   background: linear-gradient(88.09deg, #A78BFA 0.11%, #E879F9 63.8%) text !important;
 }
+/* Companion: solid #5C2ED4 dot that sits beside the gradient text
+   (e.g. the Status 'Quoted' pill's purple dot). The dot uses
+   -webkit-text-fill-color: initial to opt out of the gradient-text
+   trick its parent <p> applies. In dark mode, brighten it to the
+   same A78BFA stop so dot + text feel like one unit. */
+[data-dark="true"] [style*="background: rgb(92, 46, 212)"][style*="-webkit-text-fill-color: initial"],
+[data-dark="true"] [style*="background:#5C2ED4"][style*="-webkit-text-fill-color: initial"],
+[data-dark="true"] [style*="background: #5C2ED4"][style*="-webkit-text-fill-color: initial"] {
+  background: #A78BFA !important;
+}
 
 /* Upload card outer glow pulse after popup dismiss */
 @keyframes uploadPulse {
