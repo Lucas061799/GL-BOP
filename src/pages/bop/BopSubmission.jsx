@@ -6,6 +6,8 @@ import btisLogoDark from '../../assets/btislogo-dark.png'
 import norbieface from '../../assets/norbieface.png'
 import sidebarBg from '../../assets/sidebar-bg.png'
 import iconWorker from '../../assets/icon-worker.png'
+import iconGL from '../../assets/icon-general-liability.png'
+import iconBO from '../../assets/icon-business-owner.png'
 import sellMoreBg from '../../assets/sell-more-bg.png'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
@@ -484,30 +486,20 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                     iconImg: iconWorker,
                   },
                   {
-                    name: 'Commercial Auto',
-                    desc: 'Vehicles used for business',
-                    price: '$960/year',
+                    name: 'General Liability',
+                    desc: 'Higher-limit GL standalone, on top of BOP',
+                    price: '$450/year',
                     badge: 'RECOMMENDED',
                     badgeBg: '#73C9B7',
-                    iconSvg: (
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 3h-2a2 2 0 0 0-2 2v3H5l-2 7v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-1h6v1a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5l-2-7h-1V5a2 2 0 0 0-2-2z"/>
-                        <circle cx="7" cy="17" r="1.4"/><circle cx="17" cy="17" r="1.4"/>
-                      </svg>
-                    ),
+                    iconImg: iconGL,
                   },
                   {
-                    name: 'Cyber Liability',
-                    desc: 'Protect data, privacy, and online operations',
-                    price: '$540/year',
+                    name: 'Commercial Auto',
+                    desc: 'Coverage for vehicles used for business',
+                    price: '$960/year',
                     badge: 'BEST VALUE',
                     badgeBg: '#73C9B7',
-                    iconSvg: (
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        <path d="M9 12l2 2 4-4"/>
-                      </svg>
-                    ),
+                    iconImg: iconBO,
                   },
                 ].map((item) => (
                   <div
@@ -521,10 +513,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                         className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                         style={{ background: isDark ? 'rgba(92,46,212,0.15)' : 'rgba(92,46,212,0.06)' }}
                       >
-                        {item.iconImg
-                          ? <img src={item.iconImg} alt={item.name} className="w-6 h-6 object-contain" />
-                          : item.iconSvg
-                        }
+                        <img src={item.iconImg} alt={item.name} className="w-6 h-6 object-contain" />
                       </div>
 
                       {/* Name + badge + desc */}
