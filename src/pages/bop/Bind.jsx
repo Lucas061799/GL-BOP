@@ -495,7 +495,12 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
 
           {/* Payment summary */}
           <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-            <div className="text-sm font-semibold text-gray-700 mb-3">Payment Summary</div>
+            <div className="flex items-baseline justify-between gap-3 mb-3">
+              <div className="text-sm font-semibold text-gray-700">Payment Summary</div>
+              <p className="text-[11px] italic text-gray-400 text-right">
+                There will be two separate charges made to your card.
+              </p>
+            </div>
 
             {/* Charged to your card (fees) */}
             <div className="mb-1">
@@ -565,9 +570,6 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
               <span className="text-sm font-bold text-gray-800">Due Today (Your Card)</span>
               <span className="text-xl font-bold text-gray-900">{money(dueToday)}</span>
             </div>
-            <p className="text-[11px] italic text-gray-400 mt-2">
-              There will be two separate charges made to your card.
-            </p>
           </div>
 
         {/* Insured Contact */}
