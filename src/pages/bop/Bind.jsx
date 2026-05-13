@@ -365,85 +365,36 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
   return (
     <div className="w-full space-y-6">
       <div className="space-y-5">
-        {/* ============ APPLICATION SUMMARY ============ */}
-        {/* Recap of what they're about to buy. The price still appears
-            in the right rail; this card is the 'what am I binding?'
-            view, not a second price card. */}
-        {(() => {
-          const biz       = formData.business   || {}
-          const sm        = formData.smartStart || {}
-          const loc       = formData.location   || {}
-          const cov       = formData.coverage   || {}
-          const packageId = formData.bind?.packageId
-          const PACKAGE_LABEL = { base: 'Base', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' }
-          const packageLabel = packageId ? PACKAGE_LABEL[packageId] : '—'
-          const optionalAddons = formData.bind?.optionalAddons || []
-          const removedItems   = formData.bind?.removedPackageItems || []
+        {/* ============ PRICING ============ */}
 
-          const fmtMoney = (n) => n ? '$' + Number(String(n).replace(/[^0-9.]/g, '')).toLocaleString() : null
-          const glLimit = cov.glLimit ? fmtMoney(cov.glLimit) : null
-
-          const SummaryRow = ({ label, value }) => (
-            <div className="flex items-baseline justify-between gap-3 py-1.5 text-sm">
-              <span className="text-gray-500 shrink-0">{label}</span>
-              <span className="text-gray-800 font-medium text-right truncate">{value || '—'}</span>
-            </div>
-          )
-
-          return (
-            <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Application Summary</div>
-                <span
-                  className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase"
-                  style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
-                >
-                  {carrier} · {packageLabel}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 divide-y sm:divide-y-0">
-                <div>
-                  <SummaryRow label="Business"  value={biz.name} />
-                  <SummaryRow label="Class"     value={sm.naics ? `NAICS ${sm.naics}` : null} />
-                  <SummaryRow label="Location"  value={[loc.city, loc.state].filter(Boolean).join(', ') || null} />
-                  <SummaryRow label="Effective" value={biz.effectiveDate} />
-                </div>
-                <div>
-                  <SummaryRow label="GL Limit"      value={glLimit ? `${glLimit} / ${fmtMoney(Number(cov.glLimit) * 2)}` : null} />
-                  <SummaryRow label="Carrier"       value={carrier} />
-                  <SummaryRow label="Package"       value={packageLabel} />
-                  <SummaryRow
-                    label="Optional add-ons"
-                    value={
-                      optionalAddons.length === 0 && removedItems.length === 0
-                        ? 'None'
-                        : [
-                            optionalAddons.length ? `${optionalAddons.length} added` : null,
-                            removedItems.length   ? `${removedItems.length} removed` : null,
-                          ].filter(Boolean).join(' · ')
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="mt-3 pt-3 flex items-center justify-between" style={{ borderTop: '1px solid #F3F4F6' }}>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Annual Premium</span>
-                <span
-                  className="text-2xl font-bold"
-                  style={{
-                    background: BRAND_GRADIENT,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  {money(annualPremium)}
-                </span>
-              </div>
-            </div>
-          )
-        })()}
+        {/* Carrier + price + single proposal action */}
+        <div className="rounded-xl p-6 text-center" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+          <div className="flex items-center justify-center mb-4">
+            <span
+              className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
+              style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
+            >
+              {carrier}
+            </span>
+          </div>
+          <div className="flex items-baseline justify-center gap-1 mb-3">
+            <span className="text-4xl font-bold text-gray-900">{money(annualPremium)}</span>
+            <span className="text-sm text-gray-400">/year</span>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
+            style={{ color: '#5C2ED4' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="11" x2="12" y2="17"/>
+              <polyline points="9 14 12 17 15 14"/>
+            </svg>
+            Download Quote Proposal
+          </button>
+        </div>
 
           {/* Payment plan */}
           <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
