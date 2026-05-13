@@ -239,8 +239,9 @@ function ConsentRow({ item, checked, onChange, open, onToggle }) {
     <div
       className="rounded-lg overflow-hidden transition"
       style={{
-        background: checked ? 'rgba(124,58,237,0.06)' : 'white',
-        border: `1.5px solid ${checked ? '#7C3AED' : '#E5E7EB'}`,
+        background: 'white',
+        // Soft purple-tinted border once accepted, plain gray before
+        border: `1px solid ${checked ? 'rgba(124,58,237,0.30)' : '#E5E7EB'}`,
       }}
     >
       <div className="flex items-stretch">
@@ -249,19 +250,22 @@ function ConsentRow({ item, checked, onChange, open, onToggle }) {
           onClick={() => onChange(!checked)}
           className="flex-1 flex items-center gap-3 px-3.5 py-3 transition hover:bg-black/[0.02] text-left min-w-0"
         >
-          {/* Status icon — alert circle while unconfirmed, gradient
-              check once the user has accepted. */}
+          {/* Status icon — soft tinted chip throughout. Alert ! before
+              the user accepts, gradient-stroked check after. Same chip
+              style we use on the right-rail stepper. */}
           <span
-            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition"
-            style={
-              checked
-                ? { background: BRAND_GRADIENT }
-                : { background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }
-            }
+            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
           >
             {checked ? (
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                <defs>
+                  <linearGradient id={`bindConsentG-${item.key}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stopColor="#5C2ED4"/>
+                    <stop offset="100%" stopColor="#A614C3"/>
+                  </linearGradient>
+                </defs>
+                <path d="M5 13l4 4L19 7" stroke={`url(#bindConsentG-${item.key})`} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             ) : (
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
