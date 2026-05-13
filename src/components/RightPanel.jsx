@@ -386,38 +386,40 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           )}
 
 
-          {/* Download Quote Proposal — enabled once a carrier is selected */}
-          {showPrices && !showSkeleton && (
-            <button
-              type="button"
-              disabled={!selectedCarrier}
-              onClick={() => { /* hook up real proposal download here */ }}
-              className="w-full inline-flex items-center justify-center gap-1.5 mt-4 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
-              style={selectedCarrier
-                ? {
-                    background: BRAND_GRADIENT,
-                    color: 'white',
-                    boxShadow: '0 4px 14px rgba(92,46,212,0.22)',
-                  }
-                : {
-                    background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
-                    color: isDark ? '#6B7280' : '#9CA3AF',
-                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
-                  }
-              }
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="12" y1="11" x2="12" y2="17"/>
-                <polyline points="9 14 12 17 15 14"/>
-              </svg>
-              Download Quote Proposal
-            </button>
-          )}
-          {readyToQuote && !showSkeleton && !selectedCarrier && (
+          {/* Download Application Summary — the form-page version of
+              the right-rail download. The 'Quote Proposal' download
+              only unlocks at the Bind & Pay step (rendered in the
+              quote-flow branch below). */}
+          <button
+            type="button"
+            disabled={!readyToQuote}
+            onClick={() => { /* hook up real application-summary download here */ }}
+            className="w-full inline-flex items-center justify-center gap-1.5 mt-4 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
+            style={readyToQuote
+              ? {
+                  background: BRAND_GRADIENT,
+                  color: 'white',
+                  boxShadow: '0 4px 14px rgba(92,46,212,0.22)',
+                }
+              : {
+                  background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
+                  color: isDark ? '#6B7280' : '#9CA3AF',
+                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+                }
+            }
+          >
+            {/* Clipboard-with-form-lines icon — signals 'application' */}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+              <line x1="9" y1="13" x2="15" y2="13"/>
+              <line x1="9" y1="17" x2="13" y2="17"/>
+            </svg>
+            Download Application Summary
+          </button>
+          {!readyToQuote && (
             <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
-              Select a carrier above to download the quote proposal.
+              Pick a class code to download the application summary.
             </p>
           )}
         </div>
