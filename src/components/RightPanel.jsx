@@ -87,7 +87,14 @@ function SkeletonRow() {
   )
 }
 
-export default function RightPanel({ onFormReview, formData = {}, pulseUpload = false, isDark = false }) {
+export default function RightPanel({ onFormReview, formData = {}, updateFormData, pulseUpload = false, isDark = false }) {
+  const selectedCarrier = formData.bind?.selectedCarrier
+  const selectCarrier = (id) => {
+    if (!updateFormData) return
+    // Toggle off if clicking the already-selected card
+    updateFormData('bind', { selectedCarrier: selectedCarrier === id ? null : id })
+  }
+
   const [files, setFiles] = useState([])
   const [dragging, setDragging] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
@@ -217,59 +224,105 @@ export default function RightPanel({ onFormReview, formData = {}, pulseUpload = 
               <div className="skel h-8 w-32 rounded" />
               <div className="skel h-3 w-20 rounded" />
             </div>
-          ) : (
-            <div
-              className="rounded-2xl px-5 py-5 mb-3 flex flex-col items-center text-center relative overflow-hidden"
-              style={{
-                background: 'white',
-                border: '1.5px solid #7C3AED',
-                boxShadow: '0 4px 20px rgba(92,46,212,0.10)',
-              }}
-            >
-              <div
-                className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider text-white"
-                style={{ background: BRAND_GRADIENT }}
+          ) : (() => {
+            const top = quotes[0]
+            const isSelected = selectedCarrier === top.id
+            return (
+              <button
+                type="button"
+                onClick={() => selectCarrier(top.id)}
+                className="w-full rounded-2xl px-5 py-5 mb-3 flex flex-col items-center text-center relative overflow-hidden transition cursor-pointer hover:-translate-y-px"
+                style={{
+                  background: 'white',
+                  border: `1.5px solid ${isSelected ? '#5C2ED4' : '#7C3AED'}`,
+                  boxShadow: isSelected
+                    ? '0 6px 24px rgba(92,46,212,0.22)'
+                    : '0 4px 20px rgba(92,46,212,0.10)',
+                }}
               >
-                BEST
-              </div>
-              <CarrierMark name={quotes[0].name} logo={quotes[0].logo} size="lg" />
-              <div className="mt-3">
-                <span
-                  className="text-3xl font-bold"
-                  style={{
-                    background: BRAND_GRADIENT,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
+                <div
+                  className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider text-white"
+                  style={{ background: BRAND_GRADIENT }}
                 >
-                  {money(quotes[0].premium)}
-                </span>
-              </div>
-              <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
-            </div>
-          )}
+                  BEST
+                </div>
+                {isSelected && (
+                  <div
+                    className="absolute top-2.5 left-2.5 w-5 h-5 rounded-full flex items-center justify-center"
+                    style={{ background: BRAND_GRADIENT }}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                      <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                )}
+                <CarrierMark name={top.name} logo={top.logo} size="lg" />
+                <div className="mt-3">
+                  <span
+                    className="text-3xl font-bold"
+                    style={{
+                      background: BRAND_GRADIENT,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    {money(top.premium)}
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
+                <p
+                  className="text-[10px] font-semibold mt-2"
+                  style={{ color: isSelected ? '#5C2ED4' : '#9CA3AF' }}
+                >
+                  {isSelected ? '✓ Selected' : 'Tap to select'}
+                </p>
+              </button>
+            )
+          })()}
 
           {/* Remaining carriers */}
           <div className="space-y-2">
             {showSkeleton
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonRow key={i} />)
-              : quotes.slice(1).map(q => (
-                  <div
-                    key={q.id}
-                    className="rounded-xl px-3 py-3 flex items-center gap-3 transition hover:border-gray-300"
-                    style={{ background: 'white', border: '1px solid #E5E7EB' }}
-                  >
-                    <CarrierMark name={q.name} logo={q.logo} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-semibold text-gray-700 truncate">{q.name}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="text-sm font-bold text-gray-900 leading-tight">{money(q.premium)}</div>
-                      <div className="text-[9px] text-gray-400">per year</div>
-                    </div>
-                  </div>
-                ))
+              : quotes.slice(1).map(q => {
+                  const isSelected = selectedCarrier === q.id
+                  return (
+                    <button
+                      type="button"
+                      key={q.id}
+                      onClick={() => selectCarrier(q.id)}
+                      className="w-full rounded-xl px-3 py-3 flex items-center gap-3 transition cursor-pointer text-left"
+                      style={{
+                        background: isSelected ? 'rgba(124,58,237,0.06)' : 'white',
+                        border: `1.5px solid ${isSelected ? '#7C3AED' : '#E5E7EB'}`,
+                        boxShadow: isSelected ? '0 4px 14px rgba(92,46,212,0.10)' : 'none',
+                      }}
+                    >
+                      <CarrierMark name={q.name} logo={q.logo} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-semibold text-gray-700 truncate">{q.name}</p>
+                        {isSelected && (
+                          <p
+                            className="text-[9px] font-semibold mt-0.5"
+                            style={{
+                              background: BRAND_GRADIENT,
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              backgroundClip: 'text',
+                            }}
+                          >
+                            ✓ Selected
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="text-sm font-bold text-gray-900 leading-tight">{money(q.premium)}</div>
+                        <div className="text-[9px] text-gray-400">per year</div>
+                      </div>
+                    </button>
+                  )
+                })
             }
           </div>
 

@@ -529,7 +529,7 @@ function App() {
         </main>
 
         <div className="hidden lg:block">
-          <RightPanel onFormReview={handleCheckErrors} formData={formData} pulseUpload={pulseUpload} isDark={darkMode} />
+          <RightPanel onFormReview={handleCheckErrors} formData={formData} updateFormData={updateFormData} pulseUpload={pulseUpload} isDark={darkMode} />
         </div>
       </div>
     </div>
