@@ -508,25 +508,54 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                 </div>
               )}
 
-              {/* Steps */}
+              {/* Steps — vertical stepper with a connector running between
+                  the dots. Completed portions of the connector pick up
+                  the brand gradient so progress reads at a glance. */}
               <div className="mb-5">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-3 pl-0.5">
                   Where you are
                 </div>
-                <div className="space-y-3">
-                  {QUOTE_STEPS.map(step => {
-                    const current = step.id === quoteStep
-                    const done    = isStepDone(step.id) && !current
+                <div className="relative pl-0.5">
+                  {QUOTE_STEPS.map((step, idx) => {
+                    const current   = step.id === quoteStep
+                    const done      = isStepDone(step.id) && !current
+                    const isLast    = idx === QUOTE_STEPS.length - 1
+                    // The connector below this row is "done" if THIS step
+                    // is done (i.e. we've moved past it).
+                    const connectorDone = done
+
                     return (
-                      <div key={step.id} className="flex items-center gap-3">
+                      <div key={step.id} className={`relative flex items-center gap-3 ${isLast ? '' : 'pb-4'}`}>
+                        {/* Connector to the next step */}
+                        {!isLast && (
+                          <div
+                            className="absolute left-[13px] top-7 w-0.5"
+                            style={{
+                              bottom: 0,
+                              background: connectorDone
+                                ? BRAND_GRADIENT
+                                : (isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB'),
+                            }}
+                          />
+                        )}
+
+                        {/* Circle */}
                         <span
-                          className="w-7 h-7 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0"
+                          className="relative z-[1] w-7 h-7 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0"
                           style={
                             current
-                              ? { background: BRAND_GRADIENT, color: 'white' }
+                              ? {
+                                  background: BRAND_GRADIENT,
+                                  color: 'white',
+                                  boxShadow: '0 0 0 4px rgba(124,58,237,0.12)',
+                                }
                               : done
-                                ? { background: 'linear-gradient(88.09deg, rgba(92,46,212,0.18) 0%, rgba(166,20,195,0.18) 100%)', color: '#5C2ED4' }
-                                : { background: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6', color: '#9CA3AF' }
+                                ? { background: BRAND_GRADIENT, color: 'white' }
+                                : {
+                                    background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+                                    border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.12)' : '#E5E7EB'}`,
+                                    color: '#9CA3AF',
+                                  }
                           }
                         >
                           {done ? (
@@ -537,57 +566,83 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                             step.n
                           )}
                         </span>
-                        <span
-                          className="text-[13px]"
-                          style={{
-                            fontWeight: current ? 700 : done ? 600 : 500,
-                            color: current
-                              ? (isDark ? '#F9FAFB' : '#111827')
-                              : done
-                                ? (isDark ? '#D1D5DB' : '#4B5563')
-                                : '#9CA3AF',
-                          }}
-                        >
-                          {step.label}
-                        </span>
+
+                        {/* Label */}
+                        <div className="min-w-0">
+                          <div
+                            className="text-[13px] leading-tight"
+                            style={{
+                              fontWeight: current ? 700 : done ? 600 : 500,
+                              color: current
+                                ? (isDark ? '#F9FAFB' : '#111827')
+                                : done
+                                  ? (isDark ? '#D1D5DB' : '#4B5563')
+                                  : '#9CA3AF',
+                            }}
+                          >
+                            {step.label}
+                          </div>
+                          {current && (
+                            <div
+                              className="text-[10px] font-semibold mt-0.5"
+                              style={{
+                                background: BRAND_GRADIENT,
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                backgroundClip: 'text',
+                              }}
+                            >
+                              In progress
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )
                   })}
                 </div>
               </div>
 
-              {/* Download Quote Proposal */}
-              <button
-                type="button"
-                disabled={!carrierName}
-                onClick={() => { /* hook up real proposal download here */ }}
-                className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
-                style={carrierName
-                  ? {
-                      background: BRAND_GRADIENT,
-                      color: 'white',
-                      boxShadow: '0 4px 14px rgba(92,46,212,0.22)',
-                    }
-                  : {
-                      background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
-                      color: isDark ? '#6B7280' : '#9CA3AF',
-                      border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
-                    }
-                }
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <line x1="12" y1="11" x2="12" y2="17"/>
-                  <polyline points="9 14 12 17 15 14"/>
-                </svg>
-                Download Quote Proposal
-              </button>
-              {!carrierName && (
-                <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
-                  Pick a carrier to download the quote proposal.
-                </p>
-              )}
+              {/* Download Quote Proposal — only unlocks at the Bind & Pay
+                  step. Before that the quote isn't final, so showing a
+                  download CTA would let the user grab a half-baked PDF. */}
+              {(() => {
+                const downloadReady = quoteStep === 'bind' && !!carrierName
+                return (
+                  <>
+                    <button
+                      type="button"
+                      disabled={!downloadReady}
+                      onClick={() => { /* hook up real proposal download here */ }}
+                      className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
+                      style={downloadReady
+                        ? {
+                            background: BRAND_GRADIENT,
+                            color: 'white',
+                            boxShadow: '0 4px 14px rgba(92,46,212,0.22)',
+                          }
+                        : {
+                            background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
+                            color: isDark ? '#6B7280' : '#9CA3AF',
+                            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+                          }
+                      }
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="12" y1="11" x2="12" y2="17"/>
+                        <polyline points="9 14 12 17 15 14"/>
+                      </svg>
+                      Download Quote Proposal
+                    </button>
+                    {!downloadReady && (
+                      <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
+                        Available at the Bind &amp; Pay step.
+                      </p>
+                    )}
+                  </>
+                )
+              })()}
             </div>
           )
         })()}
