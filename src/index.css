@@ -282,6 +282,17 @@ button.force-white-text,
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
 }
+/* Inline gradient-text pattern (style={{ background: BRAND_GRADIENT,
+   WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }})
+   — match any element where the inline BRAND_GRADIENT is paired with
+   background-clip: text so we only swap *text* gradients, not solid
+   gradient backgrounds (buttons, pills, accent bars). */
+[data-dark="true"] [style*="linear-gradient(88.09deg, rgb(92, 46, 212)"][style*="background-clip: text"],
+[data-dark="true"] [style*="linear-gradient(88.09deg, rgb(92, 46, 212)"][style*="-webkit-background-clip: text"],
+[data-dark="true"] [style*="linear-gradient(88.09deg, #5C2ED4"][style*="background-clip: text"],
+[data-dark="true"] [style*="linear-gradient(88.09deg, #5C2ED4"][style*="-webkit-background-clip: text"] {
+  background: linear-gradient(88.09deg, #A78BFA 0.11%, #E879F9 63.8%) !important;
+}
 
 /* Upload card outer glow pulse after popup dismiss */
 @keyframes uploadPulse {
