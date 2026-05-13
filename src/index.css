@@ -480,21 +480,41 @@ button.force-white-text,
   /* Hide everything, then reveal only the print area */
   body * { visibility: hidden !important; }
   #submission-print-area,
-  #submission-print-area * { visibility: visible !important; }
-  #submission-print-area {
+  #submission-print-area *,
+  #uw-preview-print-area,
+  #uw-preview-print-area * { visibility: visible !important; }
+
+  #submission-print-area,
+  #uw-preview-print-area {
     position: fixed !important;
     inset: 0 !important;
     overflow: visible !important;
     background: white !important;
     padding: 18px 22px !important;
     font-family: 'Montserrat', sans-serif !important;
+    /* Strip modal chrome so the body content prints flat */
+    max-height: none !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
   }
 
   /* Show print-only elements */
-  #submission-print-area .print-only { display: flex !important; }
+  #submission-print-area .print-only,
+  #uw-preview-print-area .print-only { display: flex !important; }
 
   /* Hide screen-only elements inside print area */
-  #submission-print-area .screen-only { display: none !important; }
+  #submission-print-area .screen-only,
+  #uw-preview-print-area .screen-only,
+  .no-print { display: none !important; }
+
+  /* Kill the dimmed backdrop on the Underwriting preview modal */
+  .uw-preview-backdrop {
+    background: white !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 /* ── Gradient button white text — highest-priority fix ─────────────────────

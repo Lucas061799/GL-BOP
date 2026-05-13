@@ -149,11 +149,12 @@ function PreviewModal({ formData, onClose, onConfirm }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 uw-preview-backdrop"
       style={{ background: 'rgba(15,18,40,0.55)', backdropFilter: 'blur(3px)' }}
       onClick={onClose}
     >
       <div
+        id="uw-preview-print-area"
         className="relative w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col"
         style={{ maxHeight: '90vh', background: '#F9FAFB', boxShadow: '0 32px 80px rgba(0,0,0,0.22)' }}
         onClick={(e) => e.stopPropagation()}
@@ -184,7 +185,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="inline-flex items-center justify-center w-6 h-6 rounded-md shrink-0 transition"
+                  className="no-print inline-flex items-center justify-center w-6 h-6 rounded-md shrink-0 transition"
                   style={{ background: 'rgba(92,46,212,0.08)' }}
                   onMouseEnter={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.16)' }}
                   onMouseLeave={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.08)' }}
@@ -210,7 +211,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
             <button
               type="button"
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
+              className="no-print w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
               style={{ border: '1px solid #E5E7EB', background: 'white' }}
               onMouseEnter={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.06)'; ev.currentTarget.style.borderColor = 'rgba(92,46,212,0.3)' }}
               onMouseLeave={ev => { ev.currentTarget.style.background = 'white'; ev.currentTarget.style.borderColor = '#E5E7EB' }}
@@ -268,7 +269,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 shrink-0 flex items-center justify-between gap-3" style={{ background: 'white', borderTop: '1px solid #E5E7EB' }}>
+        <div className="no-print px-6 py-4 shrink-0 flex items-center justify-between gap-3" style={{ background: 'white', borderTop: '1px solid #E5E7EB' }}>
           <button
             type="button"
             onClick={onClose}
