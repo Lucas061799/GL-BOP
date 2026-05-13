@@ -5,6 +5,8 @@ import btisLogo from '../../assets/btislogo.png'
 import btisLogoDark from '../../assets/btislogo-dark.png'
 import norbieface from '../../assets/norbieface.png'
 import sidebarBg from '../../assets/sidebar-bg.png'
+import iconWorker from '../../assets/icon-worker.png'
+import sellMoreBg from '../../assets/sell-more-bg.png'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
@@ -424,104 +426,204 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
               )}
             </div>
 
-            {/* Business details */}
-            <SectionCard title="Business Details" icon={ICONS.briefcase}>
-              <Field label="Business Name"      value={business.name} />
-              <Field label="Entity Type"        value={business.entityType} />
-              <Field label="Year Established"   value={business.yearEstablished} />
-              <Field label="Annual Revenue"     value={business.annualRevenue ? '$' + Number(business.annualRevenue).toLocaleString() : null} />
-              <Field label="Annual Payroll"     value={business.annualPayroll ? '$' + Number(business.annualPayroll).toLocaleString() : null} />
-              <Field label="Full-Time Employees" value={business.numberOfEmployees} />
-              <Field label="Part-Time Employees" value={business.partTimeEmployees || 0} />
-              <Field label="Phone"              value={business.phone} />
-              <Field label="Email"              value={business.email} />
-              <Field
-                full
-                label="Class Code"
-                value={cls.classId ? `${cls.classId} — ${cls.description}` : null}
-              />
-            </SectionCard>
-
-            {/* Location */}
-            <SectionCard title="Location & Premises" icon={ICONS.pin}>
-              <Field
-                full
-                label="Address"
-                value={[location.address, location.city, location.state, location.zip].filter(Boolean).join(', ')}
-              />
-              <Field label="Premises Type"     value={location.locationType} />
-              <Field label="Square Feet"       value={location.squareFeet ? Number(location.squareFeet).toLocaleString() + ' sq ft' : null} />
-            </SectionCard>
-
-            {/* Coverage */}
-            <SectionCard title="Coverage Selection" icon={ICONS.shield}>
-              <Field label="GL Each Occurrence"   value={coverage.eachOccurrence || coverage.glLimit} />
-              <Field label="GL Aggregate"         value={coverage.aggregate} />
-              <Field label="Products / Completed" value={coverage.productsAggregate} />
-              <Field label="Personal Injury"      value={coverage.personalInjury} />
-              <Field label="Deductible"           value={coverage.deductible} />
-              <Field label="Effective Date"       value={business.effectiveDate} />
-            </SectionCard>
-
-            {/* Bind & Payment */}
-            <SectionCard title="Bind & Payment" icon={ICONS.card}>
-              <Field label="Selected Carrier" value={carrier} />
-              <Field label="Coverage Tier"    value={packageId ? packageId.charAt(0).toUpperCase() + packageId.slice(1) : null} />
-              <Field label="Annual Premium"   value={money(premium)} />
-              <Field label="Total Fees"       value={money(totalFees)} />
-              <Field label="Insured Contact"  value={[contact.firstName, contact.lastName].filter(Boolean).join(' ')} />
-              <Field label="Contact Email"    value={contact.email} />
-            </SectionCard>
-
-            {/* What's next */}
-            <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-              <div className="flex items-center gap-2 mb-4">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  {ICONS.check}
-                </svg>
-                <span
-                  className="text-[12px] font-bold uppercase tracking-wider"
-                  style={{
-                    background: BRAND_GRADIENT,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  What's Next
-                </span>
+            {/* CROSS-SELL OPPORTUNITIES — mirrors Commercial Auto */}
+            <div
+              className="rounded-2xl px-4 md:px-10 py-6 md:py-8"
+              style={{
+                background: isDark ? '#1A1E38' : 'white',
+                border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid #F3F4F6',
+              }}
+            >
+              <div className="text-center mb-6">
+                <div className="flex items-center justify-center gap-1.5 mb-2">
+                  <svg className="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="url(#lgBolt2BopSub)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}>
+                    <defs>
+                      <linearGradient id="lgBolt2BopSub" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor={isDark ? '#A78BFA' : '#5C2ED4'}/>
+                        <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                  </svg>
+                  <span
+                    className="text-[10px] font-bold tracking-widest uppercase"
+                    style={{
+                      background: BRAND_GRADIENT,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    CROSS-SELL OPPORTUNITIES
+                  </span>
+                </div>
+                <h3 className="text-lg md:text-2xl font-bold mb-2 leading-snug" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                  We prefill your information<br className="hidden md:block" /> to save you time.{' '}
+                  <span
+                    style={{
+                      background: BRAND_GRADIENT,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    Why wait?
+                  </span>
+                </h3>
+                <p className="text-xs md:text-sm text-gray-400">Client info is already saved — adding coverages takes minutes.</p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+              <div className="space-y-3">
                 {[
-                  { n: 1, t: 'Confirmation email', d: 'A receipt and policy documents will land in your inbox shortly.' },
-                  { n: 2, t: 'Policy issuance',    d: 'Your policy is in force as of the effective date you selected.' },
-                  { n: 3, t: 'Add more coverage',  d: 'Bundle workers comp or commercial auto to save more.' },
-                ].map(step => (
-                  <div key={step.n} className="rounded-lg p-4" style={{ background: '#FAFAFB', border: '1px solid #F3F4F6' }}>
-                    <div
-                      className="w-7 h-7 rounded-full text-sm font-bold flex items-center justify-center mb-2"
-                      style={{ background: 'rgba(92,46,212,0.10)' }}
-                    >
-                      <span style={{ background: BRAND_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                        {step.n}
-                      </span>
+                  {
+                    name: "Workers' Compensation",
+                    desc: 'Required coverage for employees',
+                    price: '$1,200/year',
+                    badge: 'TOP PICK',
+                    badgeBg: BRAND_GRADIENT,
+                    iconImg: iconWorker,
+                  },
+                  {
+                    name: 'Commercial Auto',
+                    desc: 'Vehicles used for business',
+                    price: '$960/year',
+                    badge: 'RECOMMENDED',
+                    badgeBg: '#73C9B7',
+                    iconSvg: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M16 3h-2a2 2 0 0 0-2 2v3H5l-2 7v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-1h6v1a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5l-2-7h-1V5a2 2 0 0 0-2-2z"/>
+                        <circle cx="7" cy="17" r="1.4"/><circle cx="17" cy="17" r="1.4"/>
+                      </svg>
+                    ),
+                  },
+                  {
+                    name: 'Cyber Liability',
+                    desc: 'Protect data, privacy, and online operations',
+                    price: '$540/year',
+                    badge: 'BEST VALUE',
+                    badgeBg: '#73C9B7',
+                    iconSvg: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                      </svg>
+                    ),
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.name}
+                    className="rounded-2xl overflow-hidden hover:shadow-sm transition"
+                    style={{ border: isDark ? '1px solid rgba(255,255,255,0.07)' : '1px solid #F3F4F6' }}
+                  >
+                    <div className="flex items-center gap-3 px-4 py-4">
+                      {/* Icon */}
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: isDark ? 'rgba(92,46,212,0.15)' : 'rgba(92,46,212,0.06)' }}
+                      >
+                        {item.iconImg
+                          ? <img src={item.iconImg} alt={item.name} className="w-6 h-6 object-contain" />
+                          : item.iconSvg
+                        }
+                      </div>
+
+                      {/* Name + badge + desc */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap mb-0.5">
+                          <p className="text-sm font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{item.name}</p>
+                          <span
+                            className="text-[8px] font-bold px-1.5 py-0.5 rounded-md text-white shrink-0"
+                            style={{ background: item.badgeBg }}
+                          >
+                            {item.badge}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-gray-400 leading-snug">{item.desc}</p>
+                      </div>
+
+                      {/* Price + button — desktop */}
+                      <div className="hidden md:flex items-center gap-4 shrink-0 ml-2">
+                        <div className="text-right">
+                          <p
+                            className="text-base font-bold leading-tight"
+                            style={{
+                              background: BRAND_GRADIENT,
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              backgroundClip: 'text',
+                            }}
+                          >
+                            {item.price}
+                          </p>
+                          <p className="text-[10px] text-gray-400">estimated</p>
+                        </div>
+                        <button
+                          className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white rounded-xl transition whitespace-nowrap hover:opacity-90"
+                          style={{ background: BRAND_GRADIENT }}
+                        >
+                          Get Quote Now →
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-sm font-semibold text-gray-800">{step.t}</p>
-                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">{step.d}</p>
+
+                    {/* Mobile footer */}
+                    <div
+                      className="md:hidden flex items-center justify-between px-4 py-3"
+                      style={{
+                        borderTop: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid #F3F4F6',
+                        background: isDark ? 'rgba(255,255,255,0.02)' : '#FAFAFA',
+                      }}
+                    >
+                      <div>
+                        <p
+                          className="text-sm font-bold leading-tight"
+                          style={{
+                            background: BRAND_GRADIENT,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                          }}
+                        >
+                          {item.price}
+                        </p>
+                        <p className="text-[10px] text-gray-400">estimated</p>
+                      </div>
+                      <button
+                        className="flex items-center gap-1 px-3 py-2 text-xs font-bold text-white rounded-xl transition whitespace-nowrap hover:opacity-90"
+                        style={{ background: BRAND_GRADIENT }}
+                      >
+                        Get Quote Now →
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-center pt-2 pb-6">
-              <button
-                type="button"
-                onClick={onBack}
-                className="text-xs font-semibold transition hover:underline"
-                style={{ color: '#5C2ED4' }}
-              >
-                ← Start a new submission
-              </button>
+            {/* Return to NorbieLink CTA */}
+            <div
+              className="rounded-2xl relative cursor-pointer hover:opacity-95 transition overflow-hidden"
+              onClick={onBack}
+              style={{ minHeight: '100px' }}
+            >
+              <img src={sellMoreBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              <div className="px-8 py-6 relative z-10">
+                <p className="text-lg font-bold mb-1" style={{ color: '#111827' }}>Return to the Jungle?</p>
+                <p className="text-xs text-gray-400">
+                  Head back to{' '}
+                  <span
+                    className="font-semibold underline underline-offset-2"
+                    style={{
+                      background: BRAND_GRADIENT,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    Norbielink
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
         </main>
