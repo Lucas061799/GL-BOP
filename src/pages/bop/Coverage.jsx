@@ -31,12 +31,11 @@ export default function Coverage({ formData, updateFormData }) {
 
   const glLimit = data.glLimit ?? DEFAULTS.glLimit
   const aggregate = glLimit * 2
-  const businessName = formData.business?.name
 
   return (
     <div className="w-full space-y-6">
       <p className="text-sm text-gray-500 -mt-2">
-        Choose your coverage limits{businessName ? <> for <span className="font-semibold text-gray-700">{businessName}</span></> : null}
+        Choose your coverage limits.
       </p>
 
       <FieldGroup label="Liability Coverage">
