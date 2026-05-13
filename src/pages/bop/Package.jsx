@@ -147,7 +147,7 @@ function PackageCard({ pkg, selected, onSelect }) {
               : { background: '#F9FAFB', color: '#374151', borderTop: '1px solid #E5E7EB' }
           }
         >
-          {selected ? '✓ Selected' : `Select ${pkg.name}`}
+          {selected ? '✓ Selected' : 'Select'}
         </button>
       </div>
     </div>
