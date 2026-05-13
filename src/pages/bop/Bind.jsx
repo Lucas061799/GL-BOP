@@ -719,7 +719,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-lg font-bold text-gray-900 leading-snug">Confirm payment authorization</h2>
+                  <h2 className="text-lg font-bold text-gray-900 leading-snug">Confirm Payment Authorization</h2>
                   <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                     You'll see <span className="font-semibold text-gray-700">two separate charges</span> on the card on file. The premium is processed separately from the fees.
                   </p>
