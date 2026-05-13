@@ -228,28 +228,56 @@ function PreviewModal({ formData, onClose, onConfirm }) {
 
         {/* Body */}
         <div className="px-6 py-5 overflow-y-auto space-y-3">
-          {/* Print-only branding row — replaces the screen modal header on the printed page */}
-          <div
-            className="print-only"
-            style={{
-              flexDirection: 'column',
-              alignItems: 'stretch',
-              paddingBottom: 10,
-              marginBottom: 6,
-              borderBottom: '1.5px solid #E5E7EB',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <img src={norbielinkLogo} alt="NorbieLink" style={{ height: 24, objectFit: 'contain' }} />
+          {/* Print-only document header — matches Commercial Auto Submission */}
+          <div className="print-only flex-col mb-4">
+            {/* Branding row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 8, marginBottom: 8, borderBottom: '1.5px solid #E5E7EB' }}>
+              <img src={norbielinkLogo} alt="NorbieLink" style={{ height: 22, objectFit: 'contain' }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 8, color: '#9CA3AF', letterSpacing: '0.10em', fontWeight: 700, textTransform: 'uppercase' }}>Powered by</span>
+                <span style={{ fontSize: 8, color: '#9CA3AF', letterSpacing: '0.08em', fontWeight: 600 }}>POWERED BY</span>
                 <img src={btisLogo} alt="btis" style={{ height: 18, objectFit: 'contain' }} />
               </div>
             </div>
-            <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <p style={{ fontSize: 11, fontWeight: 700, color: '#111827' }}>Application Summary — Review before quoting</p>
-              <p style={{ fontSize: 9, color: '#9CA3AF' }}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
-            </div>
+            {/* Applicant + product info row */}
+            {(() => {
+              const productType = formData.pageZero?.productType || 'bop'
+              const productLabel = productType === 'gl'
+                ? 'General Liability Application'
+                : 'Business Owners Policy Application'
+              const metaLine = [
+                biz.entityType,
+                biz.effectiveDate ? `Eff. ${biz.effectiveDate}` : null,
+                biz.phone,
+                biz.email,
+              ].filter(Boolean).join('  ·  ')
+              return (
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                  <div>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#111827' }}>{biz.name || '—'}</p>
+                    {metaLine && (
+                      <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>{metaLine}</p>
+                    )}
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p
+                      style={{
+                        fontSize: 9,
+                        fontWeight: 700,
+                        background: 'linear-gradient(88deg,#5C2ED4 0%,#A614C3 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      {productLabel}
+                    </p>
+                    <p style={{ fontSize: 8, color: '#9CA3AF', marginTop: 2 }}>
+                      {ss.classId ? `#${ss.classId} · ` : ''}{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                  </div>
+                </div>
+              )
+            })()}
           </div>
           {ss.description && (
             <PSection title="Class Code" icon="tag">
