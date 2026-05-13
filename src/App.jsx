@@ -24,7 +24,7 @@ const STEPS = [
   { id: 3, label: 'Location',    key: 'location' },
   { id: 4, label: 'Coverage Limits',        key: 'coverage' },
   { id: 5, label: 'Underwriting Questions', key: 'underwriting' },
-  { id: 6, label: 'Compare',      key: 'compare' },
+  { id: 6, label: 'Select Carrier', key: 'compare' },
   { id: 7, label: 'Bind & Pay',   key: 'bind' },
 ]
 
