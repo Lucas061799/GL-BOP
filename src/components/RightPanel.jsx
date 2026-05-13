@@ -47,15 +47,6 @@ function estimatePremium(formData) {
 
 const money = (n) => '$' + Math.round(n).toLocaleString()
 
-// Numbered steps shown while the agent fills the form and quotes
-// haven't come back yet. Same visual pattern as BopSubmission's
-// 'What's Next' section so the experience feels consistent.
-const NEXT_STEPS = [
-  { n: 1, t: 'Tell us about the business', d: 'Add revenue, payroll, and employee count so carriers can rate the risk.' },
-  { n: 2, t: 'Compare live quotes',         d: "We'll fetch real-time prices across every carrier on the list." },
-  { n: 3, t: 'Bind in minutes',              d: 'Pick the carrier that fits, review the terms, and pay to issue the policy.' },
-]
-
 // Carrier logo chip — square white tile holding the partner logo
 function CarrierMark({ name, logo, size = 'sm' }) {
   const dim = size === 'lg' ? 64 : 40
@@ -366,41 +357,6 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
             </p>
           )}
 
-          {/* Numbered steps — only render while quotes haven't landed yet.
-              Same visual pattern as the BopSubmission 'What's Next' block
-              (gradient-tinted number pill + bold title + gray description). */}
-          {readyToQuote && !showPrices && (
-            <div className="mt-5">
-              <h3 className="text-sm font-bold mb-4" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
-                What happens next
-              </h3>
-              <div className="space-y-5">
-                {NEXT_STEPS.map(step => (
-                  <div key={step.n} className="flex gap-3">
-                    <span
-                      className="w-8 h-8 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
-                      style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)' }}
-                    >
-                      <span
-                        style={{
-                          background: BRAND_GRADIENT,
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
-                      >
-                        {step.n}
-                      </span>
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-[13px] font-semibold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{step.t}</p>
-                      <p className="text-[11px] mt-0.5 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>{step.d}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Download Quote Proposal — enabled once a carrier is selected */}
           {showPrices && !showSkeleton && (
