@@ -243,6 +243,20 @@ input, select, textarea, button {
 [data-dark="true"] .bop-page [style*="color: #111827"] {
   color: #F9FAFB !important;
 }
+/* Exception: 'Return to the Jungle' CTA sits on a light jungle background
+   image that's the SAME in both light and dark mode. Don't flip its
+   dark text to white — that makes it invisible on the lighter parts of
+   the image. Keep the original gray-900. */
+[data-dark="true"] .jungle-cta [style*="color: rgb(17, 24, 39)"],
+[data-dark="true"] .jungle-cta [style*="color:#111827"],
+[data-dark="true"] .jungle-cta [style*="color: #111827"] {
+  color: #111827 !important;
+}
+/* Subtitle '...Norbielink' line uses Tailwind text-gray-400. Dark-mode
+   would lighten that too — keep it readable on the jungle bg. */
+[data-dark="true"] .jungle-cta .text-gray-400 {
+  color: #4B5563 !important;
+}
 /* Green "Included" badge — strengthen in dark mode for contrast */
 [data-dark="true"] .bop-page span[style*="rgba(52, 211, 153"] {
   background: rgba(52, 211, 153, 0.18) !important;

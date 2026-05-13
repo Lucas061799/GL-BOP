@@ -818,7 +818,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
 
             {/* Return to NorbieLink CTA */}
             <div
-              className="rounded-2xl relative cursor-pointer hover:opacity-95 transition overflow-hidden"
+              className="jungle-cta rounded-2xl relative cursor-pointer hover:opacity-95 transition overflow-hidden"
               onClick={onBack}
               style={{ minHeight: '100px' }}
             >
