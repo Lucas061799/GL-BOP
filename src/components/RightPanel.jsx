@@ -4,6 +4,7 @@ import logoHiscox        from '../assets/carrier-hiscox.png'
 import logoCNA           from '../assets/carrier-cna.png'
 import logoGreatAmerican from '../assets/carrier-greatamerican.png'
 import logoUSLI          from '../assets/carrier-usli.png'
+import { PreviewModal }  from '../pages/bop/Underwriting'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
@@ -192,6 +193,11 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
   }, [baseEstimate])
 
   const showSkeleton = !readyToQuote || primingQuotes
+
+  // Application-summary preview modal (opened by both right-rail
+  // download buttons — form-page version and in-flow version).
+  const [summaryPreviewOpen, setSummaryPreviewOpen] = useState(false)
+  const openSummaryPreview = () => setSummaryPreviewOpen(true)
 
   return (
     <aside
@@ -394,7 +400,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           <button
             type="button"
             disabled={!readyToQuote}
-            onClick={() => { /* hook up real application-summary download here */ }}
+            onClick={openSummaryPreview}
             className="w-full inline-flex items-center justify-center gap-1.5 mt-4 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
             style={readyToQuote
               ? {
@@ -585,7 +591,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   since a carrier is already selected by this point. */}
               <button
                 type="button"
-                onClick={() => { /* hook up real application-summary download here */ }}
+                onClick={openSummaryPreview}
                 className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition"
                 style={{
                   background: BRAND_GRADIENT,
@@ -606,6 +612,17 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
         })()}
 
       </div>
+
+      {/* Application-summary preview — opened by either Download
+          button. Reuses the Underwriting PreviewModal in 'download'
+          variant (Close + Download Summary footer). */}
+      {summaryPreviewOpen && (
+        <PreviewModal
+          formData={formData}
+          onClose={() => setSummaryPreviewOpen(false)}
+          variant="download"
+        />
+      )}
     </aside>
   )
 }

@@ -142,7 +142,13 @@ function PSection({ title, icon = 'briefcase', children }) {
   )
 }
 
-function PreviewModal({ formData, onClose, onConfirm }) {
+// `variant` controls the footer + header subtitle:
+//   'review'   → 'Go back to edit' + 'Confirm & Get Quotes' (default,
+//                used from the Underwriting page before quoting)
+//   'download' → just a 'Close' button; the user downloads via the
+//                printer icon in the header. Used from the right rail
+//                'Download Application Summary' button.
+export function PreviewModal({ formData, onClose, onConfirm, variant = 'review' }) {
   const ss = formData.smartStart || {}
   const biz = formData.business || {}
   const loc = formData.location || {}
@@ -183,7 +189,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">Review Before Quoting</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">{variant === 'download' ? 'Application Summary' : 'Review Before Quoting'}</h2>
                 <button
                   type="button"
                   onClick={() => window.print()}
@@ -204,10 +210,14 @@ function PreviewModal({ formData, onClose, onConfirm }) {
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                Confirm your details below. We'll send them to our carriers.
+                {variant === 'download'
+                  ? 'Preview the application below before downloading.'
+                  : "Confirm your details below. We'll send them to our carriers."}
               </p>
               <p className="text-[11px] mt-1 leading-relaxed" style={{ color: '#5C2ED4' }}>
-                Need a copy first? Tap the printer icon.
+                {variant === 'download'
+                  ? 'Tap the printer icon to save a copy.'
+                  : 'Need a copy first? Tap the printer icon.'}
               </p>
             </div>
             <button
@@ -323,28 +333,57 @@ function PreviewModal({ formData, onClose, onConfirm }) {
 
         {/* Footer */}
         <div className="no-print px-6 py-4 shrink-0 flex items-center justify-between gap-3" style={{ background: 'white', borderTop: '1px solid #E5E7EB' }}>
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2 rounded-xl text-sm font-semibold transition hover:bg-gray-50"
-            style={{ color: '#374151', border: '1.5px solid #E5E7EB', background: 'white' }}
-          >
-            Go back to edit
-          </button>
-          <button
-            type="button"
-            onClick={() => { onClose(); onConfirm() }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90"
-            style={{
-              background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
-              boxShadow: '0 4px 14px rgba(92,46,212,0.25)',
-            }}
-          >
-            Confirm &amp; Get Quotes
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-            </svg>
-          </button>
+          {variant === 'download' ? (
+            <>
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-5 py-2 rounded-xl text-sm font-semibold transition hover:bg-gray-50"
+                style={{ color: '#374151', border: '1.5px solid #E5E7EB', background: 'white' }}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90"
+                style={{
+                  background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
+                  boxShadow: '0 4px 14px rgba(92,46,212,0.25)',
+                }}
+              >
+                Download Summary
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3v12m0 0l-4-4m4 4 4-4M5 21h14"/>
+                </svg>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-5 py-2 rounded-xl text-sm font-semibold transition hover:bg-gray-50"
+                style={{ color: '#374151', border: '1.5px solid #E5E7EB', background: 'white' }}
+              >
+                Go back to edit
+              </button>
+              <button
+                type="button"
+                onClick={() => { onClose(); onConfirm() }}
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90"
+                style={{
+                  background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
+                  boxShadow: '0 4px 14px rgba(92,46,212,0.25)',
+                }}
+              >
+                Confirm &amp; Get Quotes
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                </svg>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
