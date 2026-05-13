@@ -621,8 +621,8 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                   <div className="text-left min-w-0">
                     <div className="text-[13px] font-semibold text-gray-800 truncate">
                       {allDone
-                        ? 'All acknowledgments accepted'
-                        : `Accept all ${CONSENTS.length} acknowledgments`}
+                        ? 'All Acknowledgments Accepted'
+                        : `Accept All ${CONSENTS.length} Acknowledgments`}
                     </div>
                     <div className="text-[11px] text-gray-400 truncate">
                       {allDone
