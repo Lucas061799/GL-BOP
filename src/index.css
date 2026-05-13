@@ -321,6 +321,18 @@ button.force-white-text,
   background: #A78BFA !important;
 }
 
+/* Cross-sell product icons (icon-worker / icon-general-liability /
+   icon-business-owner) are small dark-colored illustrations that
+   get lost on the dark navy card background. Bump brightness so
+   the illustration colors pop on the dark surface, and lighten the
+   tile background a touch for more contrast against the page. */
+[data-dark="true"] .cross-sell-icon-tile {
+  background: rgba(167,139,250,0.18) !important;
+}
+[data-dark="true"] .cross-sell-icon-tile img {
+  filter: brightness(1.35) saturate(1.1);
+}
+
 /* Upload card outer glow pulse after popup dismiss */
 @keyframes uploadPulse {
   0%   { box-shadow: 0 0 0 0 rgba(92,46,212,0); border-color: rgba(92,46,212,0.1); }

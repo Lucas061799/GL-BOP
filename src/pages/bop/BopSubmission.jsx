@@ -737,7 +737,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                     <div className="flex items-center gap-3 px-4 py-4">
                       {/* Icon */}
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                        className="cross-sell-icon-tile w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                         style={{ background: isDark ? 'rgba(92,46,212,0.15)' : 'rgba(92,46,212,0.06)' }}
                       >
                         <img src={item.iconImg} alt={item.name} className="w-6 h-6 object-contain" />
