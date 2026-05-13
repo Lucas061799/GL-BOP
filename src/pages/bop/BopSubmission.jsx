@@ -907,7 +907,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
             <h3 className="text-sm font-bold mb-5" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>What's Next?</h3>
             <div className="space-y-6 mb-5">
               {[
-                { n: 1, t: 'Review & Processing',  d: 'Your application will be reviewed within 24–48 hours.' },
+                { n: 1, t: 'Review & Processing',  d: 'Your application will be reviewed as soon as possible.' },
                 { n: 2, t: 'Email Confirmation',   d: "You'll receive detailed policy confirmation via email." },
                 { n: 3, t: 'Policy in Force',      d: 'Coverage starts on the effective date you selected.' },
               ].map(step => (
