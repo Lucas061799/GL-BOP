@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import norbieface from '../../assets/norbieface.png'
+import norbielinkLogo from '../../assets/norbielink-logo.png'
+import btisLogo from '../../assets/btislogo.png'
 
 const QUESTIONS = [
   { key: 'prior_losses',        section: 'history', label: 'Any property losses or liability claims in the past 5 years?' },
@@ -159,8 +161,8 @@ function PreviewModal({ formData, onClose, onConfirm }) {
         style={{ maxHeight: '90vh', background: '#F9FAFB', boxShadow: '0 32px 80px rgba(0,0,0,0.22)' }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="px-5 pt-4 pb-4 shrink-0" style={{ background: 'white', borderBottom: '1px solid #F3F4F6' }}>
+        {/* Header — screen only */}
+        <div className="no-print px-5 pt-4 pb-4 shrink-0" style={{ background: 'white', borderBottom: '1px solid #F3F4F6' }}>
           <div className="flex items-start gap-4">
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
@@ -226,6 +228,29 @@ function PreviewModal({ formData, onClose, onConfirm }) {
 
         {/* Body */}
         <div className="px-6 py-5 overflow-y-auto space-y-3">
+          {/* Print-only branding row — replaces the screen modal header on the printed page */}
+          <div
+            className="print-only"
+            style={{
+              flexDirection: 'column',
+              alignItems: 'stretch',
+              paddingBottom: 10,
+              marginBottom: 6,
+              borderBottom: '1.5px solid #E5E7EB',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <img src={norbielinkLogo} alt="NorbieLink" style={{ height: 24, objectFit: 'contain' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 8, color: '#9CA3AF', letterSpacing: '0.10em', fontWeight: 700, textTransform: 'uppercase' }}>Powered by</span>
+                <img src={btisLogo} alt="btis" style={{ height: 18, objectFit: 'contain' }} />
+              </div>
+            </div>
+            <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: 11, fontWeight: 700, color: '#111827' }}>Application Summary — Review before quoting</p>
+              <p style={{ fontSize: 9, color: '#9CA3AF' }}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            </div>
+          </div>
           {ss.description && (
             <PSection title="Class Code" icon="tag">
               <PRow label="Business Type" value={ss.description} />
