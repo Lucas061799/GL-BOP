@@ -47,6 +47,19 @@ function estimatePremium(formData) {
 
 const money = (n) => '$' + Math.round(n).toLocaleString()
 
+// Short broker-facing tips that rotate while the user is filling in
+// the form and quotes haven't come in yet.
+const PRO_TIPS = [
+  "Class code accuracy directly impacts every carrier's quote — double-check before submitting.",
+  "Higher payroll usually means higher GL premiums. Quote a few carriers to see who's most competitive at your client's size.",
+  "Most carriers reward 3+ years in business with better pricing.",
+  "Tell your client the proposal numbers can move — final premium depends on UW review and any state-rate changes.",
+  "Some carriers prefer no claims in the last 3 years. Capture prior losses early to avoid surprises at bind.",
+  "BOP usually beats standalone GL + Property when both are needed — bundle when possible.",
+  "Hiscox tends to like consultants and small offices. Coterie is fast on retail and food service.",
+  "If a carrier returns 'Not a fit,' the decline reasons are a goldmine for placing the next risk.",
+]
+
 // Carrier logo chip — square white tile holding the partner logo
 function CarrierMark({ name, logo, size = 'sm' }) {
   const dim = size === 'lg' ? 64 : 40
@@ -104,6 +117,14 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
   }
 
   const [refreshing, setRefreshing] = useState(false)
+  // Rotating pro-tip while quotes are loading.
+  const [tipIdx, setTipIdx] = useState(() => Math.floor(Math.random() * PRO_TIPS.length))
+  useEffect(() => {
+    const t = setInterval(() => {
+      setTipIdx(i => (i + 1) % PRO_TIPS.length)
+    }, 6000)
+    return () => clearInterval(t)
+  }, [])
 
   const completion = useMemo(() => getSectionCompletion(formData), [formData])
   const completedCount = Object.values(completion).filter(Boolean).length
@@ -355,6 +376,41 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
             <p className="text-[10px] text-gray-400 text-left mt-3 leading-relaxed">
               Pick a class code to see live quotes.
             </p>
+          )}
+
+          {/* Pro tip — rotates every few seconds while the agent fills in
+              the form and quotes haven't landed yet. Hidden once we're
+              showing real prices. */}
+          {readyToQuote && !showPrices && (
+            <div
+              className="rounded-xl px-3.5 py-3 mt-3 flex items-start gap-2.5"
+              style={{
+                background: isDark ? 'rgba(124,58,237,0.10)' : 'rgba(124,58,237,0.05)',
+                border: `1px solid ${isDark ? 'rgba(167,139,250,0.25)' : 'rgba(124,58,237,0.15)'}`,
+              }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
+                <path d="M9 18h6"/>
+                <path d="M10 22h4"/>
+                <path d="M12 2a7 7 0 0 0-4 12.7c.5.5.8 1.1.8 1.8V18h6.4v-1.5c0-.7.3-1.3.8-1.8A7 7 0 0 0 12 2z"/>
+              </svg>
+              <div className="min-w-0">
+                <p
+                  className="text-[9.5px] font-bold uppercase tracking-[0.12em] mb-0.5"
+                  style={{
+                    background: BRAND_GRADIENT,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  Pro tip
+                </p>
+                <p className="text-[11px] leading-relaxed" style={{ color: isDark ? '#D1D5DB' : '#4B5563' }}>
+                  {PRO_TIPS[tipIdx]}
+                </p>
+              </div>
+            </div>
           )}
 
           {/* Download Quote Proposal — enabled once a carrier is selected */}
