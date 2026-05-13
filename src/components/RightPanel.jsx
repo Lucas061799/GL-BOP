@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import logoCoterie       from '../assets/carrier-coterie.png'
 import logoHiscox        from '../assets/carrier-hiscox.png'
 import logoCNA           from '../assets/carrier-cna.png'
@@ -87,7 +87,7 @@ function SkeletonRow() {
   )
 }
 
-export default function RightPanel({ onFormReview, formData = {}, updateFormData, pulseUpload = false, isDark = false }) {
+export default function RightPanel({ formData = {}, updateFormData, isDark = false }) {
   const selectedCarrier = formData.bind?.selectedCarrier
   const selectCarrier = (id) => {
     if (!updateFormData) return
@@ -95,10 +95,7 @@ export default function RightPanel({ onFormReview, formData = {}, updateFormData
     updateFormData('bind', { selectedCarrier: selectedCarrier === id ? null : id })
   }
 
-  const [files, setFiles] = useState([])
-  const [dragging, setDragging] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
-  const inputRef = useRef()
 
   const completion = useMemo(() => getSectionCompletion(formData), [formData])
   const completedCount = Object.values(completion).filter(Boolean).length
@@ -138,13 +135,6 @@ export default function RightPanel({ onFormReview, formData = {}, updateFormData
   }
 
   const showSkeleton = !readyToQuote || primingQuotes || refreshing
-
-  const addFiles = (newFiles) => {
-    const arr = Array.from(newFiles).map(f => ({ name: f.name, size: f.size, id: Math.random() }))
-    setFiles(prev => [...prev, ...arr])
-  }
-  const removeFile = (id) => setFiles(prev => prev.filter(f => f.id !== id))
-  const formatSize = (bytes) => bytes < 1024 ? bytes + ' bytes' : Math.round(bytes / 1024) + ' KB'
 
   return (
     <aside
@@ -333,79 +323,6 @@ export default function RightPanel({ onFormReview, formData = {}, updateFormData
           )}
         </div>
 
-        {/* Upload & Save Time */}
-        <div className={`mb-5 rounded-2xl overflow-hidden transition-all ${pulseUpload ? 'upload-pulse' : ''}`} style={{ border: isDark ? '1px solid rgba(92,46,212,0.25)' : '1px solid #E5E7EB', background: isDark ? 'rgba(92,46,212,0.12)' : 'white' }}>
-          <div className="px-4 pt-4 pb-4">
-            <h3 className="text-base font-bold text-navy leading-tight mb-0.5">Upload & Save Time!</h3>
-            <div className="flex items-center gap-1.5 mb-3">
-              <p className="text-[11px] text-gray-500 font-medium whitespace-nowrap">Competitor quote or ACORD form?</p>
-              <div className="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 text-white text-[8px] font-bold" style={{ background: '#73C9B7' }}>i</div>
-            </div>
-
-            <div
-              onDragOver={e => { e.preventDefault(); setDragging(true) }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={e => { e.preventDefault(); setDragging(false); addFiles(e.dataTransfer.files) }}
-              className={`rounded-xl border-2 border-dashed transition-all px-3 pt-3 pb-3 ${dragging ? 'border-[#5C2ED4] bg-[#5C2ED4]/5' : 'border-[#A614C3]/25'}`}
-            >
-              <input ref={inputRef} type="file" multiple accept=".pdf,.jpg,.png" className="hidden" onChange={e => addFiles(e.target.files)} />
-              <p className="text-center text-[10px] text-gray-400 mb-2">
-                Drop a file or <span className="font-semibold text-gray-500">drag &amp; drop</span> · PDF, JPG, PNG · Max 10MB
-              </p>
-              <button
-                onClick={() => inputRef.current?.click()}
-                className="w-full py-2.5 rounded-lg text-sm font-bold text-white transition-all hover:opacity-90 active:scale-[0.98]"
-                style={{ background: BRAND_GRADIENT }}
-              >
-                Upload Here
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Uploaded files list */}
-        {files.length > 0 && (
-          <div className="mb-4 space-y-2">
-            {files.map(f => (
-              <div key={f.id} className="flex items-center justify-between rounded-xl px-3 py-2" style={{ background: isDark ? 'rgba(255,255,255,0.05)' : 'white', border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #F3F4F6' }}>
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 border border-gray-200 rounded-lg flex items-center justify-center shrink-0">
-                    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-semibold text-gray-700 truncate max-w-[120px]">{f.name}</p>
-                    <p className="text-[9px] text-gray-400">{formatSize(f.size)}</p>
-                  </div>
-                </div>
-                <button onClick={e => { e.stopPropagation(); removeFile(f.id) }}>
-                  <svg className="w-3.5 h-3.5 text-red-400 hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Form Review button */}
-        <button
-          onClick={onFormReview}
-          className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition"
-          style={{
-            color: isDark ? '#D8B4FE' : '#A614C3',
-            border: isDark ? '1px solid rgba(216,180,254,0.35)' : '1px solid rgba(166,20,195,0.3)',
-            background: isDark ? 'rgba(167,139,250,0.08)' : 'white',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = isDark ? 'rgba(167,139,250,0.15)' : 'rgba(166,20,195,0.06)'}
-          onMouseLeave={e => e.currentTarget.style.background = isDark ? 'rgba(167,139,250,0.08)' : 'white'}
-        >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          Form Review
-        </button>
 
       </div>
     </aside>
