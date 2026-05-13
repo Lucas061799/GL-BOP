@@ -1,5 +1,18 @@
 import { useState } from 'react'
 import { Select } from '../../components/FormField'
+import logoCoterie       from '../../assets/carrier-coterie.png'
+import logoHiscox        from '../../assets/carrier-hiscox.png'
+import logoCNA           from '../../assets/carrier-cna.png'
+import logoGreatAmerican from '../../assets/carrier-greatamerican.png'
+import logoUSLI          from '../../assets/carrier-usli.png'
+
+const CARRIER_LOGOS = {
+  'Coterie':        logoCoterie,
+  'Hiscox':         logoHiscox,
+  'CNA':            logoCNA,
+  'Great American': logoGreatAmerican,
+  'USLI':           logoUSLI,
+}
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
@@ -86,11 +99,28 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
       <div className="px-4 py-3.5 cursor-pointer" onClick={onToggle}>
         {/* Row 1 — Carrier + pills + chevron */}
         <div className="flex items-center justify-between gap-3 mb-2.5">
-          <div className="flex items-center gap-2 min-w-0 flex-wrap">
-            <span
-              className="w-2.5 h-2.5 rounded-full shrink-0"
-              style={{ background: isDeclined ? '#D1D5DB' : BRAND_GRADIENT }}
-            />
+          <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
+            {/* Carrier logo tile — replaces the old purple dot */}
+            <div
+              className="rounded-md flex items-center justify-center shrink-0"
+              style={{
+                width: 28,
+                height: 28,
+                background: 'white',
+                border: '1px solid #E5E7EB',
+                padding: 4,
+                opacity: isDeclined ? 0.5 : 1,
+              }}
+            >
+              {CARRIER_LOGOS[q.carrier] && (
+                <img
+                  src={CARRIER_LOGOS[q.carrier]}
+                  alt={q.carrier}
+                  className="max-w-full max-h-full select-none pointer-events-none"
+                  style={{ objectFit: 'contain' }}
+                />
+              )}
+            </div>
             <span
               className="text-sm font-semibold truncate"
               style={{ color: isDeclined ? '#6B7280' : '#1F2937' }}
@@ -164,12 +194,12 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
               onClick={(e) => { e.stopPropagation(); onSelect(); }}
               className="px-4 py-2 rounded-lg text-xs font-bold transition shrink-0"
               style={
-                (isBest || isSelected || isReferred)
+                isSelected
                   ? { background: BRAND_GRADIENT, color: '#fff' }
                   : { background: 'white', color: '#5C2ED4', border: '1.5px solid rgba(92,46,212,0.35)' }
               }
             >
-              {isReferred ? 'Submit for Review' : isSelected ? '✓ Selected' : isBest ? 'Select Best' : 'Select'}
+              {isSelected ? '✓ Selected' : 'Select'}
             </button>
           )}
         </div>
