@@ -900,41 +900,6 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
               <div className="h-full rounded-full w-full transition-all duration-500" style={{ background: BRAND_GRADIENT }} />
             </div>
 
-            {/* Divider */}
-            <div className="mb-5" style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
-
-            {/* What's Next */}
-            <h3 className="text-sm font-bold mb-5" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>What's Next?</h3>
-            <div className="space-y-6 mb-5">
-              {[
-                { n: 1, t: 'Review & Processing',  d: 'Your application will be reviewed as soon as possible.' },
-                { n: 2, t: 'Email Confirmation',   d: "You'll receive detailed policy confirmation via email." },
-                { n: 3, t: 'Policy in Force',      d: 'Coverage starts on the effective date you selected.' },
-              ].map(step => (
-                <div key={step.n} className="flex gap-4">
-                  <span
-                    className="w-9 h-9 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
-                    style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)' }}
-                  >
-                    <span
-                      style={{
-                        background: BRAND_GRADIENT,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}
-                    >
-                      {step.n}
-                    </span>
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{step.t}</p>
-                    <p className="text-xs mt-1 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>{step.d}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
           </div>
         </aside>
       </div>
