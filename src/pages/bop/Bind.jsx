@@ -16,11 +16,77 @@ const SAMPLE_PREMIUMS = {
   'Great American': { basePremium: 480, policyFee: 60, riskProgram: 0,   total: 540, monthly: 48, installmentFee: 0 },
 }
 
+// Everything the user has to consent to before binding lives here.
+// Each item has a short label (shown in the row), a summary (right-rail
+// description), and details (the full legal text, revealed when the
+// user expands the row).
 const CONSENTS = [
-  { key: 'fraud',  label: 'I acknowledge the fraud warning statement for my state' },
-  { key: 'svcFee', label: 'I agree to the BTIS service fee of $75' },
-  { key: 'broker', label: 'I acknowledge the broker disclosure statement' },
-  { key: 'esign',  label: 'I consent to electronic delivery of documents' },
+  {
+    key: 'fraud',
+    label: 'Fraud Warning Statement',
+    summary: 'Required state disclosure',
+    details:
+      'It is unlawful to knowingly provide false, incomplete, or misleading facts or information to an insurance ' +
+      'company for the purpose of defrauding or attempting to defraud the company. Penalties may include ' +
+      'imprisonment, fines, denial of insurance, and civil damages. Any insurance company or agent of an insurance ' +
+      'company who knowingly provides false, incomplete, or misleading facts or information to a policyholder or ' +
+      'claimant for the purpose of defrauding or attempting to defraud the policyholder or claimant with regard to ' +
+      'a settlement or award payable from insurance proceeds shall be reported to the Colorado Division of ' +
+      'Insurance within the Department of Regulatory Agencies.',
+  },
+  {
+    key: 'svcFee',
+    label: 'BTIS Service Fee ($75)',
+    summary: 'One-time, non-refundable',
+    details:
+      'BTIS will impose a Service Fee of $75.00, separate from amounts charged by the insurer. This fee is ' +
+      'non-refundable except where required by law.',
+  },
+  {
+    key: 'broker',
+    label: 'Broker Disclosure',
+    summary: 'Broker fee and compensation arrangements',
+    details:
+      'If indicated, Total Amount Due includes a Broker Fee for services that may include performing a risk ' +
+      'analysis, comparing policies, processing submissions, communication expenses, searching the markets for ' +
+      'the desired coverage, working with underwriters on the coverage proposal, and servicing the policy after ' +
+      'issuance. If we are deemed to be a broker, we represent the insured and will represent you honestly and ' +
+      'competently in placing the insurance. We will also receive commission from the insurer. Broker Fees on ' +
+      'Admitted policies are fully earned and nonrefundable, except when applicable by law. Broker Fees may be ' +
+      'applicable to renewal policies. The insured is not obligated to purchase the proposed insurance.',
+  },
+  {
+    key: 'esign',
+    label: 'Electronic Delivery Consent',
+    summary: 'Receive policy documents electronically',
+    details:
+      'I consent to receive policy documents, notices, and disclosures electronically at the email address on ' +
+      'file. I understand I may withdraw this consent at any time by contacting BTIS.',
+  },
+  {
+    key: 'terms',
+    label: 'Quotation Terms & Conditions',
+    summary: 'Quote subject to underwriting review',
+    details:
+      'This is not a final quote, nor is it an offer of insurance. Pricing is based only upon the rating ' +
+      'information your agent has provided and may be subject to change due to additional rating variables. In ' +
+      'addition, this is not a policy, but merely a general description of coverages available. Refer to actual ' +
+      'policy for full coverage details including exclusions and limitations. Your policy will contain all of ' +
+      'the terms and conditions applicable in the event of a loss or claim. All quotations should be considered ' +
+      'an estimate and are subject to change based on accurate underwriting information, changes in state rates, ' +
+      'experience modifications, or any other items by jurisdictions that have control over such items. This ' +
+      'quotation is strictly conditioned upon no material change in the risk between the date of this quotation ' +
+      'and the inception date of the proposed policy.',
+  },
+  {
+    key: 'sameDay',
+    label: 'Same-Day Bind Request',
+    summary: 'Must be submitted by 5 PM PST',
+    details:
+      'Same-day bind requests must be received by 5 pm PST. Requests received after that time will be processed ' +
+      'the following business day. This card will be used for renewal — contact bopbinds@btisinc.com within 15 ' +
+      'days to change. Pricing is subject to change due to rate and underwriting updates.',
+  },
 ]
 
 const money = (n) => '$' + Math.round(n).toLocaleString()
@@ -165,31 +231,72 @@ function FieldRow({ label, value, bold, muted }) {
   )
 }
 
-function ConsentRow({ label, checked, onChange }) {
+// Consent row with a checkbox + label/summary + an expand chevron for
+// the full legal text. Clicking the checkbox area toggles consent;
+// clicking the chevron expands the details panel.
+function ConsentRow({ item, checked, onChange, open, onToggle }) {
   return (
-    <label
-      className="flex items-center gap-3 cursor-pointer rounded-lg px-3.5 py-3 transition select-none"
+    <div
+      className="rounded-lg overflow-hidden transition"
       style={{
         background: checked ? 'rgba(124,58,237,0.06)' : 'white',
         border: `1.5px solid ${checked ? '#7C3AED' : '#E5E7EB'}`,
       }}
-      onClick={() => onChange(!checked)}
     >
-      <span
-        className="w-4 h-4 rounded flex items-center justify-center shrink-0 transition"
-        style={{
-          background: checked ? BRAND_GRADIENT : 'white',
-          border: `1.5px solid ${checked ? 'transparent' : '#D1D5DB'}`,
-        }}
-      >
-        {checked && (
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-            <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+      <div className="flex items-stretch">
+        <button
+          type="button"
+          onClick={() => onChange(!checked)}
+          className="flex-1 flex items-center gap-3 px-3.5 py-3 transition hover:bg-black/[0.02] text-left min-w-0"
+        >
+          <span
+            className="w-4 h-4 rounded flex items-center justify-center shrink-0 transition"
+            style={{
+              background: checked ? BRAND_GRADIENT : 'white',
+              border: `1.5px solid ${checked ? 'transparent' : '#D1D5DB'}`,
+            }}
+          >
+            {checked && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
+          </span>
+          <div className="min-w-0">
+            <div className="text-[13px] font-semibold text-gray-800 leading-tight">{item.label}</div>
+            {item.summary && (
+              <div className="text-[11px] text-gray-500 leading-tight mt-0.5 truncate">{item.summary}</div>
+            )}
+          </div>
+        </button>
+        {item.details && (
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label={open ? 'Hide details' : 'Show details'}
+            className="px-3 flex items-center justify-center transition hover:bg-black/[0.02]"
+            style={{ borderLeft: `1px solid ${checked ? 'rgba(124,58,237,0.18)' : '#F3F4F6'}` }}
+          >
+            <svg
+              width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className="shrink-0 transition-transform"
+              style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
         )}
-      </span>
-      <span className="text-[13px] text-gray-700 leading-snug">{label}</span>
-    </label>
+      </div>
+      {open && item.details && (
+        <div
+          className="px-3.5 pb-3 pt-2.5 border-t"
+          style={{ borderColor: checked ? 'rgba(124,58,237,0.18)' : '#F3F4F6' }}
+        >
+          <p className="text-[12px] leading-relaxed text-gray-600">{item.details}</p>
+        </div>
+      )}
+    </div>
   )
 }
 
@@ -199,10 +306,10 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
 
   const [frequency, setFrequency] = useState('Annual')
   const [brokerFee, setBrokerFee] = useState(0)
-  const [disclosuresOpen, setDisclosuresOpen] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
-  const [fraudOpen, setFraudOpen] = useState(false)
+  // Which individual consent rows have their details panel expanded
+  const [openConsentDetails, setOpenConsentDetails] = useState({})
   const [showChargeConfirm, setShowChargeConfirm] = useState(false)
 
   const contact = formData.bindContact || {}
@@ -258,88 +365,85 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
   return (
     <div className="w-full space-y-6">
       <div className="space-y-5">
-        {/* ============ TOP: ACKNOWLEDGMENTS ============ */}
+        {/* ============ APPLICATION SUMMARY ============ */}
+        {/* Recap of what they're about to buy. The price still appears
+            in the right rail; this card is the 'what am I binding?'
+            view, not a second price card. */}
+        {(() => {
+          const biz       = formData.business   || {}
+          const sm        = formData.smartStart || {}
+          const loc       = formData.location   || {}
+          const cov       = formData.coverage   || {}
+          const packageId = formData.bind?.packageId
+          const PACKAGE_LABEL = { base: 'Base', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' }
+          const packageLabel = packageId ? PACKAGE_LABEL[packageId] : '—'
+          const optionalAddons = formData.bind?.optionalAddons || []
+          const removedItems   = formData.bind?.removedPackageItems || []
 
-        {/* Colorado Fraud Warning — compact, collapsible */}
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{ background: 'white', border: '1px solid #E5E7EB' }}
-        >
-          <button
-            type="button"
-            onClick={() => setFraudOpen(o => !o)}
-            className="w-full flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-gray-50"
-          >
-            <div className="flex items-center gap-2.5 min-w-0">
-              <span
-                className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(124,58,237,0.10)' }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="12"/>
-                  <line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-              </span>
-              <div className="text-left min-w-0">
-                <div className="text-[13px] font-semibold text-gray-800 truncate">Colorado Fraud Warning</div>
-                <div className="text-[11px] text-gray-400 truncate">Required state disclosure · Tap to read.</div>
+          const fmtMoney = (n) => n ? '$' + Number(String(n).replace(/[^0-9.]/g, '')).toLocaleString() : null
+          const glLimit = cov.glLimit ? fmtMoney(cov.glLimit) : null
+
+          const SummaryRow = ({ label, value }) => (
+            <div className="flex items-baseline justify-between gap-3 py-1.5 text-sm">
+              <span className="text-gray-500 shrink-0">{label}</span>
+              <span className="text-gray-800 font-medium text-right truncate">{value || '—'}</span>
+            </div>
+          )
+
+          return (
+            <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Application Summary</div>
+                <span
+                  className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase"
+                  style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
+                >
+                  {carrier} · {packageLabel}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 divide-y sm:divide-y-0">
+                <div>
+                  <SummaryRow label="Business"  value={biz.name} />
+                  <SummaryRow label="Class"     value={sm.naics ? `NAICS ${sm.naics}` : null} />
+                  <SummaryRow label="Location"  value={[loc.city, loc.state].filter(Boolean).join(', ') || null} />
+                  <SummaryRow label="Effective" value={biz.effectiveDate} />
+                </div>
+                <div>
+                  <SummaryRow label="GL Limit"      value={glLimit ? `${glLimit} / ${fmtMoney(Number(cov.glLimit) * 2)}` : null} />
+                  <SummaryRow label="Carrier"       value={carrier} />
+                  <SummaryRow label="Package"       value={packageLabel} />
+                  <SummaryRow
+                    label="Optional add-ons"
+                    value={
+                      optionalAddons.length === 0 && removedItems.length === 0
+                        ? 'None'
+                        : [
+                            optionalAddons.length ? `${optionalAddons.length} added` : null,
+                            removedItems.length   ? `${removedItems.length} removed` : null,
+                          ].filter(Boolean).join(' · ')
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="mt-3 pt-3 flex items-center justify-between" style={{ borderTop: '1px solid #F3F4F6' }}>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Annual Premium</span>
+                <span
+                  className="text-2xl font-bold"
+                  style={{
+                    background: BRAND_GRADIENT,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  {money(annualPremium)}
+                </span>
               </div>
             </div>
-            <svg
-              width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              className="shrink-0 transition-transform"
-              style={{ transform: fraudOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-            >
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
-          </button>
-          {fraudOpen && (
-            <div className="px-4 pb-4 pt-1 border-t" style={{ borderColor: '#F3F4F6' }}>
-              <p className="text-[12px] leading-relaxed text-gray-600 pt-3">
-                It is unlawful to knowingly provide false, incomplete, or misleading facts or information to an insurance
-                company for the purpose of defrauding or attempting to defraud the company. Penalties may include
-                imprisonment, fines, denial of insurance, and civil damages. Any insurance company or agent of an
-                insurance company who knowingly provides false, incomplete, or misleading facts or information to a
-                policyholder or claimant for the purpose of defrauding or attempting to defraud the policyholder or
-                claimant with regard to a settlement or award payable from insurance proceeds shall be reported to the
-                Colorado Division of Insurance within the Department of Regulatory Agencies.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* ============ PRICING ============ */}
-
-        {/* Carrier + price + single proposal action */}
-        <div className="rounded-xl p-6 text-center" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-          <div className="flex items-center justify-center mb-4">
-            <span
-              className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
-              style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
-            >
-              {carrier}
-            </span>
-          </div>
-          <div className="flex items-baseline justify-center gap-1 mb-3">
-            <span className="text-4xl font-bold text-gray-900">{money(annualPremium)}</span>
-            <span className="text-sm text-gray-400">/year</span>
-          </div>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
-            style={{ color: '#5C2ED4' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="12" y1="11" x2="12" y2="17"/>
-              <polyline points="9 14 12 17 15 14"/>
-            </svg>
-            Download Quote Proposal
-          </button>
-        </div>
+          )
+        })()}
 
           {/* Payment plan */}
           <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
@@ -563,9 +667,11 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                     {CONSENTS.map(c => (
                       <ConsentRow
                         key={c.key}
-                        label={c.label}
+                        item={c}
                         checked={!!consents[c.key]}
                         onChange={(val) => setConsent(c.key, val)}
+                        open={!!openConsentDetails[c.key]}
+                        onToggle={() => setOpenConsentDetails(prev => ({ ...prev, [c.key]: !prev[c.key] }))}
                       />
                     ))}
                   </div>
@@ -575,85 +681,6 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
           )
         })()}
 
-        {/* Footer disclaimers */}
-        <div className="space-y-2 text-[12px] text-gray-500 leading-relaxed">
-          <p>
-            Same-day bind requests must be received by 5 pm PST. We kindly ask you to review and consent to these
-            transactions before proceeding.
-          </p>
-          <p>
-            This card will be used for renewal. Contact <span style={{ color: '#5C2ED4' }}>bopbinds@btisinc.com</span> within
-            15 days to change. Pricing is subject to changes due to rate and underwriting updates.
-          </p>
-          <p>
-            Review {carrier}'s <a href="#" className="font-semibold hover:underline" style={{ color: '#5C2ED4' }}>terms &amp; conditions</a>.
-          </p>
-        </div>
-      </div>
-
-      {/* ============ DISCLOSURES & TERMS (full width) ============ */}
-      <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-        <button
-          type="button"
-          onClick={() => setDisclosuresOpen(o => !o)}
-          className="flex items-center gap-1 text-sm font-semibold hover:underline"
-          style={{ color: '#5C2ED4' }}
-        >
-          <span>{disclosuresOpen ? '−' : '+'}</span>
-          View Disclosures &amp; Terms
-        </button>
-
-        {disclosuresOpen && (
-          <div className="mt-5 space-y-5 text-[13px] text-gray-600 leading-relaxed">
-            <div>
-              <div className="text-[12px] font-bold uppercase tracking-wider text-gray-800 mb-2">Quote Notice</div>
-              <p>
-                This is not a final quote, nor is it an offer of insurance. Pricing is based only upon the rating
-                information your agent has provided and may be subject to change due to additional rating variables.
-                In addition, this is not a policy, but merely a general description of coverages available. Refer to
-                actual policy for full coverage details including exclusions and limitations. Your policy will contain
-                all of the terms and conditions applicable in the event of a loss or claim. Acceptability of this risk
-                is dependent upon company underwriting review and will be subject to an engineering &amp; safety
-                services survey, including compliance with recommendations made.
-              </p>
-            </div>
-
-            <div>
-              <div className="text-[12px] font-bold uppercase tracking-wider text-gray-800 mb-2">
-                Broker Fee, Service Fee &amp; Quotation Disclosure
-              </div>
-              <p>
-                If indicated, Total Amount Due includes a Broker Fee for services that may include performing a risk
-                analysis, comparing policies, processing submissions, communication expenses, searching the markets
-                for the desired coverage, working with underwriters on the coverage proposal, and servicing the policy
-                after issuance. If we are deemed to be a broker, we represent the insured and will represent you
-                honestly and competently in placing the insurance. We will also receive commission from the insurer.
-                Broker Fees on Admitted policies are fully earned and nonrefundable, except when applicable by law.
-                Broker Fees may be applicable to renewal policies. The insured is not obligated to purchase the
-                proposed insurance. If you need further information about this fee, the compensation arrangements,
-                or the insurance company proposing to provide you insurance, please contact us.
-              </p>
-              <p className="mt-2 font-semibold text-gray-800">
-                BTIS will impose a Service Fee of $75.00, separate from amounts charged by the insurer.
-              </p>
-            </div>
-
-            <div>
-              <div className="text-[12px] font-bold uppercase tracking-wider text-gray-800 mb-2">Quotation Terms</div>
-              <p>
-                All quotations should be considered an estimate and are subject to change based on accurate
-                underwriting information, changes in state rates, experience modifications, or any other items by
-                jurisdictions that have control over such items. Final premium will be determined at the end of the
-                policy period, after payrolls have been audited. This quotation is strictly conditioned upon no
-                material change in the risk (including but not limited to claims and potential claims), between the
-                date of this quotation and the inception date of the proposed policy. The insured is required to
-                advise the potential Insurer of any changes immediately and prior to binding the coverage. In the
-                event of such change in risk, the Insurer may in its sole discretion, whether or not this quotation
-                has been already accepted by the Insured, modify and/or withdraw its quotation.
-              </p>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Bind button */}
