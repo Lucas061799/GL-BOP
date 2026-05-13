@@ -310,92 +310,6 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
           )}
         </div>
 
-        {/* Terms & Acknowledgments — compact accept-all */}
-        {(() => {
-          const acceptedCount = CONSENTS.filter(c => !!consents[c.key]).length
-          const allDone = acceptedCount === CONSENTS.length
-          const toggleAll = () => {
-            const next = !allDone
-            CONSENTS.forEach(c => setConsent(c.key, next))
-          }
-          return (
-            <div
-              className="rounded-xl overflow-hidden"
-              style={{
-                background: allDone ? 'rgba(124,58,237,0.06)' : 'white',
-                border: `1.5px solid ${allDone ? '#7C3AED' : '#E5E7EB'}`,
-                boxShadow: allDone ? '0 2px 12px rgba(92,46,212,0.10)' : 'none',
-              }}
-            >
-              <div className="flex items-stretch">
-                <button
-                  type="button"
-                  onClick={toggleAll}
-                  className="flex-1 flex items-center gap-3 px-4 py-3 transition hover:bg-gray-50 text-left min-w-0"
-                >
-                  <span
-                    className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition"
-                    style={{
-                      background: allDone ? BRAND_GRADIENT : 'white',
-                      border: `1.5px solid ${allDone ? 'transparent' : '#D1D5DB'}`,
-                    }}
-                  >
-                    {allDone && (
-                      <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
-                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    )}
-                  </span>
-                  <div className="text-left min-w-0">
-                    <div className="text-[13px] font-semibold text-gray-800 truncate">
-                      {allDone
-                        ? 'All acknowledgments accepted'
-                        : `Accept all ${CONSENTS.length} acknowledgments`}
-                    </div>
-                    <div className="text-[11px] text-gray-400 truncate">
-                      {allDone
-                        ? "You're good to bind."
-                        : acceptedCount > 0
-                          ? `${acceptedCount} of ${CONSENTS.length} accepted — tap to accept the rest.`
-                          : 'Tap to accept all, or expand to review each.'}
-                    </div>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTermsOpen(o => !o)}
-                  aria-label={termsOpen ? 'Hide details' : 'Show details'}
-                  className="px-3 flex items-center justify-center transition hover:bg-gray-50"
-                  style={{ borderLeft: '1px solid #F3F4F6' }}
-                >
-                  <svg
-                    width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                    className="shrink-0 transition-transform"
-                    style={{ transform: termsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                  >
-                    <polyline points="6 9 12 15 18 9"/>
-                  </svg>
-                </button>
-              </div>
-              {termsOpen && (
-                <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#F3F4F6' }}>
-                  <div className="space-y-2.5">
-                    {CONSENTS.map(c => (
-                      <ConsentRow
-                        key={c.key}
-                        label={c.label}
-                        checked={!!consents[c.key]}
-                        onChange={(val) => setConsent(c.key, val)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )
-        })()}
-
         {/* ============ PRICING ============ */}
 
         {/* Carrier + price + single proposal action */}
@@ -575,6 +489,92 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
           </div>
         </div>
 
+        {/* Terms & Acknowledgments — compact accept-all */}
+        {(() => {
+          const acceptedCount = CONSENTS.filter(c => !!consents[c.key]).length
+          const allDone = acceptedCount === CONSENTS.length
+          const toggleAll = () => {
+            const next = !allDone
+            CONSENTS.forEach(c => setConsent(c.key, next))
+          }
+          return (
+            <div
+              className="rounded-xl overflow-hidden"
+              style={{
+                background: allDone ? 'rgba(124,58,237,0.06)' : 'white',
+                border: `1.5px solid ${allDone ? '#7C3AED' : '#E5E7EB'}`,
+                boxShadow: allDone ? '0 2px 12px rgba(92,46,212,0.10)' : 'none',
+              }}
+            >
+              <div className="flex items-stretch">
+                <button
+                  type="button"
+                  onClick={toggleAll}
+                  className="flex-1 flex items-center gap-3 px-4 py-3 transition hover:bg-gray-50 text-left min-w-0"
+                >
+                  <span
+                    className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition"
+                    style={{
+                      background: allDone ? BRAND_GRADIENT : 'white',
+                      border: `1.5px solid ${allDone ? 'transparent' : '#D1D5DB'}`,
+                    }}
+                  >
+                    {allDone && (
+                      <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
+                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </span>
+                  <div className="text-left min-w-0">
+                    <div className="text-[13px] font-semibold text-gray-800 truncate">
+                      {allDone
+                        ? 'All acknowledgments accepted'
+                        : `Accept all ${CONSENTS.length} acknowledgments`}
+                    </div>
+                    <div className="text-[11px] text-gray-400 truncate">
+                      {allDone
+                        ? "You're good to bind."
+                        : acceptedCount > 0
+                          ? `${acceptedCount} of ${CONSENTS.length} accepted — tap to accept the rest.`
+                          : 'Tap to accept all, or expand to review each.'}
+                    </div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTermsOpen(o => !o)}
+                  aria-label={termsOpen ? 'Hide details' : 'Show details'}
+                  className="px-3 flex items-center justify-center transition hover:bg-gray-50"
+                  style={{ borderLeft: '1px solid #F3F4F6' }}
+                >
+                  <svg
+                    width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    className="shrink-0 transition-transform"
+                    style={{ transform: termsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                  >
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+              </div>
+              {termsOpen && (
+                <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#F3F4F6' }}>
+                  <div className="space-y-2.5">
+                    {CONSENTS.map(c => (
+                      <ConsentRow
+                        key={c.key}
+                        label={c.label}
+                        checked={!!consents[c.key]}
+                        onChange={(val) => setConsent(c.key, val)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })()}
+
         {/* Footer disclaimers */}
         <div className="space-y-2 text-[12px] text-gray-500 leading-relaxed">
           <p>
@@ -665,18 +665,13 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
           type="button"
           onClick={() => setShowChargeConfirm(true)}
           disabled={!canBind}
-          className="inline-flex items-center gap-3 pl-6 pr-5 py-3 rounded-xl text-white transition hover:opacity-90 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed"
           style={{
             background: canBind ? BRAND_GRADIENT : '#D1D5DB',
             boxShadow: canBind ? '0 4px 14px rgba(92,46,212,0.25)' : 'none',
           }}
         >
-          <div className="flex flex-col items-start leading-tight">
-            <span className="text-sm font-semibold">Bind Policy</span>
-            <span className="text-[10.5px] font-medium opacity-90">
-              Authorize 2 charges · {money(totalFees)} + {money(premiumPortion)}
-            </span>
-          </div>
+          Bind &amp; Pay
           <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
           </svg>
