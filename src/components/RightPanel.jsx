@@ -89,8 +89,16 @@ export default function RightPanel({ onFormReview, formData = {}, pulseUpload = 
   const completedCount = Object.values(completion).filter(Boolean).length
   const progressPct = Math.round((completedCount / 7) * 100)
 
-  // We have enough info to estimate once class code + business + location are done.
-  const readyToQuote = !!(completion[1] && completion[2] && completion[3])
+  // We can show estimates as soon as the user has picked a class code and
+  // entered at least one financial input (revenue, payroll, or employee count).
+  // The numbers refine live as more fields are filled.
+  const b = formData.business || {}
+  const hasAnyFinancial = !!(
+    Number(String(b.annualRevenue   || '').replace(/[^0-9]/g, '')) ||
+    Number(String(b.annualPayroll   || '').replace(/[^0-9]/g, '')) ||
+    Number(String(b.numberOfEmployees || '').replace(/[^0-9]/g, ''))
+  )
+  const readyToQuote = !!(formData.smartStart?.classId && hasAnyFinancial)
 
   // Pre-quote shimmer: re-trigger briefly after the readiness threshold flips, or on Refresh click.
   const [primingQuotes, setPrimingQuotes] = useState(false)
@@ -259,7 +267,7 @@ export default function RightPanel({ onFormReview, formData = {}, pulseUpload = 
 
           {!readyToQuote && (
             <p className="text-[10px] text-gray-400 text-center mt-3 leading-relaxed">
-              Fill in class code, business, and location to unlock live quotes.
+              Pick a class code and enter revenue or payroll to see live quotes.
             </p>
           )}
         </div>
