@@ -500,28 +500,85 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                 >
                   {/* Print-only branding header — only shows on the printed PDF */}
                   <div className="print-only flex-col mb-4">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 8, marginBottom: 8, borderBottom: '1.5px solid #E5E7EB' }}>
+                    {/* Branding row: Norbielink + POWERED BY btis */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 8, marginBottom: 10, borderBottom: '1.5px solid #E5E7EB' }}>
                       <img src={norbielinkLogo} alt="NorbieLink" style={{ height: 22, objectFit: 'contain' }} />
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <span style={{ fontSize: 8, color: '#9CA3AF', letterSpacing: '0.08em', fontWeight: 600 }}>POWERED BY</span>
                         <img src={btisLogo} alt="btis" style={{ height: 18, objectFit: 'contain' }} />
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                      <div>
-                        <p style={{ fontSize: 13, fontWeight: 700, color: '#111827' }}>{business.name || '—'}</p>
-                        <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>
-                          {[business.entityType, business.effectiveDate ? `Eff. ${business.effectiveDate}` : null, business.phone, business.email].filter(Boolean).join('  ·  ')}
-                        </p>
+
+                    {/* Top summary card — same chrome as the page top card */}
+                    <div className="rounded-2xl overflow-hidden" style={{ background: 'white', border: '1px solid #F3F4F6' }}>
+                      <div className="h-1" style={{ background: BRAND_GRADIENT }} />
+                      <div className="flex items-start gap-4 px-6 pt-5 pb-4">
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                          style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
+                        >
+                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <path d="M5 13l4 4L19 7" stroke="url(#bopSubCheckG)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h1 className="text-xl font-bold mb-1" style={{ color: '#111827' }}>
+                            General Liability Application Summary
+                          </h1>
+                          <p className="text-xs text-gray-400 leading-relaxed">
+                            {carrier
+                              ? <>Your policy with <span className="font-semibold">{carrier}</span> is bound. A receipt and policy documents will arrive by email shortly.</>
+                              : 'Your application has been received and is being processed.'
+                            }
+                          </p>
+                        </div>
                       </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontSize: 9, fontWeight: 700, background: BRAND_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                          General Liability Application
-                        </p>
-                        <p style={{ fontSize: 8, color: '#9CA3AF', marginTop: 2 }}>
-                          #{quoteId} · {generatedAt}
-                        </p>
+                      <div className="grid grid-cols-3" style={{ borderTop: '1px solid #F3F4F6' }}>
+                        {[
+                          { label: 'Quote Number', value: quoteId,     gradient: true },
+                          { label: 'Generated',    value: generatedAt },
+                          { label: 'Status',       value: 'Quoted',    pill: true },
+                        ].map((item, i) => (
+                          <div
+                            key={item.label}
+                            className="px-5 py-4"
+                            style={{ borderLeft: i === 0 ? 'none' : '1px solid #F3F4F6' }}
+                          >
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">{item.label}</p>
+                            {item.pill ? (
+                              <span className="inline-flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#5C2ED4' }} />
+                                <p className="text-sm font-bold" style={{ background: BRAND_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                                  {item.value}
+                                </p>
+                              </span>
+                            ) : item.gradient ? (
+                              <p className="text-sm font-bold truncate" style={{ background: BRAND_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                                {item.value}
+                              </p>
+                            ) : (
+                              <p className="text-sm font-semibold truncate" style={{ color: '#111827' }}>
+                                {item.value}
+                              </p>
+                            )}
+                          </div>
+                        ))}
                       </div>
+                      {carrier && (
+                        <div className="flex items-center gap-4 flex-wrap px-6 py-4" style={{ background: 'white', borderTop: '1px solid #F3F4F6' }}>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold" style={{ color: '#111827' }}>Policy bound with {carrier}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              {packageId ? <>Package: <span className="font-semibold capitalize">{packageId}</span> · </> : null}
+                              Annual premium {money(premium)} · Fees {money(totalFees)}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charged today</div>
+                            <div className="text-xl font-bold" style={{ color: '#111827' }}>{money(dueToday)}</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
