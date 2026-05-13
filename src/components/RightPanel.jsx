@@ -289,20 +289,21 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           )}
 
           {/* Carrier list — when prices are showing this is just the
-              non-best carriers; otherwise it's the full list so the BEST
-              card doesn't get singled out before there's anything to
-              compare. */}
+              non-best carriers (cheapest is the hero card above);
+              otherwise it's the full list with a shimmer where the
+              price will appear, and rows are non-interactive. */}
           <div className="space-y-2">
             {showSkeleton
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonRow key={i} isDark={isDark} />)
               : (showPrices ? quotes.slice(1) : quotes).map(q => {
-                  const isSelected = selectedCarrier === q.id
+                  const isSelected = showPrices && selectedCarrier === q.id
+                  const Wrapper = showPrices ? 'button' : 'div'
                   return (
-                    <button
-                      type="button"
+                    <Wrapper
+                      type={showPrices ? 'button' : undefined}
                       key={q.id}
-                      onClick={() => selectCarrier(q.id)}
-                      className="w-full rounded-xl px-3 py-3 flex items-center gap-3 transition cursor-pointer text-left"
+                      onClick={showPrices ? () => selectCarrier(q.id) : undefined}
+                      className={`w-full rounded-xl px-3 py-3 flex items-center gap-3 transition text-left ${showPrices ? 'cursor-pointer' : 'cursor-default'}`}
                       style={{
                         background: isSelected ? 'rgba(124,58,237,0.06)' : 'white',
                         border: `1.5px solid ${isSelected ? '#7C3AED' : '#E5E7EB'}`,
@@ -326,13 +327,19 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           </p>
                         )}
                       </div>
-                      {showPrices && (
+                      {showPrices ? (
                         <div className="text-right shrink-0">
                           <div className="text-sm font-bold text-gray-900 leading-tight">{money(q.premium)}</div>
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
+                      ) : (
+                        /* Price shimmer placeholder — quotes are 'loading' */
+                        <div className="text-right shrink-0 flex flex-col items-end gap-1">
+                          <div className={`${isDark ? 'skel-dark' : 'skel'} h-3 w-12 rounded`} />
+                          <div className={`${isDark ? 'skel-dark' : 'skel'} h-2 w-8 rounded`} />
+                        </div>
                       )}
-                    </button>
+                    </Wrapper>
                   )
                 })
             }
