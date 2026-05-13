@@ -179,27 +179,31 @@ function PreviewModal({ formData, onClose, onConfirm }) {
               </svg>
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">Review before quoting</h2>
-              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">Confirm your details below. We'll send them to 4 carriers.</p>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">Review before quoting</h2>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="inline-flex items-center justify-center w-6 h-6 rounded-md shrink-0 transition"
+                  style={{ background: 'rgba(92,46,212,0.08)' }}
+                  onMouseEnter={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.16)' }}
+                  onMouseLeave={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.08)' }}
+                  aria-label="Print or save a copy"
+                  title="Print or save a copy"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                    <path
+                      stroke="url(#prevHdrG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+                      d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+                    />
+                    <rect x="6" y="14" width="12" height="8" stroke="url(#prevHdrG)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                Confirm your details below. We'll send them to 4 carriers — or tap the printer icon to save a copy first.
+              </p>
             </div>
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
-              style={{ border: '1px solid #E5E7EB', background: 'white' }}
-              onMouseEnter={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.06)'; ev.currentTarget.style.borderColor = 'rgba(92,46,212,0.3)' }}
-              onMouseLeave={ev => { ev.currentTarget.style.background = 'white'; ev.currentTarget.style.borderColor = '#E5E7EB' }}
-              aria-label="Print summary"
-              title="Print summary"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path
-                  stroke="url(#prevHdrG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                  d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
-                />
-                <rect x="6" y="14" width="12" height="8" stroke="url(#prevHdrG)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
             <button
               type="button"
               onClick={onClose}
