@@ -662,21 +662,26 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
       </div>
 
       {/* Bind button */}
-      <div className="pt-2 flex items-center justify-between">
+      <div className="pt-2 flex items-center justify-between gap-4 flex-wrap">
         <p className="text-[11px] text-gray-400 max-w-md">
-          By clicking Bind, you authorize the charge above. Your policy will be issued immediately.
+          By clicking Bind, you authorize the two charges shown above to be placed on the card on file. Your policy will be issued immediately.
         </p>
         <button
           type="button"
           onClick={() => setShowPayment(true)}
           disabled={!canBind}
-          className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-3 pl-6 pr-5 py-3 rounded-xl text-white transition hover:opacity-90 disabled:cursor-not-allowed"
           style={{
             background: canBind ? BRAND_GRADIENT : '#D1D5DB',
             boxShadow: canBind ? '0 4px 14px rgba(92,46,212,0.25)' : 'none',
           }}
         >
-          Bind Policy · Charge {money(dueToday)}
+          <div className="flex flex-col items-start leading-tight">
+            <span className="text-sm font-semibold">Bind Policy</span>
+            <span className="text-[10.5px] font-medium opacity-90">
+              Authorize 2 charges · {money(totalFees)} + {money(premiumPortion)}
+            </span>
+          </div>
           <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
           </svg>
