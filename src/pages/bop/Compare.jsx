@@ -194,7 +194,7 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
               onClick={(e) => { e.stopPropagation(); onSelect(); }}
               className="px-4 py-2 rounded-lg text-xs font-bold transition shrink-0"
               style={
-                isSelected
+                (isSelected || isBest)
                   ? { background: BRAND_GRADIENT, color: '#fff' }
                   : { background: 'white', color: '#5C2ED4', border: '1.5px solid rgba(92,46,212,0.35)' }
               }
