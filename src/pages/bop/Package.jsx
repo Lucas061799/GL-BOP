@@ -172,8 +172,7 @@ export default function Package({ formData, updateFormData, onBack, onContinue }
   return (
     <div className="w-full space-y-5">
       <p className="text-sm text-gray-500 -mt-2">
-        Select a coverage tier{businessName ? <> for <span className="font-semibold text-gray-700">{businessName}</span></> : null}
-        {carrier && <> · <span className="font-semibold text-gray-700">{carrier}</span></>}
+        Select a coverage tier.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 pt-3">

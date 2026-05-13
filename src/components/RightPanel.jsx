@@ -470,12 +470,6 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                     boxShadow: '0 4px 20px rgba(92,46,212,0.10)',
                   }}
                 >
-                  <div
-                    className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider text-white"
-                    style={{ background: BRAND_GRADIENT }}
-                  >
-                    SELECTED
-                  </div>
                   {carrierLogo && <CarrierMark name={carrierName} logo={carrierLogo} size="xl" />}
                   <div className="mt-3">
                     <span

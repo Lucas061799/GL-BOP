@@ -55,25 +55,32 @@ function Toggle({ on, onClick }) {
 // Collapsible section card — clicking the header expands or collapses
 // the body. We use this for both 'Included in Gold' and 'Optional
 // Add-Ons' so the page stays short until the user opens one.
-function Collapsible({ title, badge, defaultOpen = false, children }) {
+function Collapsible({ title, badge, defaultOpen = false, children, isDark = false }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <div
       className="rounded-xl overflow-hidden transition"
       style={{
-        background: 'white',
-        border: `1px solid ${open ? 'rgba(124,58,237,0.25)' : '#E5E7EB'}`,
+        background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+        border: `1px solid ${
+          open
+            ? 'rgba(124,58,237,0.30)'
+            : (isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB')
+        }`,
         boxShadow: open ? '0 2px 8px rgba(92,46,212,0.06)' : 'none',
       }}
     >
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="w-full px-4 py-3.5 flex items-center justify-between gap-3 transition hover:bg-gray-50 text-left"
+        className="w-full px-4 py-3.5 flex items-center justify-between gap-3 transition text-left"
+        style={{ background: 'transparent' }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : '#F9FAFB' }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
         aria-expanded={open}
       >
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-sm font-bold text-gray-900">{title}</span>
+          <span className="text-sm font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{title}</span>
           {badge}
         </div>
         <svg
@@ -81,7 +88,7 @@ function Collapsible({ title, badge, defaultOpen = false, children }) {
           height="18"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="#6B7280"
+          stroke={isDark ? '#9CA3AF' : '#6B7280'}
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -92,7 +99,7 @@ function Collapsible({ title, badge, defaultOpen = false, children }) {
         </svg>
       </button>
       {open && (
-        <div className="border-t" style={{ borderColor: '#F3F4F6' }}>
+        <div className="border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6' }}>
           {children}
         </div>
       )}
@@ -101,19 +108,23 @@ function Collapsible({ title, badge, defaultOpen = false, children }) {
 }
 
 // Optional add-on row — the only items on this page that still toggle.
-function OptionalRow({ cov, on, onToggle, last }) {
+function OptionalRow({ cov, on, onToggle, last, isDark = false }) {
   return (
     <div
       className="px-4 py-3.5 transition"
       style={{
-        background: on ? 'linear-gradient(135deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)' : 'transparent',
-        borderBottom: last ? 'none' : '1px solid #F3F4F6',
+        background: on
+          ? (isDark
+              ? 'linear-gradient(135deg, rgba(92,46,212,0.14) 0%, rgba(166,20,195,0.14) 100%)'
+              : 'linear-gradient(135deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)')
+          : 'transparent',
+        borderBottom: last ? 'none' : `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
       }}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-gray-900 mb-1">{cov.name}</div>
-          <p className="text-xs text-gray-500 leading-snug">{cov.description}</p>
+          <div className="text-sm font-semibold mb-1" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{cov.name}</div>
+          <p className="text-xs leading-snug" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>{cov.description}</p>
         </div>
         <div className="shrink-0 pt-0.5">
           <Toggle on={on} onClick={onToggle} />
@@ -123,7 +134,7 @@ function OptionalRow({ cov, on, onToggle, last }) {
   )
 }
 
-export default function AddOns({ formData, updateFormData, onBack, onContinue }) {
+export default function AddOns({ formData, updateFormData, onBack, onContinue, isDark = false }) {
   const carrier   = formData.bind?.selectedCarrier || 'Coterie'
   const packageId = formData.bind?.packageId || 'gold'
   const packageName = PACKAGE_PRICES[packageId].name
@@ -185,14 +196,7 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
   return (
     <div className="w-full space-y-4">
       <p className="text-sm text-gray-500 -mt-2">
-        Customize optional coverages for{' '}
-        <span className="font-semibold text-gray-700">{carrier}</span>{' '}
-        <span
-          className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ml-1"
-          style={{ background: 'rgba(92,46,212,0.12)', color: '#5C2ED4' }}
-        >
-          {packageName} Package
-        </span>
+        Customize your optional coverages.
       </p>
 
       {/* Included with the package. 'Always' items (TRIA, Blanket AI)
@@ -201,19 +205,20 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
           opting out adds their priceImpact back onto the premium since
           the user is forfeiting the bundled discount. */}
       <Collapsible
+        isDark={isDark}
         title={`Included in your ${packageName} package`}
         badge={
           removedCount > 0 ? (
             <span
               className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(245,158,11,0.16)', color: '#B45309' }}
+              style={{ background: 'rgba(245,158,11,0.18)', color: isDark ? '#FCD34D' : '#B45309' }}
             >
               {packageItems.length - removedCount} of {packageItems.length} kept
             </span>
           ) : (
             <span
               className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(52,211,153,0.16)', color: '#059669' }}
+              style={{ background: 'rgba(92,46,212,0.14)', color: isDark ? '#C4B5FD' : '#5C2ED4' }}
             >
               {always.length + packageItems.length} included
             </span>
@@ -221,24 +226,33 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
         }
         defaultOpen={false}
       >
-        <div className="divide-y" style={{ borderColor: '#F3F4F6' }}>
+        <div className="divide-y" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6' }}>
           {/* Always-included — locked */}
           {always.map(c => (
-            <div key={c.id} className="px-4 py-3.5 flex items-start gap-3" style={{ borderColor: '#F3F4F6' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
-                <polyline points="20 6 9 17 4 12"/>
+            <div key={c.id} className="px-4 py-3.5 flex items-start gap-3" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6' }}>
+              <svg className="w-[18px] h-[18px] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24">
+                <defs>
+                  <linearGradient id={`addonsAlwaysG-${c.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stopColor="#5C2ED4"/>
+                    <stop offset="100%" stopColor="#A614C3"/>
+                  </linearGradient>
+                </defs>
+                <polyline points="20 6 9 17 4 12" stroke={`url(#addonsAlwaysG-${c.id})`} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-semibold text-gray-900">{c.name}</span>
+                  <span className="text-sm font-semibold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{c.name}</span>
                   <span
                     className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider"
-                    style={{ background: '#F3F4F6', color: '#6B7280' }}
+                    style={{
+                      background: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
+                      color: isDark ? '#D1D5DB' : '#6B7280',
+                    }}
                   >
                     Always Included
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 leading-snug mt-0.5">{c.description}</p>
+                <p className="text-xs leading-snug mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>{c.description}</p>
               </div>
             </div>
           ))}
@@ -251,8 +265,10 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
                 key={c.id}
                 className="px-4 py-3.5 flex items-start gap-3 transition"
                 style={{
-                  background: isRemoved ? 'rgba(245,158,11,0.04)' : 'transparent',
-                  borderColor: '#F3F4F6',
+                  background: isRemoved
+                    ? (isDark ? 'rgba(245,158,11,0.10)' : 'rgba(245,158,11,0.04)')
+                    : 'transparent',
+                  borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6',
                 }}
               >
                 <div className="min-w-0 flex-1">
@@ -260,7 +276,9 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
                     <span
                       className="text-sm font-semibold"
                       style={{
-                        color: isRemoved ? '#9CA3AF' : '#111827',
+                        color: isRemoved
+                          ? (isDark ? '#6B7280' : '#9CA3AF')
+                          : (isDark ? '#F9FAFB' : '#111827'),
                         textDecoration: isRemoved ? 'line-through' : 'none',
                       }}
                     >
@@ -269,20 +287,26 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
                     {!isRemoved ? (
                       <span
                         className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider"
-                        style={{ background: 'rgba(92,46,212,0.10)', color: '#5C2ED4' }}
+                        style={{
+                          background: 'rgba(92,46,212,0.14)',
+                          color: isDark ? '#C4B5FD' : '#5C2ED4',
+                        }}
                       >
                         Included in {packageName}
                       </span>
                     ) : (
                       <span
                         className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider"
-                        style={{ background: 'rgba(245,158,11,0.16)', color: '#B45309' }}
+                        style={{
+                          background: 'rgba(245,158,11,0.18)',
+                          color: isDark ? '#FCD34D' : '#B45309',
+                        }}
                       >
                         Removed · +${c.priceImpact}/yr
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 leading-snug mt-0.5">{c.description}</p>
+                  <p className="text-xs leading-snug mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>{c.description}</p>
                 </div>
                 <div className="shrink-0 pt-0.5">
                   <Toggle on={!isRemoved} onClick={() => togglePackageItem(c.id)} />
@@ -297,19 +321,23 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
           area. The badge tracks how many they've turned on so they can
           see selection state without expanding. */}
       <Collapsible
+        isDark={isDark}
         title="Optional Add-Ons"
         badge={
           selectedCount > 0 ? (
             <span
               className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(92,46,212,0.12)', color: '#5C2ED4' }}
+              style={{ background: 'rgba(92,46,212,0.14)', color: isDark ? '#C4B5FD' : '#5C2ED4' }}
             >
               {selectedCount} of {optionals.length} selected
             </span>
           ) : (
             <span
               className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={{ background: '#F3F4F6', color: '#6B7280' }}
+              style={{
+                background: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6',
+                color: isDark ? '#D1D5DB' : '#6B7280',
+              }}
             >
               {optionals.length} available
             </span>
@@ -325,6 +353,7 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
               on={selected.includes(cov.id)}
               onToggle={() => toggleOptional(cov.id)}
               last={i === optionals.length - 1}
+              isDark={isDark}
             />
           ))}
         </div>
