@@ -184,6 +184,24 @@ function PreviewModal({ formData, onClose, onConfirm }) {
             </div>
             <button
               type="button"
+              onClick={() => window.print()}
+              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
+              style={{ border: '1px solid #E5E7EB', background: 'white' }}
+              onMouseEnter={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.06)'; ev.currentTarget.style.borderColor = 'rgba(92,46,212,0.3)' }}
+              onMouseLeave={ev => { ev.currentTarget.style.background = 'white'; ev.currentTarget.style.borderColor = '#E5E7EB' }}
+              aria-label="Print summary"
+              title="Print summary"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path
+                  stroke="url(#prevHdrG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                  d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+                />
+                <rect x="6" y="14" width="12" height="8" stroke="url(#prevHdrG)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <button
+              type="button"
               onClick={onClose}
               className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
               style={{ border: '1px solid #E5E7EB', background: 'white' }}
@@ -243,7 +261,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 shrink-0 flex items-center justify-between gap-3 flex-wrap" style={{ background: 'white', borderTop: '1px solid #E5E7EB' }}>
+        <div className="px-6 py-4 shrink-0 flex items-center justify-between gap-3" style={{ background: 'white', borderTop: '1px solid #E5E7EB' }}>
           <button
             type="button"
             onClick={onClose}
@@ -252,34 +270,20 @@ function PreviewModal({ formData, onClose, onConfirm }) {
           >
             Go back to edit
           </button>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition hover:bg-gray-50"
-              style={{ color: '#5C2ED4', border: '1.5px solid rgba(92,46,212,0.35)', background: 'white' }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                <rect x="6" y="14" width="12" height="8"/>
-              </svg>
-              Print Summary
-            </button>
-            <button
-              type="button"
-              onClick={() => { onClose(); onConfirm() }}
-              className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90"
-              style={{
-                background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
-                boxShadow: '0 4px 14px rgba(92,46,212,0.25)',
-              }}
-            >
-              Confirm &amp; Get Quotes
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M13 7l5 5m0 0l-5 5m5-5H6"/>
-              </svg>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => { onClose(); onConfirm() }}
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90"
+            style={{
+              background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
+              boxShadow: '0 4px 14px rgba(92,46,212,0.25)',
+            }}
+          >
+            Confirm &amp; Get Quotes
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
