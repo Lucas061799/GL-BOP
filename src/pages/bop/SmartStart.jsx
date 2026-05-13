@@ -102,34 +102,6 @@ export default function SmartStart({ formData, updateFormData }) {
         Type a class code or describe your client's business.
       </p>
 
-      {/* Selected class banner */}
-      {selectedClass && (
-        <div
-          className="rounded-xl px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3"
-          style={{
-            background: 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
-            border: '1px solid rgba(92,46,212,0.22)',
-          }}
-        >
-          <div
-            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: BRAND_GRADIENT }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-gray-800">{selectedClass.description}</div>
-            <div className="text-xs text-gray-500 mt-0.5">
-              <span className="font-mono font-semibold" style={{ color: '#5C2ED4' }}>NAICS {selectedClass.naics}</span>
-              <span className="mx-1">·</span>
-              <span>or search below to change</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Search section — no SECTION LABEL, no empty-state box, no extra magnifying glasses */}
       <div>
         <div
@@ -163,6 +135,34 @@ export default function SmartStart({ formData, updateFormData }) {
           )}
         </div>
       </div>
+
+      {/* Selected class banner — shows below the search input as current state */}
+      {selectedClass && (
+        <div
+          className="rounded-xl px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3"
+          style={{
+            background: 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
+            border: '1px solid rgba(92,46,212,0.22)',
+          }}
+        >
+          <div
+            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+            style={{ background: BRAND_GRADIENT }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-semibold text-gray-800">{selectedClass.description}</div>
+            <div className="text-xs text-gray-500 mt-0.5">
+              <span className="font-mono font-semibold" style={{ color: '#5C2ED4' }}>NAICS {selectedClass.naics}</span>
+              <span className="mx-1">·</span>
+              <span>type above to change</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Results */}
       {query && results.length > 0 && (
