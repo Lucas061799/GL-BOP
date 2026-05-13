@@ -143,7 +143,7 @@ function SkeletonRow({ isDark = false }) {
 // Steps shown in the right rail while the user is moving through
 // the quote flow (Compare → Package → Add-Ons → Bind & Pay).
 const QUOTE_STEPS = [
-  { id: 'compare',  n: 1, label: 'Compare Quotes' },
+  { id: 'compare',  n: 1, label: 'Select Carrier' },
   { id: 'package',  n: 2, label: 'Choose Package' },
   { id: 'addons',   n: 3, label: 'Add-Ons' },
   { id: 'bind',     n: 4, label: 'Bind & Pay' },

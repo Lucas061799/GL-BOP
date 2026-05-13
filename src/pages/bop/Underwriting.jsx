@@ -183,7 +183,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">Review before quoting</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">Review Before Quoting</h2>
                 <button
                   type="button"
                   onClick={() => window.print()}

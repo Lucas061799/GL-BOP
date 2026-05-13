@@ -18,7 +18,7 @@ const STEP_LABELS = [
   'Location',
   'Coverage Limits',
   'Underwriting Questions',
-  'Compare Quotes',
+  'Select Carrier',
   'Bind & Pay',
 ]
 
@@ -912,7 +912,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
               </div>
               <div className="space-y-5">
                 {[
-                  { n: 1, label: 'Compare Quotes' },
+                  { n: 1, label: 'Select Carrier' },
                   { n: 2, label: 'Choose Package' },
                   { n: 3, label: 'Add-Ons'        },
                   { n: 4, label: 'Bind & Pay'     },
