@@ -55,9 +55,14 @@ input, select, textarea, button {
 /* Field group card backgrounds (light gray #F9FAFB → subtle dark inset)
    Slightly lighter than the white→dark mapping (#252948) so nested
    surfaces read as "raised on the card", matching the gentle light-mode
-   step from white → #F9FAFB. */
-[data-dark="true"] .bop-page div[style*="rgb(249, 250, 251)"],
-[data-dark="true"] .bop-page div[style*="#F9FAFB"] {
+   step from white → #F9FAFB.
+   IMPORTANT: scoped to "background" prefix so we don't accidentally
+   match elements that use #F9FAFB as a *text color* (e.g. the big
+   'Charged today $465' value in the BopSubmission top card). */
+[data-dark="true"] .bop-page div[style*="background: rgb(249, 250, 251)"],
+[data-dark="true"] .bop-page div[style*="background:rgb(249, 250, 251)"],
+[data-dark="true"] .bop-page div[style*="background: #F9FAFB"],
+[data-dark="true"] .bop-page div[style*="background:#F9FAFB"] {
   background: #2A2D45 !important;
   border-color: rgba(255,255,255,0.08) !important;
 }

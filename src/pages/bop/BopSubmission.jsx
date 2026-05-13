@@ -386,20 +386,24 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                   >
                     <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">{item.label}</p>
                     {item.pill ? (
-                      <span className="inline-flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#5C2ED4' }} />
-                        <p
-                          className="text-sm font-bold"
+                      <p
+                        className="text-sm font-bold flex items-center gap-1.5"
+                        style={{
+                          background: BRAND_GRADIENT,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        <span
+                          className="w-1.5 h-1.5 rounded-full shrink-0"
                           style={{
-                            background: BRAND_GRADIENT,
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
+                            background: '#5C2ED4',
+                            WebkitTextFillColor: 'initial',
                           }}
-                        >
-                          {item.value}
-                        </p>
-                      </span>
+                        />
+                        {item.value}
+                      </p>
                     ) : item.gradient ? (
                       <p
                         className="text-sm font-bold truncate"
