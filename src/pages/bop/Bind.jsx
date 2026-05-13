@@ -208,6 +208,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
   const [disclosuresOpen, setDisclosuresOpen] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
+  const [fraudOpen, setFraudOpen] = useState(false)
 
   const contact = formData.bindContact || {}
   const setContact = (id) => (val) => updateFormData('bindContact', { [id]: val })
@@ -261,38 +262,175 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
 
   return (
     <div className="w-full space-y-6">
-      <div className="grid grid-cols-1 gap-6">
-        {/* ============ TOP STACK ============ */}
-        <div className="space-y-5">
-          {/* Carrier + price */}
-          <div className="rounded-xl p-6 text-center" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-            <div className="flex items-center justify-center mb-4">
+      <div className="space-y-5">
+        {/* ============ TOP: ACKNOWLEDGMENTS ============ */}
+
+        {/* Colorado Fraud Warning — compact, collapsible */}
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{ background: 'white', border: '1px solid #E5E7EB' }}
+        >
+          <button
+            type="button"
+            onClick={() => setFraudOpen(o => !o)}
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 transition hover:bg-gray-50"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
               <span
-                className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
-                style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
+                className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(124,58,237,0.10)' }}
               >
-                {carrier}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
               </span>
+              <div className="text-left min-w-0">
+                <div className="text-[13px] font-semibold text-gray-800 truncate">Colorado Fraud Warning</div>
+                <div className="text-[11px] text-gray-400 truncate">Required state disclosure · Tap to read.</div>
+              </div>
             </div>
-            <div className="flex items-baseline justify-center gap-1 mb-3">
-              <span className="text-4xl font-bold text-gray-900">{money(annualPremium)}</span>
-              <span className="text-sm text-gray-400">/year</span>
+            <svg
+              width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className="shrink-0 transition-transform"
+              style={{ transform: fraudOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          {fraudOpen && (
+            <div className="px-4 pb-4 pt-1 border-t" style={{ borderColor: '#F3F4F6' }}>
+              <p className="text-[12px] leading-relaxed text-gray-600 pt-3">
+                It is unlawful to knowingly provide false, incomplete, or misleading facts or information to an insurance
+                company for the purpose of defrauding or attempting to defraud the company. Penalties may include
+                imprisonment, fines, denial of insurance, and civil damages. Any insurance company or agent of an
+                insurance company who knowingly provides false, incomplete, or misleading facts or information to a
+                policyholder or claimant for the purpose of defrauding or attempting to defraud the policyholder or
+                claimant with regard to a settlement or award payable from insurance proceeds shall be reported to the
+                Colorado Division of Insurance within the Department of Regulatory Agencies.
+              </p>
             </div>
-            <div className="flex items-center justify-center gap-5 text-[13px] font-semibold" style={{ color: '#5C2ED4' }}>
-              <button type="button" className="inline-flex items-center gap-1 hover:underline">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                </svg>
-                Download Proposal
-              </button>
-              <button type="button" className="inline-flex items-center gap-1 hover:underline">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-                </svg>
-                View Application Summary
-              </button>
+          )}
+        </div>
+
+        {/* Terms & Acknowledgments — compact accept-all */}
+        {(() => {
+          const acceptedCount = CONSENTS.filter(c => !!consents[c.key]).length
+          const allDone = acceptedCount === CONSENTS.length
+          const toggleAll = () => {
+            const next = !allDone
+            CONSENTS.forEach(c => setConsent(c.key, next))
+          }
+          return (
+            <div
+              className="rounded-xl overflow-hidden"
+              style={{
+                background: allDone ? 'rgba(124,58,237,0.06)' : 'white',
+                border: `1.5px solid ${allDone ? '#7C3AED' : '#E5E7EB'}`,
+                boxShadow: allDone ? '0 2px 12px rgba(92,46,212,0.10)' : 'none',
+              }}
+            >
+              <div className="flex items-stretch">
+                <button
+                  type="button"
+                  onClick={toggleAll}
+                  className="flex-1 flex items-center gap-3 px-4 py-3 transition hover:bg-gray-50 text-left min-w-0"
+                >
+                  <span
+                    className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition"
+                    style={{
+                      background: allDone ? BRAND_GRADIENT : 'white',
+                      border: `1.5px solid ${allDone ? 'transparent' : '#D1D5DB'}`,
+                    }}
+                  >
+                    {allDone && (
+                      <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
+                        <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </span>
+                  <div className="text-left min-w-0">
+                    <div className="text-[13px] font-semibold text-gray-800 truncate">
+                      {allDone
+                        ? 'All acknowledgments accepted'
+                        : `Accept all ${CONSENTS.length} acknowledgments`}
+                    </div>
+                    <div className="text-[11px] text-gray-400 truncate">
+                      {allDone
+                        ? "You're good to bind."
+                        : acceptedCount > 0
+                          ? `${acceptedCount} of ${CONSENTS.length} accepted — tap to accept the rest.`
+                          : 'Tap to accept all, or expand to review each.'}
+                    </div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTermsOpen(o => !o)}
+                  aria-label={termsOpen ? 'Hide details' : 'Show details'}
+                  className="px-3 flex items-center justify-center transition hover:bg-gray-50"
+                  style={{ borderLeft: '1px solid #F3F4F6' }}
+                >
+                  <svg
+                    width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                    className="shrink-0 transition-transform"
+                    style={{ transform: termsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                  >
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </button>
+              </div>
+              {termsOpen && (
+                <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#F3F4F6' }}>
+                  <div className="space-y-2.5">
+                    {CONSENTS.map(c => (
+                      <ConsentRow
+                        key={c.key}
+                        label={c.label}
+                        checked={!!consents[c.key]}
+                        onChange={(val) => setConsent(c.key, val)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
+          )
+        })()}
+
+        {/* ============ PRICING ============ */}
+
+        {/* Carrier + price + single proposal action */}
+        <div className="rounded-xl p-6 text-center" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+          <div className="flex items-center justify-center mb-4">
+            <span
+              className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
+              style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
+            >
+              {carrier}
+            </span>
           </div>
+          <div className="flex items-baseline justify-center gap-1 mb-3">
+            <span className="text-4xl font-bold text-gray-900">{money(annualPremium)}</span>
+            <span className="text-sm text-gray-400">/year</span>
+          </div>
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
+            style={{ color: '#5C2ED4' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="11" x2="12" y2="17"/>
+              <polyline points="9 14 12 17 15 14"/>
+            </svg>
+            Download Quote Proposal
+          </button>
+        </div>
 
           {/* Payment plan */}
           <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
@@ -426,176 +564,35 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
               <span className="text-xl font-bold text-gray-900">{money(dueToday)}</span>
             </div>
             <p className="text-[11px] italic text-gray-400 mt-2">
-              Fees and premium will appear as two separate transactions on your card.
+              These will appear as two separate charges on your card.
             </p>
+          </div>
+
+        {/* Insured Contact */}
+        <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">Insured Contact</div>
+          <div className="space-y-4">
+            <FormGrid>
+              <Input label="First Name" value={contact.firstName} onChange={setContact('firstName')} placeholder="First name" />
+              <Input label="Last Name"  value={contact.lastName}  onChange={setContact('lastName')}  placeholder="Last name" />
+            </FormGrid>
+            <Input label="Email" type="email" value={contact.email} onChange={setContact('email')} placeholder="name@company.com" />
           </div>
         </div>
 
-        {/* ============ BOTTOM STACK ============ */}
-        <div className="space-y-5">
-          {/* Fraud warning */}
-          <div
-            className="rounded-xl p-5 relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)',
-              border: '1px solid rgba(124,58,237,0.18)',
-            }}
-          >
-            <div
-              className="absolute left-0 top-0 bottom-0 w-1"
-              style={{ background: BRAND_GRADIENT }}
-            />
-            <div className="flex items-center gap-2 mb-3">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-              <span
-                className="text-[11px] font-bold uppercase tracking-wider"
-                style={{
-                  background: BRAND_GRADIENT,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                Colorado Fraud Warning
-              </span>
-            </div>
-            <p className="text-[13px] leading-relaxed text-gray-600">
-              It is unlawful to knowingly provide false, incomplete, or misleading facts or information to an insurance
-              company for the purpose of defrauding or attempting to defraud the company. Penalties may include
-              imprisonment, fines, denial of insurance, and civil damages. Any insurance company or agent of an
-              insurance company who knowingly provides false, incomplete, or misleading facts or information to a
-              policyholder or claimant for the purpose of defrauding or attempting to defraud the policyholder or
-              claimant with regard to a settlement or award payable from insurance proceeds shall be reported to the
-              Colorado Division of Insurance within the Department of Regulatory Agencies.
-            </p>
-          </div>
-
-          {/* Insured Contact */}
-          <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-            <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">Insured Contact</div>
-            <div className="space-y-4">
-              <FormGrid>
-                <Input label="First Name" value={contact.firstName} onChange={setContact('firstName')} placeholder="First name" />
-                <Input label="Last Name"  value={contact.lastName}  onChange={setContact('lastName')}  placeholder="Last name" />
-              </FormGrid>
-              <Input label="Email" type="email" value={contact.email} onChange={setContact('email')} placeholder="name@company.com" />
-            </div>
-          </div>
-
-          {/* Terms & Acknowledgments — one-tap accept all, expandable for details */}
-          {(() => {
-            const acceptedCount = CONSENTS.filter(c => !!consents[c.key]).length
-            const allDone = acceptedCount === CONSENTS.length
-            const toggleAll = () => {
-              const next = !allDone
-              CONSENTS.forEach(c => setConsent(c.key, next))
-            }
-            return (
-              <div>
-                <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-2.5">
-                  Terms &amp; Acknowledgments
-                </div>
-                <div
-                  className="rounded-xl overflow-hidden"
-                  style={{
-                    background: allDone ? 'rgba(124,58,237,0.06)' : 'white',
-                    border: `1.5px solid ${allDone ? '#7C3AED' : '#E5E7EB'}`,
-                    boxShadow: allDone ? '0 2px 12px rgba(92,46,212,0.10)' : 'none',
-                  }}
-                >
-                  <div className="flex items-stretch">
-                    {/* Primary action — one tap toggles all consents */}
-                    <button
-                      type="button"
-                      onClick={toggleAll}
-                      className="flex-1 flex items-center gap-3 px-4 py-3 transition hover:bg-gray-50 text-left min-w-0"
-                    >
-                      <span
-                        className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition"
-                        style={{
-                          background: allDone ? BRAND_GRADIENT : 'white',
-                          border: `1.5px solid ${allDone ? 'transparent' : '#D1D5DB'}`,
-                        }}
-                      >
-                        {allDone && (
-                          <svg width="11" height="11" viewBox="0 0 10 10" fill="none">
-                            <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )}
-                      </span>
-                      <div className="text-left min-w-0">
-                        <div className="text-[13px] font-semibold text-gray-800 truncate">
-                          {allDone
-                            ? 'All acknowledgments accepted'
-                            : `Accept all ${CONSENTS.length} acknowledgments`}
-                        </div>
-                        <div className="text-[11px] text-gray-400 truncate">
-                          {allDone
-                            ? "You're good to bind."
-                            : acceptedCount > 0
-                              ? `${acceptedCount} of ${CONSENTS.length} accepted — tap to accept the rest.`
-                              : 'Tap to accept all, or expand to review each.'}
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* Secondary action — expand to review individual rows */}
-                    <button
-                      type="button"
-                      onClick={() => setTermsOpen(o => !o)}
-                      aria-label={termsOpen ? 'Hide details' : 'Show details'}
-                      className="px-3 flex items-center justify-center transition hover:bg-gray-50"
-                      style={{ borderLeft: '1px solid #F3F4F6' }}
-                    >
-                      <svg
-                        width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                        className="shrink-0 transition-transform"
-                        style={{ transform: termsOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                      >
-                        <polyline points="6 9 12 15 18 9"/>
-                      </svg>
-                    </button>
-                  </div>
-
-                  {/* Expanded body — individual checkboxes */}
-                  {termsOpen && (
-                    <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#F3F4F6' }}>
-                      <div className="space-y-2.5">
-                        {CONSENTS.map(c => (
-                          <ConsentRow
-                            key={c.key}
-                            label={c.label}
-                            checked={!!consents[c.key]}
-                            onChange={(val) => setConsent(c.key, val)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })()}
-
-          {/* Footer disclaimers */}
-          <div className="space-y-2 text-[12px] text-gray-500 leading-relaxed">
-            <p>
-              Same-day bind requests must be received by 5 pm PST. We kindly ask you to review and consent to these
-              transactions before proceeding.
-            </p>
-            <p>
-              This card will be used for renewal. Contact <span style={{ color: '#5C2ED4' }}>bopbinds@btisinc.com</span> within
-              15 days to change. Pricing is subject to changes due to rate and underwriting updates.
-            </p>
-            <p>
-              Review {carrier}'s <a href="#" className="font-semibold hover:underline" style={{ color: '#5C2ED4' }}>terms &amp; conditions</a>.
-            </p>
-          </div>
+        {/* Footer disclaimers */}
+        <div className="space-y-2 text-[12px] text-gray-500 leading-relaxed">
+          <p>
+            Same-day bind requests must be received by 5 pm PST. We kindly ask you to review and consent to these
+            transactions before proceeding.
+          </p>
+          <p>
+            This card will be used for renewal. Contact <span style={{ color: '#5C2ED4' }}>bopbinds@btisinc.com</span> within
+            15 days to change. Pricing is subject to changes due to rate and underwriting updates.
+          </p>
+          <p>
+            Review {carrier}'s <a href="#" className="font-semibold hover:underline" style={{ color: '#5C2ED4' }}>terms &amp; conditions</a>.
+          </p>
         </div>
       </div>
 
