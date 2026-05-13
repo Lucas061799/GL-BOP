@@ -71,9 +71,9 @@ function CarrierMark({ name, logo, size = 'sm' }) {
   )
 }
 
-// Loading price placeholder — a $ sitting inside a spinning purple
-// arc. The static $ tells the user 'this slot is for a price' while
-// the rotating ring shows it's still being fetched.
+// Loading price placeholder — a $ sitting inside a spinning ring.
+// The arc and the $ both pick up the brand purple→magenta gradient
+// so the loader feels on-brand instead of plain purple.
 function LoadingPriceTicker() {
   return (
     <div
@@ -87,12 +87,23 @@ function LoadingPriceTicker() {
         className="absolute inset-0 animate-spin"
         style={{ animationDuration: '1.1s' }}
       >
+        <defs>
+          <linearGradient id="rpSpinG" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#5C2ED4"/>
+            <stop offset="100%" stopColor="#A614C3"/>
+          </linearGradient>
+        </defs>
         <circle cx="12" cy="12" r="10" stroke="#E5E7EB" strokeWidth="2"/>
-        <path d="M22 12a10 10 0 0 0-10-10" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M22 12a10 10 0 0 0-10-10" stroke="url(#rpSpinG)" strokeWidth="2" strokeLinecap="round"/>
       </svg>
       <span
         className="relative text-[11px] font-bold"
-        style={{ color: '#5C2ED4' }}
+        style={{
+          background: BRAND_GRADIENT,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}
       >
         $
       </span>
