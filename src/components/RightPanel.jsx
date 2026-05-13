@@ -1,4 +1,9 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import logoCoterie       from '../assets/carrier-coterie.png'
+import logoHiscox        from '../assets/carrier-hiscox.png'
+import logoCNA           from '../assets/carrier-cna.png'
+import logoGreatAmerican from '../assets/carrier-greatamerican.png'
+import logoUSLI          from '../assets/carrier-usli.png'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
@@ -22,10 +27,11 @@ function getSectionCompletion(formData) {
 }
 
 const CARRIERS = [
-  { id: 'Coterie',        name: 'Coterie',         multiplier: 1.00, color: '#1E3A8A' },
-  { id: 'Hiscox',         name: 'Hiscox',          multiplier: 1.12, color: '#DC2626' },
-  { id: 'CNA',            name: 'CNA',             multiplier: 1.34, color: '#B91C1C' },
-  { id: 'Great American', name: 'Great American',  multiplier: 1.62, color: '#991B1B' },
+  { id: 'USLI',           name: 'USLI',            multiplier: 0.91, logo: logoUSLI },
+  { id: 'Coterie',        name: 'Coterie',         multiplier: 1.00, logo: logoCoterie },
+  { id: 'Hiscox',         name: 'Hiscox',          multiplier: 1.12, logo: logoHiscox },
+  { id: 'CNA',            name: 'CNA',             multiplier: 1.34, logo: logoCNA },
+  { id: 'Great American', name: 'Great American',  multiplier: 1.62, logo: logoGreatAmerican },
 ]
 
 // Rough premium estimate from the business data the user has entered.
@@ -41,24 +47,26 @@ function estimatePremium(formData) {
 
 const money = (n) => '$' + Math.round(n).toLocaleString()
 
-// ── Carrier logos (text-based chips so we don't need to bundle image logos) ──
-function CarrierMark({ name, color, size = 'sm' }) {
-  const sizeClass = size === 'lg' ? 'w-14 h-14 text-base' : 'w-9 h-9 text-[10px]'
+// Carrier logo chip — square white tile holding the partner logo
+function CarrierMark({ name, logo, size = 'sm' }) {
+  const dim = size === 'lg' ? 64 : 40
   return (
     <div
-      className={`${sizeClass} rounded-xl flex items-center justify-center shrink-0 font-bold`}
+      className="rounded-xl flex items-center justify-center shrink-0"
       style={{
+        width: dim,
+        height: dim,
         background: 'white',
         border: '1px solid #E5E7EB',
-        color,
-        letterSpacing: '0.02em',
+        padding: size === 'lg' ? 8 : 6,
       }}
     >
-      {name === 'Great American' ? 'GAIG'
-        : name === 'Coterie'     ? 'cot.'
-        : name === 'Hiscox'      ? 'Hx'
-        : name === 'CNA'         ? 'CNA'
-        : name.slice(0, 3)}
+      <img
+        src={logo}
+        alt={name}
+        className="max-w-full max-h-full select-none pointer-events-none"
+        style={{ objectFit: 'contain' }}
+      />
     </div>
   )
 }
@@ -224,7 +232,7 @@ export default function RightPanel({ onFormReview, formData = {}, pulseUpload = 
               >
                 BEST
               </div>
-              <CarrierMark name={quotes[0].name} color={quotes[0].color} size="lg" />
+              <CarrierMark name={quotes[0].name} logo={quotes[0].logo} size="lg" />
               <div className="mt-3">
                 <span
                   className="text-3xl font-bold"
@@ -252,7 +260,7 @@ export default function RightPanel({ onFormReview, formData = {}, pulseUpload = 
                     className="rounded-xl px-3 py-3 flex items-center gap-3 transition hover:border-gray-300"
                     style={{ background: 'white', border: '1px solid #E5E7EB' }}
                   >
-                    <CarrierMark name={q.name} color={q.color} />
+                    <CarrierMark name={q.name} logo={q.logo} />
                     <div className="flex-1 min-w-0">
                       <p className="text-[11px] font-semibold text-gray-700 truncate">{q.name}</p>
                     </div>
