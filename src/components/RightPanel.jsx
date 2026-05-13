@@ -317,7 +317,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           </div>
 
           {!readyToQuote && (
-            <p className="text-[10px] text-gray-400 text-center mt-3 leading-relaxed">
+            <p className="text-[10px] text-gray-400 text-left mt-3 leading-relaxed">
               Pick a class code and enter revenue or payroll to see live quotes.
             </p>
           )}
