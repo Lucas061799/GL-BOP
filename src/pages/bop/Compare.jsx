@@ -17,7 +17,16 @@ function premiumForGl(basePremium, gl) {
 
 const SAMPLE_QUOTES = [
   { carrier: 'Coterie',        premium: 1248, glLimit: 1000000, deductible: 500,   bppLimit: 25000, fees: { service: 75, tax: 38, stamping: 12 }, status: 'Quoted' },
-  { carrier: 'Hiscox',         premium: 1392, glLimit: 1000000, deductible: 1000,  bppLimit: 25000, fees: { service: 75, tax: 42, stamping: 12 }, status: 'Quoted' },
+  {
+    carrier: 'Hiscox',
+    status: 'Declined',
+    reason: "Hiscox isn't currently quoting this risk profile.",
+    factors: [
+      'Class code 423620 is outside their current appetite',
+      'Annual revenue above the preferred band for this state',
+      'Colorado is not a preferred state for this product mix',
+    ],
+  },
   { carrier: 'CNA',            premium: 1518, glLimit: 1000000, deductible: 1000,  bppLimit: 25000, fees: { service: 75, tax: 46, stamping: 12 }, status: 'Quoted' },
   { carrier: 'Great American', premium: 0,    status: 'Referred', reason: 'Underwriter review required' },
 ]
@@ -60,14 +69,16 @@ function BrandText({ children, className = '' }) {
 
 function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendingGl, onGlChange, onRequote, requoting }) {
   const isReferred = q.status === 'Referred'
-  const totalCost = isReferred ? null : q.premium + (q.fees?.service ?? 0) + (q.fees?.tax ?? 0) + (q.fees?.stamping ?? 0)
-  const glChanged = !isReferred && pendingGl !== undefined && pendingGl !== q.glLimit
+  const isDeclined = q.status === 'Declined'
+  const isQuoted   = !isReferred && !isDeclined
+  const totalCost  = isQuoted ? q.premium + (q.fees?.service ?? 0) + (q.fees?.tax ?? 0) + (q.fees?.stamping ?? 0) : null
+  const glChanged  = isQuoted && pendingGl !== undefined && pendingGl !== q.glLimit
 
   return (
     <div
       className="rounded-lg transition overflow-hidden"
       style={{
-        background: 'white',
+        background: isDeclined ? '#FAFAFB' : 'white',
         border: `1.5px solid ${isBest ? '#7C3AED' : '#E5E7EB'}`,
         boxShadow: isBest ? '0 2px 12px rgba(92,46,212,0.12)' : 'none',
       }}
@@ -76,8 +87,16 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
         {/* Row 1 — Carrier + pills + chevron */}
         <div className="flex items-center justify-between gap-3 mb-2.5">
           <div className="flex items-center gap-2 min-w-0 flex-wrap">
-            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: BRAND_GRADIENT }} />
-            <span className="text-sm font-semibold text-gray-800 truncate">{q.carrier}</span>
+            <span
+              className="w-2.5 h-2.5 rounded-full shrink-0"
+              style={{ background: isDeclined ? '#D1D5DB' : BRAND_GRADIENT }}
+            />
+            <span
+              className="text-sm font-semibold truncate"
+              style={{ color: isDeclined ? '#6B7280' : '#1F2937' }}
+            >
+              {q.carrier}
+            </span>
             {isBest && (
               <span
                 className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white whitespace-nowrap"
@@ -94,8 +113,16 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
                 UW Review
               </span>
             )}
+            {isDeclined && (
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap"
+                style={{ background: 'rgba(156,163,175,0.18)', color: '#6B7280', border: '1px solid rgba(156,163,175,0.35)' }}
+              >
+                Not a fit
+              </span>
+            )}
           </div>
-          {!isReferred && (
+          {(isQuoted || isDeclined) && (
             <svg
               width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
               className="shrink-0"
@@ -106,11 +133,20 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
           )}
         </div>
 
-        {/* Row 2 — Price (or referral note) + Select button */}
+        {/* Row 2 — Price (or referral / decline note) + action button */}
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          {isReferred ? (
+          {isReferred && (
             <span className="text-xs text-gray-500 flex-1 min-w-0">{q.reason}</span>
-          ) : (
+          )}
+          {isDeclined && (
+            <span className="text-xs flex-1 min-w-0" style={{ color: '#6B7280' }}>
+              {q.carrier} isn't quoting this risk today.
+              <span style={{ color: '#5C2ED4' }} className="font-semibold ml-1">
+                {expanded ? 'Hide details' : 'See why →'}
+              </span>
+            </span>
+          )}
+          {isQuoted && (
             <div>
               <div className="flex items-baseline gap-1">
                 <span className="text-xl font-bold text-gray-800">{money(q.premium)}</span>
@@ -122,22 +158,82 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onSelect(); }}
-            className="px-4 py-2 rounded-lg text-xs font-bold transition shrink-0"
-            style={
-              (isBest || isSelected || isReferred)
-                ? { background: BRAND_GRADIENT, color: '#fff' }
-                : { background: 'white', color: '#5C2ED4', border: '1.5px solid rgba(92,46,212,0.35)' }
-            }
-          >
-            {isReferred ? 'Submit for Review' : isSelected ? '✓ Selected' : isBest ? 'Select Best' : 'Select'}
-          </button>
+          {!isDeclined && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onSelect(); }}
+              className="px-4 py-2 rounded-lg text-xs font-bold transition shrink-0"
+              style={
+                (isBest || isSelected || isReferred)
+                  ? { background: BRAND_GRADIENT, color: '#fff' }
+                  : { background: 'white', color: '#5C2ED4', border: '1.5px solid rgba(92,46,212,0.35)' }
+              }
+            >
+              {isReferred ? 'Submit for Review' : isSelected ? '✓ Selected' : isBest ? 'Select Best' : 'Select'}
+            </button>
+          )}
         </div>
       </div>
 
-      {expanded && !isReferred && (
+      {/* Declined — expandable "Why" panel */}
+      {expanded && isDeclined && (
+        <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#EAEAEA' }}>
+          <div className="rounded-xl p-4" style={{ background: 'white', border: '1px solid #EAEAEA' }}>
+            <div className="flex items-start gap-3 mb-3">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(124,58,237,0.08)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="16" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-gray-800 leading-snug">
+                  Why {q.carrier} didn't quote
+                </p>
+                <p className="text-[11px] text-gray-500 leading-relaxed mt-0.5">
+                  Knowing this carrier's appetite helps you place future clients faster. Use these signals to pre-screen your next submission.
+                </p>
+              </div>
+            </div>
+
+            {q.reason && (
+              <p className="text-[12px] text-gray-700 mb-3">{q.reason}</p>
+            )}
+
+            {Array.isArray(q.factors) && q.factors.length > 0 && (
+              <>
+                <div className="text-[10px] font-bold uppercase tracking-[0.1em] text-gray-400 mb-2">Contributing factors</div>
+                <ul className="space-y-1.5">
+                  {q.factors.map(f => (
+                    <li key={f} className="flex items-start gap-2 text-[12px] text-gray-700 leading-snug">
+                      <span className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5" style={{ background: '#9CA3AF' }} />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            <div className="border-t mt-4 pt-3 flex items-center justify-between" style={{ borderColor: '#F3F4F6' }}>
+              <span className="text-[11px] text-gray-400">Have questions about {q.carrier}'s appetite?</span>
+              <a
+                href="#"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[11px] font-semibold hover:underline"
+                style={{ color: '#5C2ED4' }}
+              >
+                Contact underwriting →
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {expanded && isQuoted && (
         <div className="px-4 pb-4 pt-3 border-t" style={{ borderColor: '#F3F4F6' }}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Fee breakdown */}
@@ -265,10 +361,12 @@ export default function Compare({ formData, updateFormData, quotesReady, onGoToS
   }
 
   const quoted = quotes.filter(q => q.status === 'Quoted')
+  // Order: quoted (cheapest first) → declined ("not a fit") → referred (needs UW)
+  const rank = (q) => q.status === 'Referred' ? 2 : q.status === 'Declined' ? 1 : 0
   const sorted = [...quotes].sort((a, b) => {
-    if (a.status === 'Referred') return 1
-    if (b.status === 'Referred') return -1
-    return a.premium - b.premium
+    const r = rank(a) - rank(b)
+    if (r !== 0) return r
+    return (a.premium || 0) - (b.premium || 0)
   })
   const bestPremium = quoted.length > 0 ? Math.min(...quoted.map(q => q.premium)) : 0
 
