@@ -508,12 +508,12 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                 </div>
               )}
 
-              {/* Steps — soft-tinted gradient circles for every state
-                  (matches the success-header chip style on the
-                  submission page). Done shows a gradient check; current
-                  and upcoming show the step number in gradient text;
-                  current adds a soft focus ring + bold label so it
-                  stands apart without going to a heavier filled circle. */}
+              {/* Steps — same numbered-circle pattern as the
+                  'What's Next?' block on the submission page. Soft
+                  tinted (rgba 0.25) circle with the step number in
+                  brand-gradient text. State is conveyed by label
+                  weight/color and a soft focus ring on the current
+                  step, not by swapping the circle visual. */}
               <div className="mb-6">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-4 pl-0.5">
                   Where you are
@@ -522,40 +522,26 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   {QUOTE_STEPS.map((step, idx) => {
                     const isCurrent = idx === currentIdx
                     const isDone    = idx < currentIdx
-                    const gradId    = `rpStepCheck-${step.id}`
-
                     return (
                       <div key={step.id} className="flex items-center gap-4">
                         <span
                           className="w-9 h-9 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
                           style={{
-                            background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+                            background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)',
                             ...(isCurrent ? { boxShadow: '0 0 0 3px rgba(124,58,237,0.14)' } : {}),
-                            opacity: !isCurrent && !isDone ? 0.6 : 1,
+                            opacity: !isCurrent && !isDone ? 0.55 : 1,
                           }}
                         >
-                          {isDone ? (
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24">
-                              <defs>
-                                <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
-                                  <stop offset="0%"   stopColor="#5C2ED4"/>
-                                  <stop offset="100%" stopColor="#A614C3"/>
-                                </linearGradient>
-                              </defs>
-                              <path d="M5 13l4 4L19 7" stroke={`url(#${gradId})`} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                          ) : (
-                            <span
-                              style={{
-                                background: BRAND_GRADIENT,
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                backgroundClip: 'text',
-                              }}
-                            >
-                              {step.n}
-                            </span>
-                          )}
+                          <span
+                            style={{
+                              background: BRAND_GRADIENT,
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              backgroundClip: 'text',
+                            }}
+                          >
+                            {step.n}
+                          </span>
                         </span>
                         <span
                           className="text-sm leading-tight"

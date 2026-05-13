@@ -903,35 +903,35 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
             {/* Divider */}
             <div className="mb-5" style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
 
-            {/* Where you are — every step is done by the time the user
-                lands on this page. Same soft-tinted circle look we use
-                on the in-flow right rail so the visual treatment is
-                consistent across surfaces. */}
+            {/* Where you are — same numbered-circle pattern as the
+                'What's Next?' block on this page. Soft tinted circle
+                with the step number in brand-gradient text. */}
             <div className="mb-6">
               <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-4 pl-0.5">
                 Where you are
               </div>
               <div className="space-y-5">
                 {[
-                  { id: 'compare', label: 'Compare Quotes'   },
-                  { id: 'package', label: 'Choose Package'   },
-                  { id: 'addons',  label: 'Add-Ons'          },
-                  { id: 'bind',    label: 'Bind & Pay'       },
+                  { n: 1, label: 'Compare Quotes' },
+                  { n: 2, label: 'Choose Package' },
+                  { n: 3, label: 'Add-Ons'        },
+                  { n: 4, label: 'Bind & Pay'     },
                 ].map(step => (
-                  <div key={step.id} className="flex items-center gap-4">
+                  <div key={step.n} className="flex items-center gap-4">
                     <span
-                      className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
-                      style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
+                      className="w-9 h-9 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
+                      style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)' }}
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24">
-                        <defs>
-                          <linearGradient id={`bopSubStepG-${step.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%"   stopColor={isDark ? '#A78BFA' : '#5C2ED4'}/>
-                            <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
-                          </linearGradient>
-                        </defs>
-                        <path d="M5 13l4 4L19 7" stroke={`url(#bopSubStepG-${step.id})`} strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <span
+                        style={{
+                          background: BRAND_GRADIENT,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        {step.n}
+                      </span>
                     </span>
                     <span
                       className="text-sm leading-tight"
