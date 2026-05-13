@@ -278,83 +278,151 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
         <main className="flex-1 overflow-y-auto custom-scroll bop-page" style={{ background: isDark ? '#131629' : '#FAFAFB' }}>
           <div className="max-w-5xl 2xl:max-w-6xl mx-auto px-4 md:px-10 py-6 md:py-8 space-y-5">
 
-            {/* Title header */}
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-4 flex-1 min-w-0">
-                <img src={isDark ? btisLogoDark : btisLogo} alt="btis" className="h-9 shrink-0" />
-                <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-gray-900 leading-tight">
-                    General Liability Application Summary
-                  </h1>
-                  <div className="flex items-center gap-3 mt-1 flex-wrap">
-                    <span
-                      className="text-sm font-bold"
-                      style={{
-                        background: BRAND_GRADIENT,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}
-                    >
-                      {quoteId}
-                    </span>
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-                      style={{ background: 'rgba(124,58,237,0.08)', color: '#5C2ED4' }}
-                    >
-                      Quoted
-                    </span>
-                    <span className="text-xs text-gray-400">Generated {generatedAt}</span>
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => window.print()}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition hover:opacity-95"
-                style={{
-                  background: BRAND_GRADIENT,
-                  boxShadow: '0 4px 14px rgba(92,46,212,0.25)',
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-                  <rect x="6" y="14" width="12" height="8"/>
-                </svg>
-                Print / Download PDF
-              </button>
-            </div>
+            {/* Submission Complete card — mirrors Commercial Auto */}
+            <div
+              className="rounded-2xl overflow-hidden"
+              style={{
+                background: isDark ? '#1A1E38' : 'white',
+                border: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid #F3F4F6',
+              }}
+            >
+              {/* Gradient top accent bar */}
+              <div className="h-1" style={{ background: BRAND_GRADIENT }} />
 
-            {/* Bound summary banner */}
-            {carrier && (
-              <div
-                className="rounded-xl p-5 flex items-center gap-4 flex-wrap"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
-                  border: '1px solid rgba(124,58,237,0.22)',
-                }}
-              >
+              {/* Header row */}
+              <div className="flex items-start gap-4 px-6 pt-5 pb-4">
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: BRAND_GRADIENT }}
+                  style={{
+                    background: isDark
+                      ? 'linear-gradient(88.09deg, rgba(92,46,212,0.45) 0%, rgba(166,20,195,0.45) 100%)'
+                      : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+                  }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <defs>
+                      <linearGradient id="bopSubCheckG" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor={isDark ? '#A78BFA' : '#5C2ED4'}/>
+                        <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
+                      </linearGradient>
+                    </defs>
+                    <path d="M5 13l4 4L19 7" stroke="url(#bopSubCheckG)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-gray-900">Policy bound with {carrier}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {packageId ? <>Package: <span className="font-semibold capitalize">{packageId}</span> · </> : null}
-                    Annual premium {money(premium)} · Fees {money(totalFees)}
+                  <h1 className="text-xl font-bold mb-1" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                    General Liability Application Summary
+                  </h1>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    {carrier
+                      ? <>Your policy with <span className="font-semibold">{carrier}</span> is bound. A receipt and policy documents will arrive by email shortly.</>
+                      : 'Your application has been received and is being processed.'
+                    }
                   </p>
                 </div>
-                <div className="text-right">
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charged today</div>
-                  <div className="text-xl font-bold text-gray-900">{money(dueToday)}</div>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  title="Print / Save as PDF"
+                  className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all"
+                  style={{
+                    border: isDark ? '1px solid rgba(255,255,255,0.1)' : '1px solid #E5E7EB',
+                    background: isDark ? 'rgba(255,255,255,0.05)' : 'white',
+                  }}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <defs>
+                      <linearGradient id="bopSubPrintG" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor={isDark ? '#A78BFA' : '#5C2ED4'}/>
+                        <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
+                      </linearGradient>
+                    </defs>
+                    <path stroke="url(#bopSubPrintG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                  </svg>
+                </button>
               </div>
-            )}
+
+              {/* Info row — Quote ID · Date · Status */}
+              <div
+                className="grid grid-cols-3"
+                style={{
+                  borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
+                }}
+              >
+                {[
+                  { label: 'Quote Number',  value: quoteId,        gradient: true },
+                  { label: 'Generated',     value: generatedAt },
+                  { label: 'Status',        value: 'Quoted',       pill: true },
+                ].map((item, i) => (
+                  <div
+                    key={item.label}
+                    className="px-5 py-4"
+                    style={{ borderLeft: i === 0 ? 'none' : `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}` }}
+                  >
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">{item.label}</p>
+                    {item.pill ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#5C2ED4' }} />
+                        <p
+                          className="text-sm font-bold"
+                          style={{
+                            background: BRAND_GRADIENT,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                          }}
+                        >
+                          {item.value}
+                        </p>
+                      </span>
+                    ) : item.gradient ? (
+                      <p
+                        className="text-sm font-bold truncate"
+                        style={{
+                          background: BRAND_GRADIENT,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        {item.value}
+                      </p>
+                    ) : (
+                      <p className="text-sm font-semibold truncate" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                        {item.value}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Bound summary footer — Carrier · Package · Charged today */}
+              {carrier && (
+                <div
+                  className="flex items-center gap-4 flex-wrap px-6 py-4"
+                  style={{
+                    background: isDark
+                      ? 'rgba(92,46,212,0.10)'
+                      : 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)',
+                    borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
+                  }}
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                      Policy bound with {carrier}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      {packageId ? <>Package: <span className="font-semibold capitalize">{packageId}</span> · </> : null}
+                      Annual premium {money(premium)} · Fees {money(totalFees)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charged today</div>
+                    <div className="text-xl font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{money(dueToday)}</div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Business details */}
             <SectionCard title="Business Details" icon={ICONS.briefcase}>
