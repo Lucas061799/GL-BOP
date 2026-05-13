@@ -106,14 +106,13 @@ function SkeletonRow({ isDark = false }) {
         .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
         .rp-dollar-shimmer {
-          background: linear-gradient(90deg, #E5E7EB 0%, #6B7280 50%, #E5E7EB 100%);
-          background-size: 200% 100%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: rpDollarShimmer 1.4s linear infinite;
+          color: #E5E7EB;
+          animation: rpDollarShimmer 1.6s ease-in-out infinite;
         }
-        @keyframes rpDollarShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        @keyframes rpDollarShimmer {
+          0%, 100% { color: #E5E7EB }  /* very light gray */
+          50%      { color: #9CA3AF }  /* gray */
+        }
       `}</style>
     </div>
   )
