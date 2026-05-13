@@ -106,6 +106,31 @@ export default function SmartStart({ formData, updateFormData }) {
 
   return (
     <div className="w-full space-y-6">
+      {/* Strip every browser-applied fill from the search input —
+          Chrome paints autofill chips with a yellow/blue background
+          even when bg-transparent is set, and the typed text color
+          needs to flip in dark mode. */}
+      <style>{`
+        .ss-search-input { color: #1F2937; }
+        [data-dark="true"] .ss-search-input { color: #F9FAFB; }
+        .ss-search-input:-webkit-autofill,
+        .ss-search-input:-webkit-autofill:hover,
+        .ss-search-input:-webkit-autofill:focus,
+        .ss-search-input:-webkit-autofill:active {
+          -webkit-box-shadow: inset 0 0 0 1000px transparent !important;
+          -webkit-text-fill-color: #1F2937 !important;
+          caret-color: #1F2937 !important;
+          transition: background-color 9999s ease-in-out 0s;
+        }
+        [data-dark="true"] .ss-search-input:-webkit-autofill,
+        [data-dark="true"] .ss-search-input:-webkit-autofill:hover,
+        [data-dark="true"] .ss-search-input:-webkit-autofill:focus,
+        [data-dark="true"] .ss-search-input:-webkit-autofill:active {
+          -webkit-text-fill-color: #F9FAFB !important;
+          caret-color: #F9FAFB !important;
+        }
+      `}</style>
+
       {/* Subtitle */}
       <p className="text-sm text-gray-500 -mt-2">
         Type a class code or describe your client's business.
@@ -135,7 +160,12 @@ export default function SmartStart({ formData, updateFormData }) {
               }
             }}
             placeholder="Search by class code or business type (e.g. 722511 or restaurant)"
-            className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
+            // autoComplete=off + the inline -webkit-box-shadow trick
+            // keeps Chrome from painting a yellow/blue autofill fill
+            // over our transparent input.
+            autoComplete="off"
+            spellCheck={false}
+            className="ss-search-input flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
             autoFocus
           />
           {query && (
