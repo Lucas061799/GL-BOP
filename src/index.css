@@ -52,11 +52,21 @@ input, select, textarea, button {
 }
 
 /* ── BOP pages: dark mode overrides ────────────────────────────── */
-/* Field group card backgrounds (light gray #F9FAFB → dark panel) */
+/* Field group card backgrounds (light gray #F9FAFB → subtle dark inset)
+   Slightly lighter than the white→dark mapping (#252948) so nested
+   surfaces read as "raised on the card", matching the gentle light-mode
+   step from white → #F9FAFB. */
 [data-dark="true"] .bop-page div[style*="rgb(249, 250, 251)"],
 [data-dark="true"] .bop-page div[style*="#F9FAFB"] {
-  background: #1E2138 !important;
-  border-color: #2A2D45 !important;
+  background: #2A2D45 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+/* Disabled buttons (#D1D5DB gray-300) — light grey blob on dark bg
+   reads as a focus-magnet. Mute it to a translucent surface instead. */
+[data-dark="true"] .bop-page button[style*="rgb(209, 213, 219)"],
+[data-dark="true"] .bop-page button[style*="#D1D5DB"] {
+  background: rgba(255,255,255,0.06) !important;
+  color: rgba(255,255,255,0.35) !important;
 }
 /* Inner white cards in BOP (e.g. coverage rows, premium card) → dark.
    Multiple variants because browsers serialize style="background: white"
