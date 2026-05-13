@@ -117,11 +117,18 @@ const ICONS = {
 // =============================================================================
 export default function BopSubmission({ formData, summary, onBack, isDark = false, onToggleDark }) {
   const [showConfetti, setShowConfetti] = useState(true)
+  const [summaryOpen, setSummaryOpen] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setShowConfetti(false), 4500)
     return () => clearTimeout(t)
   }, [])
+
+  // Match Commercial Auto: open the summary panel then trigger the browser print.
+  const handlePrint = () => {
+    setSummaryOpen(true)
+    setTimeout(() => window.print(), 150)
+  }
 
   // Stable quote id for the session
   const quoteId = useMemo(() => 'SGL' + Math.floor(20000000 + Math.random() * 80000000), [])
@@ -326,7 +333,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                 </div>
                 <button
                   type="button"
-                  onClick={() => window.print()}
+                  onClick={handlePrint}
                   title="Print / Save as PDF"
                   className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all"
                   style={{
@@ -423,6 +430,128 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                   <div className="text-right">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charged today</div>
                     <div className="text-xl font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{money(dueToday)}</div>
+                  </div>
+                </div>
+              )}
+
+              {/* Expandable: Print & View Full Submission */}
+              <button
+                onClick={() => setSummaryOpen(o => !o)}
+                className="w-full flex items-center justify-between px-6 py-3.5 border-t transition-all"
+                style={{
+                  borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6',
+                  background: summaryOpen
+                    ? isDark ? 'rgba(92,46,212,0.18)' : 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)'
+                    : isDark ? 'rgba(92,46,212,0.08)' : 'linear-gradient(88.09deg, rgba(92,46,212,0.03) 0%, rgba(166,20,195,0.03) 100%)',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = isDark ? 'rgba(92,46,212,0.22)' : 'linear-gradient(88.09deg, rgba(92,46,212,0.08) 0%, rgba(166,20,195,0.08) 100%)'}
+                onMouseLeave={e => e.currentTarget.style.background = summaryOpen
+                  ? isDark ? 'rgba(92,46,212,0.18)' : 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)'
+                  : isDark ? 'rgba(92,46,212,0.08)' : 'linear-gradient(88.09deg, rgba(92,46,212,0.03) 0%, rgba(166,20,195,0.03) 100%)'}
+              >
+                <span className="flex items-center gap-2">
+                  <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24">
+                    <defs>
+                      <linearGradient id="bopSubExpandG" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor={isDark ? '#A78BFA' : '#5C2ED4'}/>
+                        <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
+                      </linearGradient>
+                    </defs>
+                    <path stroke="url(#bopSubExpandG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                  </svg>
+                  <span
+                    className="text-xs font-semibold"
+                    style={{
+                      background: BRAND_GRADIENT,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    Print &amp; View Full Submission
+                  </span>
+                </span>
+                <svg
+                  className="w-4 h-4 shrink-0 transition-transform"
+                  fill="none" viewBox="0 0 24 24"
+                  style={{ transform: summaryOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                >
+                  <path stroke="url(#bopSubExpandG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+
+              {summaryOpen && (
+                <div
+                  id="bop-submission-print-area"
+                  className="px-6 pb-6 pt-4"
+                  style={{ borderTop: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid #F3F4F6' }}
+                >
+                  {/* Section grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 mb-3">
+
+                    {/* Business Details */}
+                    <SectionCard title="Business Details" icon={ICONS.briefcase}>
+                      <Field label="Business Name"      value={business.name} />
+                      <Field label="Entity Type"        value={business.entityType} />
+                      <Field label="Year Established"   value={business.yearEstablished} />
+                      <Field label="Annual Revenue"     value={business.annualRevenue ? '$' + Number(business.annualRevenue).toLocaleString() : null} />
+                      <Field label="Annual Payroll"     value={business.annualPayroll ? '$' + Number(business.annualPayroll).toLocaleString() : null} />
+                      <Field label="Full-Time Employees" value={business.numberOfEmployees} />
+                      <Field label="Part-Time Employees" value={business.partTimeEmployees || 0} />
+                      <Field label="Phone"              value={business.phone} />
+                      <Field label="Email"              value={business.email} />
+                      <Field
+                        full
+                        label="Class Code"
+                        value={cls.classId ? `${cls.classId} — ${cls.description}` : null}
+                      />
+                    </SectionCard>
+
+                    {/* Location */}
+                    <SectionCard title="Location & Premises" icon={ICONS.pin}>
+                      <Field
+                        full
+                        label="Address"
+                        value={[location.address, location.city, location.state, location.zip].filter(Boolean).join(', ')}
+                      />
+                      <Field label="Premises Type"     value={location.locationType} />
+                      <Field label="Square Feet"       value={location.squareFeet ? Number(location.squareFeet).toLocaleString() + ' sq ft' : null} />
+                    </SectionCard>
+
+                    {/* Coverage */}
+                    <SectionCard title="Coverage Selection" icon={ICONS.shield}>
+                      <Field label="GL Each Occurrence"   value={coverage.eachOccurrence || coverage.glLimit} />
+                      <Field label="GL Aggregate"         value={coverage.aggregate} />
+                      <Field label="Products / Completed" value={coverage.productsAggregate} />
+                      <Field label="Personal Injury"      value={coverage.personalInjury} />
+                      <Field label="Deductible"           value={coverage.deductible} />
+                      <Field label="Effective Date"       value={business.effectiveDate} />
+                    </SectionCard>
+
+                    {/* Bind & Payment */}
+                    <SectionCard title="Bind & Payment" icon={ICONS.card}>
+                      <Field label="Selected Carrier" value={carrier} />
+                      <Field label="Coverage Tier"    value={packageId ? packageId.charAt(0).toUpperCase() + packageId.slice(1) : null} />
+                      <Field label="Annual Premium"   value={money(premium)} />
+                      <Field label="Total Fees"       value={money(totalFees)} />
+                      <Field label="Insured Contact"  value={[contact.firstName, contact.lastName].filter(Boolean).join(' ')} />
+                      <Field label="Contact Email"    value={contact.email} />
+                    </SectionCard>
+
+                  </div>
+
+                  {/* Print button — screen only */}
+                  <div className="screen-only">
+                    <button
+                      onClick={handlePrint}
+                      className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-bold text-white transition hover:opacity-90"
+                      style={{ background: BRAND_GRADIENT }}
+                    >
+                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}>
+                        <path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                      </svg>
+                      Print / Save as PDF
+                    </button>
                   </div>
                 </div>
               )}
