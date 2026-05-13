@@ -506,13 +506,12 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                 </div>
               )}
 
-              {/* Steps — vertical stepper. Done = filled gradient with a
-                  check, Current = white pill with a gradient ring and
-                  gradient number, Upcoming = plain gray-outline dot. The
-                  connector line between two dots picks up the gradient
-                  for segments we've already completed. */}
-              <div className="mb-5">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-3 pl-0.5">
+              {/* Steps — minimal vertical stepper. Small dots, thin
+                  connector, generous whitespace. No status pill — the
+                  filled gradient dot and bold label already make the
+                  current step obvious. */}
+              <div className="mb-6">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-4 pl-0.5">
                   Where you are
                 </div>
                 <div className="relative">
@@ -520,118 +519,71 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                     const isCurrent = idx === currentIdx
                     const isDone    = idx < currentIdx
                     const isLast    = idx === QUOTE_STEPS.length - 1
-                    // Connector below this row is active when this step
-                    // itself is done — i.e. we've reached the next one.
                     const connectorActive = isDone
 
                     return (
                       <div
                         key={step.id}
-                        className="relative flex items-center gap-3"
-                        style={{ minHeight: 44, paddingBottom: isLast ? 0 : 14 }}
+                        className="relative flex items-center gap-3.5"
+                        style={{ paddingBottom: isLast ? 0 : 20 }}
                       >
-                        {/* Connector to the next step */}
+                        {/* Thin connector line between this dot and the next */}
                         {!isLast && (
                           <div
                             className="absolute"
                             style={{
-                              left: 14,
-                              top: 30,
-                              bottom: -2,
-                              width: 2,
-                              borderRadius: 1,
+                              left: 9.25,
+                              top: 20,
+                              bottom: 0,
+                              width: 1.5,
                               background: connectorActive
                                 ? BRAND_GRADIENT
-                                : (isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB'),
+                                : (isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'),
                             }}
                           />
                         )}
 
-                        {/* Circle */}
-                        {isDone ? (
-                          <span
-                            className="relative z-[1] w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0"
-                            style={{
-                              background: BRAND_GRADIENT,
-                              color: 'white',
-                              boxShadow: '0 2px 8px rgba(92,46,212,0.20)',
-                            }}
-                          >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        {/* Dot */}
+                        <span
+                          className="relative z-[1] w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                          style={
+                            isDone
+                              ? { background: BRAND_GRADIENT }
+                              : isCurrent
+                                ? {
+                                    background: BRAND_GRADIENT,
+                                    boxShadow: `0 0 0 4px ${isDark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.12)'}`,
+                                  }
+                                : {
+                                    background: isDark ? '#191D35' : 'white',
+                                    border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.14)' : '#D1D5DB'}`,
+                                  }
+                          }
+                        >
+                          {isDone && (
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="20 6 9 17 4 12"/>
                             </svg>
-                          </span>
-                        ) : isCurrent ? (
-                          // Gradient-ringed white circle with gradient
-                          // number text — sandwiched gradient/white
-                          // backgrounds give a clean ring without a fake
-                          // border color.
-                          <span
-                            className="relative z-[1] w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0"
-                            style={{
-                              padding: 2,
-                              background: BRAND_GRADIENT,
-                              boxShadow: '0 0 0 4px rgba(124,58,237,0.10)',
-                            }}
-                          >
-                            <span
-                              className="w-full h-full rounded-full flex items-center justify-center text-[11px] font-bold"
-                              style={{ background: isDark ? '#191D35' : 'white' }}
-                            >
-                              <span
-                                style={{
-                                  background: BRAND_GRADIENT,
-                                  WebkitBackgroundClip: 'text',
-                                  WebkitTextFillColor: 'transparent',
-                                  backgroundClip: 'text',
-                                }}
-                              >
-                                {step.n}
-                              </span>
-                            </span>
-                          </span>
-                        ) : (
-                          <span
-                            className="relative z-[1] w-[30px] h-[30px] rounded-full flex items-center justify-center shrink-0 text-[11px] font-bold"
-                            style={{
-                              background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
-                              border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.12)' : '#E5E7EB'}`,
-                              color: '#9CA3AF',
-                            }}
-                          >
-                            {step.n}
-                          </span>
-                        )}
+                          )}
+                          {isCurrent && (
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'white' }} />
+                          )}
+                        </span>
 
                         {/* Label */}
-                        <div className="min-w-0 flex-1">
-                          <div
-                            className="text-[13px] leading-tight"
-                            style={{
-                              fontWeight: isCurrent ? 700 : isDone ? 600 : 500,
-                              color: isCurrent
-                                ? (isDark ? '#F9FAFB' : '#111827')
-                                : isDone
-                                  ? (isDark ? '#D1D5DB' : '#4B5563')
-                                  : '#9CA3AF',
-                            }}
-                          >
-                            {step.label}
-                          </div>
-                        </div>
-
-                        {/* Right-side "In progress" pill for the current step */}
-                        {isCurrent && (
-                          <span
-                            className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shrink-0"
-                            style={{
-                              background: 'linear-gradient(88.09deg, rgba(92,46,212,0.10) 0%, rgba(166,20,195,0.10) 100%)',
-                              color: '#5C2ED4',
-                            }}
-                          >
-                            In Progress
-                          </span>
-                        )}
+                        <span
+                          className="text-[13px] leading-tight"
+                          style={{
+                            fontWeight: isCurrent ? 700 : isDone ? 500 : 500,
+                            color: isCurrent
+                              ? (isDark ? '#F9FAFB' : '#111827')
+                              : isDone
+                                ? (isDark ? '#D1D5DB' : '#4B5563')
+                                : '#9CA3AF',
+                          }}
+                        >
+                          {step.label}
+                        </span>
                       </div>
                     )
                   })}
