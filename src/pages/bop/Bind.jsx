@@ -538,7 +538,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 >
                   Charge 1
                 </span>
-                <span className="text-[11px] text-gray-400">Policy fees</span>
+                <span className="text-[11px] text-gray-400">Policy Fees</span>
               </div>
               <FieldRow label="BTIS Service Fee" value={money(btisServiceFee)} />
               {brokerFeeNum > 0 && <FieldRow label="Broker Fee" value={money(brokerFeeNum)} />}
@@ -770,7 +770,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="min-w-0">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charge 1</div>
-                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Policy fees</div>
+                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Policy Fees</div>
                   </div>
                   <div className="text-lg font-bold text-gray-900">{money(totalFees)}</div>
                 </div>
@@ -778,7 +778,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="min-w-0">
                     <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charge 2</div>
-                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Annual premium</div>
+                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Annual Premium</div>
                   </div>
                   <div className="text-lg font-bold text-gray-900">{money(premiumPortion)}</div>
                 </div>
@@ -787,7 +787,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                   className="flex items-center justify-between px-4 py-3"
                   style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)' }}
                 >
-                  <div className="text-sm font-bold text-gray-800">Total authorized</div>
+                  <div className="text-sm font-bold text-gray-800">Total Authorized</div>
                   <div
                     className="text-xl font-bold"
                     style={{
