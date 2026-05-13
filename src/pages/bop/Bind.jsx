@@ -776,9 +776,9 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
               </p>
             </div>
 
-            {/* Footer actions */}
+            {/* Footer actions — Cancel on left, primary CTA on right */}
             <div
-              className="flex items-center justify-end gap-2 px-5 py-3 shrink-0"
+              className="flex items-center justify-between gap-2 px-5 py-3 shrink-0"
               style={{ background: '#FAFAFB', borderTop: '1px solid #F3F4F6' }}
             >
               <button
