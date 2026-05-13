@@ -495,11 +495,29 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
 
           {/* Payment summary */}
           <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
-            <div className="flex items-baseline justify-between gap-3 mb-3">
-              <div className="text-sm font-semibold text-gray-700">Payment Summary</div>
-              <p className="text-[11px] italic text-gray-400 text-right">
-                There will be two separate charges made to your card.
-              </p>
+            <div className="text-sm font-semibold text-gray-700 mb-3">Payment Summary</div>
+
+            {/* Two-charges callout — same chip style as the consent
+                rows below: tinted gradient circle + alert icon, with
+                bold title and gray subtitle. */}
+            <div
+              className="flex items-center gap-3 px-3.5 py-2.5 mb-4 rounded-lg"
+              style={{ border: '1px solid #E5E7EB', background: 'white' }}
+            >
+              <span
+                className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </span>
+              <div className="min-w-0">
+                <div className="text-[13px] font-semibold text-gray-800 leading-tight">Two Separate Charges</div>
+                <div className="text-[11px] text-gray-500 leading-tight mt-0.5">Both will be made to your card on file</div>
+              </div>
             </div>
 
             {/* Charged to your card (fees) */}
