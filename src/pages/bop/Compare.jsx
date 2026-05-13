@@ -100,27 +100,16 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
         {/* Row 1 — Carrier + pills + chevron */}
         <div className="flex items-center justify-between gap-3 mb-2.5">
           <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
-            {/* Carrier logo tile — replaces the old purple dot */}
-            <div
-              className="rounded-md flex items-center justify-center shrink-0"
+            {/* Brand-gradient dot — small visual anchor for the row */}
+            <span
+              className="rounded-full shrink-0"
               style={{
-                width: 28,
-                height: 28,
-                background: 'white',
-                border: '1px solid #E5E7EB',
-                padding: 4,
-                opacity: isDeclined ? 0.5 : 1,
+                width: 8,
+                height: 8,
+                background: BRAND_GRADIENT,
+                opacity: isDeclined ? 0.4 : 1,
               }}
-            >
-              {CARRIER_LOGOS[q.carrier] && (
-                <img
-                  src={CARRIER_LOGOS[q.carrier]}
-                  alt={q.carrier}
-                  className="max-w-full max-h-full select-none pointer-events-none"
-                  style={{ objectFit: 'contain' }}
-                />
-              )}
-            </div>
+            />
             <span
               className="text-sm font-semibold truncate"
               style={{ color: isDeclined ? '#6B7280' : '#1F2937' }}
