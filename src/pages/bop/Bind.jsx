@@ -524,7 +524,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
               </div>
             </div>
 
-            {/* Charged to your card (fees) */}
+            {/* Charge 1 — policy fees */}
             <div className="mb-1">
               <div className="flex items-baseline gap-2 mb-1">
                 <span
@@ -536,9 +536,9 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                     backgroundClip: 'text',
                   }}
                 >
-                  Charged to Your Card
+                  Charge 1
                 </span>
-                <span className="text-[11px] text-gray-400">One-time fees</span>
+                <span className="text-[11px] text-gray-400">Policy fees</span>
               </div>
               <FieldRow label="BTIS Service Fee" value={money(btisServiceFee)} />
               {brokerFeeNum > 0 && <FieldRow label="Broker Fee" value={money(brokerFeeNum)} />}
@@ -546,7 +546,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
 
             <div className="border-t my-3" style={{ borderColor: '#F3F4F6' }} />
 
-            {/* Premium breakdown */}
+            {/* Charge 2 — carrier premium */}
             <div>
               <div className="flex items-baseline gap-2 mb-1">
                 <span
@@ -558,9 +558,11 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                     backgroundClip: 'text',
                   }}
                 >
-                  {carrier} {carrier === 'Coterie' ? 'Gold ' : ''}Premium Breakdown
+                  Charge 2
                 </span>
-                <span className="text-[11px] text-gray-400">Charged to your card</span>
+                <span className="text-[11px] text-gray-400">
+                  {carrier}{carrier === 'Coterie' ? ' Gold' : ''} premium
+                </span>
               </div>
               {isAnnual ? (
                 <>
