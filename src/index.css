@@ -477,6 +477,15 @@ button.force-white-text,
 @media print {
   @page { size: A4 portrait; margin: 0.35in; }
 
+  /* Force browsers to print backgrounds + gradients exactly as on screen.
+     Without this, white-card backgrounds, brand gradient strips, gradient
+     text (background-clip: text), and tinted icon tiles all drop out. */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
   /* Hide everything, then reveal only the print area */
   body * { visibility: hidden !important; }
   #submission-print-area,
