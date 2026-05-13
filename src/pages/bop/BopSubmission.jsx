@@ -123,14 +123,17 @@ const ICONS = {
 export default function BopSubmission({ formData, summary, onBack, isDark = false, onToggleDark }) {
   const [showConfetti, setShowConfetti] = useState(true)
   const [summaryOpen, setSummaryOpen] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setShowConfetti(false), 4500)
     return () => clearTimeout(t)
   }, [])
 
-  // Match Commercial Auto: open the summary panel then trigger the browser print.
-  const handlePrint = () => {
+  // Open the print-preview modal so the user can see what they're about to print.
+  const handlePrint = () => setPreviewOpen(true)
+  // Once they confirm from inside the modal, fire the OS print dialog.
+  const confirmPrint = () => {
     setSummaryOpen(true)
     setTimeout(() => window.print(), 150)
   }
@@ -835,6 +838,169 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
           </div>
         </aside>
       </div>
+
+      {/* Print preview modal */}
+      {previewOpen && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 no-print"
+          style={{ background: 'rgba(15,18,40,0.55)', backdropFilter: 'blur(3px)' }}
+          onClick={() => setPreviewOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col"
+            style={{
+              maxHeight: '90vh',
+              background: isDark ? '#1A1E38' : '#F9FAFB',
+              boxShadow: '0 32px 80px rgba(0,0,0,0.22)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div
+              className="px-5 pt-4 pb-4 shrink-0"
+              style={{
+                background: isDark ? '#252948' : 'white',
+                borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
+              }}
+            >
+              <div className="flex items-start gap-4">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                  style={{
+                    background: isDark
+                      ? 'linear-gradient(88.09deg, rgba(92,46,212,0.45) 0%, rgba(166,20,195,0.45) 100%)'
+                      : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+                  }}
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <defs>
+                      <linearGradient id="bopPrevHdrG" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor={isDark ? '#A78BFA' : '#5C2ED4'}/>
+                        <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                      stroke="url(#bopPrevHdrG)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg sm:text-xl font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                    Print Preview
+                  </h2>
+                  <p className="text-xs mt-0.5 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+                    Review your submission before printing or saving as PDF.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen(false)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
+                  style={{
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#E5E7EB'}`,
+                    background: isDark ? 'rgba(255,255,255,0.05)' : 'white',
+                  }}
+                  aria-label="Close"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <path stroke="url(#bopPrevHdrG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Body — the printable content */}
+            <div className="px-6 py-5 overflow-y-auto space-y-3">
+              {/* Heading strip */}
+              <div className="text-center pb-3 mb-1" style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#E5E7EB'}` }}>
+                <h3 className="text-base font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                  General Liability Application Summary
+                </h3>
+                <p className="text-[11px] mt-0.5" style={{ color: '#9CA3AF' }}>
+                  {quoteId} · Generated {generatedAt}
+                </p>
+              </div>
+
+              {carrier && (
+                <SectionCard title="Bind & Payment" icon={ICONS.card} isDark={isDark}>
+                  <Field isDark={isDark} label="Selected Carrier" value={carrier} />
+                  <Field isDark={isDark} label="Coverage Tier"    value={packageId ? packageId.charAt(0).toUpperCase() + packageId.slice(1) : null} />
+                  <Field isDark={isDark} label="Annual Premium"   value={money(premium)} />
+                  <Field isDark={isDark} label="Total Fees"       value={money(totalFees)} />
+                  <Field isDark={isDark} label="Charged Today"    value={money(dueToday)} />
+                  <Field isDark={isDark} label="Insured Contact"  value={[contact.firstName, contact.lastName].filter(Boolean).join(' ')} />
+                  <Field isDark={isDark} label="Contact Email"    value={contact.email} />
+                </SectionCard>
+              )}
+
+              <SectionCard title="Business Details" icon={ICONS.briefcase} isDark={isDark}>
+                <Field isDark={isDark} label="Business Name"       value={business.name} />
+                <Field isDark={isDark} label="Entity Type"         value={business.entityType} />
+                <Field isDark={isDark} label="Year Established"    value={business.yearEstablished} />
+                <Field isDark={isDark} label="Annual Revenue"      value={business.annualRevenue ? '$' + Number(business.annualRevenue).toLocaleString() : null} />
+                <Field isDark={isDark} label="Annual Payroll"      value={business.annualPayroll ? '$' + Number(business.annualPayroll).toLocaleString() : null} />
+                <Field isDark={isDark} label="Full-Time Employees" value={business.numberOfEmployees} />
+                <Field isDark={isDark} label="Part-Time Employees" value={business.partTimeEmployees} />
+                <Field isDark={isDark} label="Phone"               value={business.phone} />
+                <Field isDark={isDark} label="Email"               value={business.email} />
+                <Field isDark={isDark} label="Class Code"          value={cls.classId ? `${cls.classId} — ${cls.description}` : null} />
+              </SectionCard>
+
+              <SectionCard title="Location & Premises" icon={ICONS.pin} isDark={isDark}>
+                <Field isDark={isDark} label="Address"        value={[location.address, location.city, location.state, location.zip].filter(Boolean).join(', ')} />
+                <Field isDark={isDark} label="Premises Type"  value={location.locationType} />
+                <Field isDark={isDark} label="Square Feet"    value={location.squareFeet ? Number(location.squareFeet).toLocaleString() + ' sq ft' : null} />
+              </SectionCard>
+
+              <SectionCard title="Coverage Selection" icon={ICONS.shield} isDark={isDark}>
+                <Field isDark={isDark} label="GL Each Occurrence"   value={coverage.eachOccurrence || coverage.glLimit} />
+                <Field isDark={isDark} label="GL Aggregate"         value={coverage.aggregate} />
+                <Field isDark={isDark} label="Products / Completed" value={coverage.productsAggregate} />
+                <Field isDark={isDark} label="Personal Injury"      value={coverage.personalInjury} />
+                <Field isDark={isDark} label="Deductible"           value={coverage.deductible} />
+                <Field isDark={isDark} label="Effective Date"       value={business.effectiveDate} />
+              </SectionCard>
+            </div>
+
+            {/* Footer actions */}
+            <div
+              className="flex items-center justify-end gap-2 px-5 py-3 shrink-0"
+              style={{
+                background: isDark ? '#252948' : 'white',
+                borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => setPreviewOpen(false)}
+                className="px-4 py-2 rounded-lg text-xs font-semibold transition hover:bg-gray-50"
+                style={{
+                  color: isDark ? '#D1D5DB' : '#374151',
+                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#E5E7EB'}`,
+                  background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+                }}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPreviewOpen(false)
+                  confirmPrint()
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white transition hover:opacity-90"
+                style={{ background: BRAND_GRADIENT, boxShadow: '0 4px 14px rgba(92,46,212,0.25)' }}
+              >
+                <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                </svg>
+                Print / Save as PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
