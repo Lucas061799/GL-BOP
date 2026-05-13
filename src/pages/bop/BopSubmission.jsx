@@ -13,9 +13,9 @@ import sellMoreBg from '../../assets/sell-more-bg.png'
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
 const STEP_LABELS = [
-  'Class Code Search',
-  'Business Information',
-  'Location Information',
+  'Class Code',
+  'Business',
+  'Location',
   'Coverage Limits',
   'Underwriting Questions',
   'Compare Quotes',
