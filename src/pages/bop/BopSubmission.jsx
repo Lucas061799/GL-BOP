@@ -457,6 +457,100 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
             </div>
           </div>
         </main>
+
+        {/* Right panel — placeholder mirroring Commercial Auto Submission */}
+        <aside
+          className="no-print hidden md:flex w-80 2xl:w-96 flex-col shrink-0"
+          style={{
+            background: isDark ? '#191D35' : 'white',
+            borderLeft: isDark ? '1px solid rgba(255,255,255,0.06)' : '1px solid #F3F4F6',
+          }}
+        >
+          <div className="p-5 flex-1 overflow-y-auto custom-scroll">
+
+            {/* Title */}
+            <h2 className="text-lg font-bold mb-3" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>Quote Submitted</h2>
+
+            {/* Auto-saved + % row */}
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5">
+                <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none">
+                  <defs>
+                    <linearGradient id="autoGradBopSub" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor={isDark ? '#A78BFA' : '#5C2ED4'}/>
+                      <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M12 16V9m0 0l-3 3m3-3l3 3" stroke="url(#autoGradBopSub)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6.5 18A4.5 4.5 0 016 9.1V9a6 6 0 0111.9-.9A4.5 4.5 0 0118 18H6.5z" stroke="url(#autoGradBopSub)" strokeWidth="1.8" strokeLinejoin="round"/>
+                </svg>
+                <span
+                  className="text-xs font-medium"
+                  style={{
+                    background: BRAND_GRADIENT,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  All progress auto-saved
+                </span>
+              </div>
+              <span
+                className="text-xs font-bold"
+                style={{
+                  background: BRAND_GRADIENT,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                100%
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full h-1.5 rounded-full overflow-hidden mb-4" style={{ background: isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6' }}>
+              <div className="h-full rounded-full w-full transition-all duration-500" style={{ background: BRAND_GRADIENT }} />
+            </div>
+
+            {/* Divider */}
+            <div className="mb-5" style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
+
+            {/* What's Next */}
+            <h3 className="text-sm font-bold mb-5" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>What's Next?</h3>
+            <div className="space-y-6 mb-5">
+              {[
+                { n: 1, t: 'Review & Processing',  d: 'Your application will be reviewed within 24–48 hours.' },
+                { n: 2, t: 'Email Confirmation',   d: "You'll receive detailed policy confirmation via email." },
+                { n: 3, t: 'Policy in Force',      d: 'Coverage starts on the effective date you selected.' },
+              ].map(step => (
+                <div key={step.n} className="flex gap-4">
+                  <span
+                    className="w-9 h-9 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
+                    style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)' }}
+                  >
+                    <span
+                      style={{
+                        background: BRAND_GRADIENT,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      {step.n}
+                    </span>
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{step.t}</p>
+                    <p className="text-xs mt-1 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>{step.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </aside>
       </div>
     </div>
   )
