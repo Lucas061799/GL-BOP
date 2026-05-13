@@ -71,6 +71,36 @@ function CarrierMark({ name, logo, size = 'sm' }) {
   )
 }
 
+// Loading price ticker — cycles a random 3–4 digit value every ~140ms
+// so the row reads as actively calculating rather than statically
+// waiting. Each instance starts on a random offset so the rows don't
+// tick in lockstep.
+function LoadingPriceTicker() {
+  const [n, setN] = useState(() => Math.floor(Math.random() * 1800) + 400)
+  useEffect(() => {
+    let intervalId = null
+    const startTimeout = setTimeout(() => {
+      intervalId = setInterval(() => {
+        setN(Math.floor(Math.random() * 1800) + 400)
+      }, 140)
+    }, Math.floor(Math.random() * 120))
+    return () => {
+      clearTimeout(startTimeout)
+      if (intervalId) clearInterval(intervalId)
+    }
+  }, [])
+  return (
+    <div
+      className="shrink-0 flex items-baseline text-sm font-bold tabular-nums"
+      style={{ minWidth: 52, justifyContent: 'flex-end', color: '#D1D5DB' }}
+      title="Calculating quote…"
+      aria-label="Calculating quote"
+    >
+      <span>${n.toLocaleString()}</span>
+    </div>
+  )
+}
+
 function SkeletonRow({ isDark = false }) {
   const skelClass = isDark ? 'skel-dark' : 'skel'
   return (
@@ -90,8 +120,6 @@ function SkeletonRow({ isDark = false }) {
         .skel { background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 50%, #EEF2F7 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        .rp-dollar-pulse { display: inline-block; animation: rpDollarPulse 1.4s ease-in-out infinite; }
-        @keyframes rpDollarPulse { 0%, 100% { opacity: 0.35 } 50% { opacity: 1 } }
       `}</style>
     </div>
   )
@@ -345,17 +373,10 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
                       ) : (
-                        /* Quotes are still loading — a gently pulsing
-                           gray "$" placeholder where the price will
-                           land. Gray reads as 'waiting' instead of
-                           competing with the brand color for attention. */
-                        <div
-                          className="shrink-0 flex items-baseline text-sm font-bold tabular-nums"
-                          title="Calculating quote…"
-                          aria-label="Calculating quote"
-                        >
-                          <span className="rp-dollar-pulse" style={{ color: '#9CA3AF' }}>$</span>
-                        </div>
+                        /* Quotes are still loading — show a ticker
+                           cycling random gray values so the row reads
+                           as actively calculating. */
+                        <LoadingPriceTicker />
                       )}
                     </Wrapper>
                   )
