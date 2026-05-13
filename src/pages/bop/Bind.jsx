@@ -566,7 +566,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
               <span className="text-xl font-bold text-gray-900">{money(dueToday)}</span>
             </div>
             <p className="text-[11px] italic text-gray-400 mt-2">
-              These will appear as two separate charges on your card.
+              There will be two separate charges made to your card.
             </p>
           </div>
 
