@@ -89,6 +89,15 @@ export default function SmartStart({ formData, updateFormData }) {
     })
   }
 
+  const clearClass = () => {
+    updateFormData('smartStart', {
+      classId: undefined,
+      description: undefined,
+      naics: undefined,
+      carriers: undefined,
+    })
+  }
+
   const sectionCardStyle = {
     background: 'white',
     border: '1px solid #EAEAEA',
@@ -161,6 +170,20 @@ export default function SmartStart({ formData, updateFormData }) {
               <span>type above to change</span>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={clearClass}
+            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition self-start sm:self-center"
+            style={{ background: 'white', border: '1px solid rgba(92,46,212,0.25)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(92,46,212,0.06)'; e.currentTarget.style.borderColor = 'rgba(92,46,212,0.4)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.borderColor = 'rgba(92,46,212,0.25)' }}
+            aria-label="Clear selected class code"
+            title="Clear selection"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+          </button>
         </div>
       )}
 
