@@ -22,44 +22,72 @@ const GL_INCLUDES = [
 function ProductCard({ accent, icon, title, tagline, bullets, ctaLabel, onClick }) {
   return (
     <div
-      className="rounded-2xl p-5 flex flex-col"
-      style={{ background: 'white', border: '1.5px solid #E5E7EB' }}
+      className="rounded-2xl overflow-hidden flex flex-col transition hover:-translate-y-0.5 group cursor-pointer"
+      style={{ background: 'white', border: '1.5px solid #E5E7EB', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}
+      onClick={onClick}
+      onMouseEnter={e => {
+        e.currentTarget.style.boxShadow = '0 12px 32px rgba(92,46,212,0.12)'
+        e.currentTarget.style.borderColor = 'rgba(124,58,237,0.4)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.02)'
+        e.currentTarget.style.borderColor = '#E5E7EB'
+      }}
     >
-      <div className="flex items-center gap-3 mb-3">
+      {/* Top accent bar */}
+      <div className="h-1" style={{ background: accent.bar }} />
+
+      <div className="px-5 pt-5 pb-5 flex flex-col flex-1">
+        {/* Icon */}
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+          className="w-12 h-12 rounded-xl flex items-center justify-center mb-3.5"
           style={{ background: accent.bg }}
         >
           {icon}
         </div>
-        <div className="min-w-0">
-          <h3 className="text-base font-bold text-gray-900 leading-tight">{title}</h3>
-          <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{tagline}</p>
-        </div>
+
+        {/* Title + tagline */}
+        <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1">{title}</h3>
+        <p className="text-[12px] text-gray-500 leading-snug mb-4">{tagline}</p>
+
+        {/* Divider */}
+        <div className="border-t mb-4" style={{ borderColor: '#F3F4F6' }} />
+
+        {/* Bullets */}
+        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 mb-2.5">What's included</p>
+        <ul className="space-y-2 mb-5 flex-1">
+          {bullets.map(b => (
+            <li key={b} className="flex items-start gap-2 text-[12.5px] text-gray-700 leading-snug">
+              <span
+                className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                style={{ background: accent.bg }}
+              >
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke={accent.stroke} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+
+        {/* CTA */}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onClick() }}
+          className="mt-auto w-full flex items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
+          style={{ background: BRAND_GRADIENT, boxShadow: '0 4px 14px rgba(92,46,212,0.22)' }}
+        >
+          {ctaLabel}
+          <svg
+            width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            className="transition-transform group-hover:translate-x-0.5"
+          >
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
       </div>
-
-      <ul className="space-y-1.5 mb-5">
-        {bullets.map(b => (
-          <li key={b} className="flex items-start gap-2 text-[12px] text-gray-600 leading-snug">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accent.stroke} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-1 shrink-0">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            <span>{b}</span>
-          </li>
-        ))}
-      </ul>
-
-      <button
-        type="button"
-        onClick={onClick}
-        className="mt-auto w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
-        style={{ background: BRAND_GRADIENT, boxShadow: '0 4px 14px rgba(92,46,212,0.22)' }}
-      >
-        {ctaLabel}
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </button>
     </div>
   )
 }
@@ -112,16 +140,20 @@ export default function PageZero({ onStart }) {
               </div>
 
               {/* Product choice — two cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
                 <ProductCard
                   title="Business Owners Policy"
-                  tagline="Property + Liability bundled"
+                  tagline="Property + Liability bundled into one easy policy."
                   bullets={BOP_INCLUDES}
                   ctaLabel="Start BOP Quote"
                   onClick={startBop}
-                  accent={{ bg: 'rgba(124,58,237,0.10)', stroke: '#5C2ED4' }}
+                  accent={{
+                    bg: 'rgba(124,58,237,0.10)',
+                    stroke: '#5C2ED4',
+                    bar: BRAND_GRADIENT,
+                  }}
                   icon={(
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                       <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
@@ -129,13 +161,17 @@ export default function PageZero({ onStart }) {
                 />
                 <ProductCard
                   title="General Liability"
-                  tagline="Liability protection, standalone"
+                  tagline="Standalone liability protection for your business."
                   bullets={GL_INCLUDES}
                   ctaLabel="Start GL Quote"
                   onClick={startGl}
-                  accent={{ bg: 'rgba(115,201,183,0.18)', stroke: '#10B981' }}
+                  accent={{
+                    bg: 'rgba(16,185,129,0.10)',
+                    stroke: '#10B981',
+                    bar: 'linear-gradient(88.09deg, #10B981 0%, #5EEAD4 100%)',
+                  }}
                   icon={(
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                     </svg>
                   )}
