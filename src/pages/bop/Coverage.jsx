@@ -34,10 +34,6 @@ export default function Coverage({ formData, updateFormData }) {
 
   return (
     <div className="w-full space-y-6">
-      <p className="text-sm text-gray-500 -mt-2">
-        Choose your coverage limits.
-      </p>
-
       <FieldGroup label="Liability Coverage">
         <FormGrid>
           <Select label="General Liability — Per Occurrence" required options={GL_LIMIT_OPTIONS} value={glLimit} onChange={set('glLimit')} />
