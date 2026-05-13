@@ -187,8 +187,9 @@ export default function SmartStart({ formData, updateFormData }) {
         </div>
       )}
 
-      {/* Results */}
-      {query && results.length > 0 && (
+      {/* Results — hidden once a class is selected. Clear the X on the
+          selected banner to search again. */}
+      {!selectedClass && query && results.length > 0 && (
         <div>
           <SectionLabel icon={<TagIcon />}>
             {results.length} {results.length === 1 ? 'Result' : 'Results'} Found
@@ -245,7 +246,7 @@ export default function SmartStart({ formData, updateFormData }) {
         </div>
       )}
 
-      {query && results.length === 0 && (
+      {!selectedClass && query && results.length === 0 && (
         <div className="rounded-xl p-10 text-center" style={sectionCardStyle}>
           <p className="text-sm text-gray-500">
             No class codes match "<span className="font-semibold text-gray-700">{query}</span>". Try a different keyword.
