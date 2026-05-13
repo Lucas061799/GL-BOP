@@ -73,8 +73,9 @@ function CarrierMark({ name, logo, size = 'sm' }) {
 
 // Loading price placeholder — a $ sitting inside a spinning ring.
 // The arc and the $ both pick up the brand purple→magenta gradient
-// so the loader feels on-brand instead of plain purple.
-function LoadingPriceTicker() {
+// so the loader feels on-brand. Track color adapts to dark mode so
+// it stays visible against the dark sidebar background.
+function LoadingPriceTicker({ isDark = false }) {
   return (
     <div
       className="shrink-0 relative flex items-center justify-center"
@@ -93,7 +94,11 @@ function LoadingPriceTicker() {
             <stop offset="100%" stopColor="#A614C3"/>
           </linearGradient>
         </defs>
-        <circle cx="12" cy="12" r="10" stroke="#E5E7EB" strokeWidth="2"/>
+        <circle
+          cx="12" cy="12" r="10"
+          stroke={isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB'}
+          strokeWidth="2"
+        />
         <path d="M22 12a10 10 0 0 0-10-10" stroke="url(#rpSpinG)" strokeWidth="2" strokeLinecap="round"/>
       </svg>
       <span
@@ -383,9 +388,9 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
                       ) : (
-                        /* Quotes are still loading — italic
-                           'Calculating ...' with the dots cycling. */
-                        <LoadingPriceTicker />
+                        /* Quotes are still loading — gradient $ inside
+                           a spinning ring; track adapts to dark mode. */
+                        <LoadingPriceTicker isDark={isDark} />
                       )}
                     </Wrapper>
                   )
