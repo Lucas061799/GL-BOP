@@ -37,9 +37,6 @@ export default function PageZero({ onStart }) {
 
               {/* Heading */}
               <div className="mb-10">
-                <p className="text-xs md:text-sm font-bold tracking-widest uppercase text-gradient mb-3">
-                  Business Owners Policy
-                </p>
                 <h1 className="text-3xl md:text-4xl font-bold text-navy leading-tight mb-4" style={{ fontWeight: 800 }}>
                   Get Multiple Quotes.<br />
                   <span className="text-gradient">One Easy Application.</span>
