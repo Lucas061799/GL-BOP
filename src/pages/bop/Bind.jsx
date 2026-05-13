@@ -561,7 +561,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                   Charge 2
                 </span>
                 <span className="text-[11px] text-gray-400">
-                  {carrier}{carrier === 'Coterie' ? ' Gold' : ''} premium
+                  {carrier === 'Coterie' ? 'Gold premium' : 'Carrier premium'}
                 </span>
               </div>
               {isAnnual ? (
@@ -586,7 +586,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
                 </>
               )}
               <div className="border-t mt-1.5 pt-1.5" style={{ borderColor: '#F3F4F6' }}>
-                <FieldRow label={`Total ${carrier} Charge`} value={money(premiumPortion)} bold />
+                <FieldRow label="Total Premium" value={money(premiumPortion)} bold />
               </div>
             </div>
 
