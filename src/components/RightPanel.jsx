@@ -71,32 +71,17 @@ function CarrierMark({ name, logo, size = 'sm' }) {
   )
 }
 
-// Loading price ticker — cycles a random 3–4 digit value every ~140ms
-// so the row reads as actively calculating rather than statically
-// waiting. Each instance starts on a random offset so the rows don't
-// tick in lockstep.
+// Loading "$" placeholder — a shimmer gradient sweeps through the
+// glyph so it reads as actively refreshing without adding any text
+// or motion of the character itself.
 function LoadingPriceTicker() {
-  const [n, setN] = useState(() => Math.floor(Math.random() * 1800) + 400)
-  useEffect(() => {
-    let intervalId = null
-    const startTimeout = setTimeout(() => {
-      intervalId = setInterval(() => {
-        setN(Math.floor(Math.random() * 1800) + 400)
-      }, 140)
-    }, Math.floor(Math.random() * 120))
-    return () => {
-      clearTimeout(startTimeout)
-      if (intervalId) clearInterval(intervalId)
-    }
-  }, [])
   return (
     <div
-      className="shrink-0 flex items-baseline text-sm font-bold tabular-nums"
-      style={{ minWidth: 52, justifyContent: 'flex-end', color: '#D1D5DB' }}
+      className="shrink-0 flex items-baseline text-sm font-bold"
       title="Calculating quote…"
       aria-label="Calculating quote"
     >
-      <span>${n.toLocaleString()}</span>
+      <span className="rp-dollar-shimmer">$</span>
     </div>
   )
 }
@@ -120,6 +105,15 @@ function SkeletonRow({ isDark = false }) {
         .skel { background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 50%, #EEF2F7 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        .rp-dollar-shimmer {
+          background: linear-gradient(90deg, #E5E7EB 0%, #6B7280 50%, #E5E7EB 100%);
+          background-size: 200% 100%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: rpDollarShimmer 1.4s linear infinite;
+        }
+        @keyframes rpDollarShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
       `}</style>
     </div>
   )
