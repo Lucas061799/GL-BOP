@@ -49,7 +49,8 @@ const money = (n) => '$' + Math.round(n).toLocaleString()
 
 // Carrier logo chip — square white tile holding the partner logo
 function CarrierMark({ name, logo, size = 'sm' }) {
-  const dim = size === 'lg' ? 64 : 40
+  const dim = size === 'xl' ? 96 : size === 'lg' ? 64 : 40
+  const pad = size === 'xl' ? 12 : size === 'lg' ? 8 : 6
   return (
     <div
       className="rounded-xl flex items-center justify-center shrink-0"
@@ -58,7 +59,7 @@ function CarrierMark({ name, logo, size = 'sm' }) {
         height: dim,
         background: 'white',
         border: '1px solid #E5E7EB',
-        padding: size === 'lg' ? 8 : 6,
+        padding: pad,
       }}
     >
       <img
@@ -469,9 +470,8 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   >
                     SELECTED
                   </div>
-                  {carrierLogo && <CarrierMark name={carrierName} logo={carrierLogo} size="lg" />}
-                  <div className="mt-3 text-sm font-semibold text-gray-900">{carrierName}</div>
-                  <div className="mt-2">
+                  {carrierLogo && <CarrierMark name={carrierName} logo={carrierLogo} size="xl" />}
+                  <div className="mt-3">
                     <span
                       className="text-3xl font-bold"
                       style={{
