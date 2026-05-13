@@ -20,22 +20,20 @@ const GL_INCLUDES = [
 ]
 
 function ProductCard({ accent, icon, title, tagline, bullets, ctaLabel, onClick }) {
+  // Use an outer box-shadow ring (instead of a CSS border) so the stripe child
+  // can clip cleanly to the rounded corners without leaving a gray L at the top.
+  const restingShadow = '0 0 0 1.5px #E5E7EB, 0 1px 2px rgba(0,0,0,0.02)'
+  const hoverShadow   = '0 0 0 1.5px rgba(124,58,237,0.45), 0 12px 32px rgba(92,46,212,0.12)'
   return (
     <div
-      className="rounded-2xl overflow-hidden flex flex-col transition hover:-translate-y-0.5 group cursor-pointer"
-      style={{ background: 'white', border: '1.5px solid #E5E7EB', boxShadow: '0 1px 2px rgba(0,0,0,0.02)' }}
+      className="rounded-xl overflow-hidden flex flex-col transition hover:-translate-y-0.5 group cursor-pointer"
+      style={{ background: 'white', boxShadow: restingShadow }}
       onClick={onClick}
-      onMouseEnter={e => {
-        e.currentTarget.style.boxShadow = '0 12px 32px rgba(92,46,212,0.12)'
-        e.currentTarget.style.borderColor = 'rgba(124,58,237,0.4)'
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.02)'
-        e.currentTarget.style.borderColor = '#E5E7EB'
-      }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = hoverShadow }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = restingShadow }}
     >
-      {/* Top accent bar */}
-      <div className="h-1" style={{ background: accent.bar }} />
+      {/* Top accent bar — sits flush with the rounded corners */}
+      <div className="h-1.5" style={{ background: accent.bar }} />
 
       <div className="px-5 pt-5 pb-5 flex flex-col flex-1">
         {/* Icon */}
