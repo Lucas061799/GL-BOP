@@ -99,7 +99,7 @@ export default function SmartStart({ formData, updateFormData }) {
     <div className="w-full space-y-6">
       {/* Subtitle */}
       <p className="text-sm text-gray-500 -mt-2">
-        Search by business type to match your client with the best carriers
+        Type a class code or describe your client's business.
       </p>
 
       {/* Selected class banner */}
@@ -130,51 +130,36 @@ export default function SmartStart({ formData, updateFormData }) {
         </div>
       )}
 
-      {/* Search section */}
+      {/* Search section — no SECTION LABEL, no empty-state box, no extra magnifying glasses */}
       <div>
-        <SectionLabel icon={<SearchIcon size={14} />}>Search Class Codes</SectionLabel>
-
-        <div className="rounded-xl p-4 sm:p-5" style={sectionCardStyle}>
-          <div
-            className="flex items-center gap-3 rounded-lg px-3.5 py-2.5 transition"
-            style={{
-              background: '#F9FAFB',
-              border: '1.5px solid #EAEAEA',
-            }}
-          >
-            <span className="text-gray-300 shrink-0"><SearchIcon size={18} /></span>
-            <input
-              type="text"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="e.g. barber shop, restaurant, landscaping..."
-              className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-300"
-              autoFocus
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => setQuery('')}
-                className="p-1 -mr-1 rounded transition hover:bg-gray-200/60 shrink-0"
-                aria-label="Clear search"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
-                  <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-                </svg>
-              </button>
-            )}
-          </div>
-
-          {!query && (
-            <div className="text-center py-8 sm:py-12">
-              <div className="inline-flex mb-3" style={{ color: '#D1D5DB' }}>
-                <SearchIcon size={32} />
-              </div>
-              <p className="text-base font-semibold text-gray-700 mb-1">Start typing to search</p>
-              <p className="text-xs text-gray-400">
-                Search thousands of class codes across our markets
-              </p>
-            </div>
+        <div
+          className="flex items-center gap-3 rounded-xl px-4 py-3 transition"
+          style={{
+            background: 'white',
+            border: '1.5px solid #EAEAEA',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          }}
+        >
+          <span className="text-gray-400 shrink-0"><SearchIcon size={18} /></span>
+          <input
+            type="text"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Search by class code or business type (e.g. 722511 or restaurant)"
+            className="flex-1 bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400"
+            autoFocus
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery('')}
+              className="p-1 -mr-1 rounded transition hover:bg-gray-100 shrink-0"
+              aria-label="Clear search"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+              </svg>
+            </button>
           )}
         </div>
       </div>
@@ -220,10 +205,7 @@ export default function SmartStart({ formData, updateFormData }) {
                       </div>
                     </div>
 
-                    {/* Right: carriers + arrow (carriers hidden on small screens to keep row tidy) */}
-                    <div className="hidden md:flex items-center gap-1.5 shrink-0">
-                      {cls.carriers.map(c => <CarrierChip key={c} name={c} />)}
-                    </div>
+                    {/* Arrow */}
                     <svg
                       width="18" height="18" viewBox="0 0 24 24" fill="none"
                       stroke={isSelected ? '#5C2ED4' : '#9CA3AF'}
@@ -232,11 +214,6 @@ export default function SmartStart({ formData, updateFormData }) {
                     >
                       <path d="M9 18l6-6-6-6"/>
                     </svg>
-                  </div>
-
-                  {/* Carriers on mobile (below the row) */}
-                  <div className="flex md:hidden items-center gap-1.5 flex-wrap mt-2.5">
-                    {cls.carriers.map(c => <CarrierChip key={c} name={c} />)}
                   </div>
                 </button>
               )
