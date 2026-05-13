@@ -423,7 +423,7 @@ export default function Compare({ formData, updateFormData, quotesReady, onGoToS
   return (
     <div className="w-full space-y-3">
       <p className="text-xs text-gray-500 mb-1">
-        <BrandText className="font-bold">{quoted.length}</BrandText> {quoted.length === 1 ? 'quote' : 'quotes'} available · Sorted by total cost
+        Sorted by total cost
       </p>
       {sorted.map(q => (
         <CarrierRow
