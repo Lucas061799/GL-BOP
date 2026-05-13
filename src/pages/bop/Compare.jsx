@@ -97,11 +97,9 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
       }}
     >
       <div className="px-4 py-3.5 cursor-pointer" onClick={onToggle}>
-        {/* Header — identity on the left, price (if any) on the right.
-            Chevron moves down to the action row so it shares the
-            right edge with the button instead of floating at the top. */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-2.5 min-w-0 flex-wrap flex-1">
+        {/* Row 1 — Carrier + pills + chevron */}
+        <div className="flex items-center justify-between gap-3 mb-2.5">
+          <div className="flex items-center gap-2.5 min-w-0 flex-wrap">
             {/* Brand-gradient dot — small visual anchor for the row */}
             <span
               className="rounded-full shrink-0"
@@ -143,64 +141,57 @@ function CarrierRow({ q, isBest, expanded, onToggle, isSelected, onSelect, pendi
               </span>
             )}
           </div>
+          {(isQuoted || isDeclined) && (
+            <svg
+              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              className="shrink-0"
+              style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
+            >
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          )}
+        </div>
 
-          {/* Price block — pinned top-right on quoted rows so the
-              number lines up cleanly with the name. */}
+        {/* Row 2 — Price (or referral / decline note) + action button */}
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          {isReferred && (
+            <span className="text-xs text-gray-500 flex-1 min-w-0">{q.reason}</span>
+          )}
+          {isDeclined && (
+            <span className="text-xs flex-1 min-w-0" style={{ color: '#6B7280' }}>
+              {q.carrier} isn't quoting this risk today.
+              <span style={{ color: '#5C2ED4' }} className="font-semibold ml-1">
+                {expanded ? 'Hide details' : 'See why →'}
+              </span>
+            </span>
+          )}
           {isQuoted && (
-            <div className="text-right shrink-0">
-              <div className="flex items-baseline justify-end gap-1">
-                <span className="text-lg font-bold text-gray-800">{money(q.premium)}</span>
-                <span className="text-[11px] text-gray-400">/yr</span>
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-bold text-gray-800">{money(q.premium)}</span>
+                <span className="text-xs text-gray-400">/yr</span>
               </div>
-              <div className="text-[10px] text-gray-400 mt-0.5">
+              <div className="text-[11px] text-gray-400">
                 {money(q.premium / 12)}/mo · Total {money(totalCost)}
               </div>
             </div>
           )}
-        </div>
 
-        {/* Action row — status note (if any) on the left, button +
-            chevron on the right, both flush to the same edge. */}
-        {(isReferred || isDeclined || !isDeclined) && (
-          <div className="flex items-center justify-between gap-3 mt-2.5">
-            <div className="text-xs min-w-0 flex-1" style={{ color: '#6B7280' }}>
-              {isReferred && <span>{q.reason}</span>}
-              {isDeclined && (
-                <span>
-                  {q.carrier} isn't quoting this risk today.
-                  <span style={{ color: '#5C2ED4' }} className="font-semibold ml-1">
-                    {expanded ? 'Hide details' : 'See why →'}
-                  </span>
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              {!isDeclined && (
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); onSelect(); }}
-                  className="px-4 py-2 rounded-lg text-xs font-bold transition shrink-0"
-                  style={
-                    (isSelected || isBest)
-                      ? { background: BRAND_GRADIENT, color: '#fff' }
-                      : { background: 'white', color: '#5C2ED4', border: '1.5px solid rgba(92,46,212,0.35)' }
-                  }
-                >
-                  {isSelected ? '✓ Selected' : 'Select'}
-                </button>
-              )}
-              {(isQuoted || isDeclined) && (
-                <svg
-                  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                  className="shrink-0"
-                  style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}
-                >
-                  <path d="M6 9l6 6 6-6"/>
-                </svg>
-              )}
-            </div>
-          </div>
-        )}
+          {!isDeclined && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onSelect(); }}
+              className="px-4 py-2 rounded-lg text-xs font-bold transition shrink-0"
+              style={
+                (isSelected || isBest)
+                  ? { background: BRAND_GRADIENT, color: '#fff' }
+                  : { background: 'white', color: '#5C2ED4', border: '1.5px solid rgba(92,46,212,0.35)' }
+              }
+            >
+              {isSelected ? '✓ Selected' : 'Select'}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Declined — expandable "Why" panel */}
