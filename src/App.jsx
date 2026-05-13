@@ -20,7 +20,7 @@ import PageZero from './pages/PageZero'
 
 const STEPS = [
   { id: 1, label: 'Class Code',  key: 'smartStart' },
-  { id: 2, label: 'Applicant Information', key: 'business' },
+  { id: 2, label: 'Applicant',   key: 'business' },
   { id: 3, label: 'Location',    key: 'location' },
   { id: 4, label: 'Coverage Limits',        key: 'coverage' },
   { id: 5, label: 'Underwriting Questions', key: 'underwriting' },
