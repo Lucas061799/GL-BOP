@@ -187,7 +187,7 @@ function PreviewModal({ formData, onClose, onConfirm }) {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="no-print inline-flex items-center justify-center w-6 h-6 rounded-md shrink-0 transition"
+                  className="no-print inline-flex items-center justify-center w-7 h-7 rounded-full shrink-0 transition"
                   style={{ background: 'rgba(92,46,212,0.08)' }}
                   onMouseEnter={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.16)' }}
                   onMouseLeave={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.08)' }}
