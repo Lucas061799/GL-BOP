@@ -18,13 +18,13 @@ const COVERAGES = [
     description: 'Terrorism Risk Insurance Act coverage. Included in all Coterie BOP policies.' },
   { id: 'blanket_ai',         name: 'Blanket Additional Insured',             type: 'always',
     description: 'Primary and non-contributory additional insured coverage for contracts. Automatically included.' },
-  { id: 'risk_program',       name: 'Manage My Risk Program',                 type: 'package',
+  { id: 'risk_program',       name: 'Manage My Risk Program',                 type: 'package', priceImpact: 33,
     description: "Coterie's risk management program — safety resources, risk assessment tools, and premium savings." },
-  { id: 'equipment',          name: 'Equipment Breakdown',                    type: 'package',
+  { id: 'equipment',          name: 'Equipment Breakdown',                    type: 'package', priceImpact: 12,
     description: 'Covers sudden mechanical or electrical breakdown of business equipment, HVAC, and computers.' },
-  { id: 'data_theft',         name: 'Data Theft Protection',                  type: 'package',
+  { id: 'data_theft',         name: 'Data Theft Protection',                  type: 'package', priceImpact: 18,
     description: 'Covers costs from data breaches including notification, credit monitoring, and legal defense.' },
-  { id: 'cyber',              name: 'Cyber Liability',                        type: 'package',
+  { id: 'cyber',              name: 'Cyber Liability',                        type: 'package', priceImpact: 25,
     description: 'Covers cyber attacks, ransomware, data loss, and business interruption from cyber events.' },
   { id: 'hnoa',               name: 'Hired & Non-Owned Auto (HNOA)',          type: 'optional', priceImpact: 15,
     description: 'Covers liability when employees drive personal or rented vehicles for business purposes.' },
@@ -128,33 +128,59 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
   const packageId = formData.bind?.packageId || 'gold'
   const packageName = PACKAGE_PRICES[packageId].name
 
-  const included  = COVERAGES.filter(c => c.type === 'always' || c.type === 'package')
-  const optionals = COVERAGES.filter(c => c.type === 'optional')
+  const always       = COVERAGES.filter(c => c.type === 'always')
+  const packageItems = COVERAGES.filter(c => c.type === 'package')
+  const optionals    = COVERAGES.filter(c => c.type === 'optional')
 
   const stored = formData.bind?.optionalAddons
   const [selected, setSelected] = useState(stored ?? [])
+  // Package items the user has opted out of. Opting out forfeits the
+  // bundled discount, so each removed item adds its priceImpact back
+  // onto the premium.
+  const storedRemoved = formData.bind?.removedPackageItems
+  const [removed, setRemoved] = useState(storedRemoved ?? [])
 
-  // Sum the priceImpact of every optional that's currently on
-  const optionalsTotal = useMemo(
-    () => optionals.reduce((sum, o) => sum + (selected.includes(o.id) ? (o.priceImpact || 0) : 0), 0),
-    [selected, optionals]
+  const sumOptionals = (list) =>
+    optionals.reduce((s, o) => s + (list.includes(o.id) ? (o.priceImpact || 0) : 0), 0)
+  const sumRemoved = (list) =>
+    packageItems.reduce((s, p) => s + (list.includes(p.id) ? (p.priceImpact || 0) : 0), 0)
+
+  const addonsTotal = useMemo(
+    () => sumOptionals(selected) + sumRemoved(removed),
+    [selected, removed]
   )
 
-  const toggle = (id) => {
+  const toggleOptional = (id) => {
     const next = selected.includes(id) ? selected.filter(x => x !== id) : [...selected, id]
     setSelected(next)
-    const sum = optionals.reduce((s, o) => s + (next.includes(o.id) ? (o.priceImpact || 0) : 0), 0)
-    // Persist so the right-rail summary can fold this into the running total
-    updateFormData('bind', { optionalAddons: next, addonsPremium: sum })
+    updateFormData('bind', {
+      optionalAddons: next,
+      addonsPremium: sumOptionals(next) + sumRemoved(removed),
+    })
+  }
+
+  const togglePackageItem = (id) => {
+    const next = removed.includes(id) ? removed.filter(x => x !== id) : [...removed, id]
+    setRemoved(next)
+    updateFormData('bind', {
+      removedPackageItems: next,
+      addonsPremium: sumOptionals(selected) + sumRemoved(next),
+    })
   }
 
   const goBack = () => { onBack && onBack() }
   const goContinue = () => {
-    updateFormData('bind', { addonsConfirmed: true, optionalAddons: selected, addonsPremium: optionalsTotal })
+    updateFormData('bind', {
+      addonsConfirmed: true,
+      optionalAddons: selected,
+      removedPackageItems: removed,
+      addonsPremium: addonsTotal,
+    })
     if (onContinue) onContinue()
   }
 
   const selectedCount = selected.length
+  const removedCount  = removed.length
 
   return (
     <div className="w-full space-y-4">
@@ -169,33 +195,101 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
         </span>
       </p>
 
-      {/* Included with the package — collapsed by default. Mostly
-          reassurance content; the user opens it only if they want to
-          inspect what they're already getting. */}
+      {/* Included with the package. 'Always' items (TRIA, Blanket AI)
+          are truly mandatory — shown as a green check with no control.
+          'Package' items default ON but can be opted out via toggle;
+          opting out adds their priceImpact back onto the premium since
+          the user is forfeiting the bundled discount. */}
       <Collapsible
         title={`Included in your ${packageName} package`}
         badge={
-          <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-            style={{ background: 'rgba(52,211,153,0.16)', color: '#059669' }}
-          >
-            {included.length} included
-          </span>
+          removedCount > 0 ? (
+            <span
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+              style={{ background: 'rgba(245,158,11,0.16)', color: '#B45309' }}
+            >
+              {packageItems.length - removedCount} of {packageItems.length} kept
+            </span>
+          ) : (
+            <span
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+              style={{ background: 'rgba(52,211,153,0.16)', color: '#059669' }}
+            >
+              {always.length + packageItems.length} included
+            </span>
+          )
         }
         defaultOpen={false}
       >
         <div className="divide-y" style={{ borderColor: '#F3F4F6' }}>
-          {included.map(c => (
+          {/* Always-included — locked */}
+          {always.map(c => (
             <div key={c.id} className="px-4 py-3.5 flex items-start gap-3" style={{ borderColor: '#F3F4F6' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              <div className="min-w-0">
-                <div className="text-sm font-semibold text-gray-900">{c.name}</div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-sm font-semibold text-gray-900">{c.name}</span>
+                  <span
+                    className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider"
+                    style={{ background: '#F3F4F6', color: '#6B7280' }}
+                  >
+                    Always Included
+                  </span>
+                </div>
                 <p className="text-xs text-gray-500 leading-snug mt-0.5">{c.description}</p>
               </div>
             </div>
           ))}
+
+          {/* Package-bundled — opt-out-able */}
+          {packageItems.map(c => {
+            const isRemoved = removed.includes(c.id)
+            return (
+              <div
+                key={c.id}
+                className="px-4 py-3.5 flex items-start gap-3 transition"
+                style={{
+                  background: isRemoved ? 'rgba(245,158,11,0.04)' : 'transparent',
+                  borderColor: '#F3F4F6',
+                }}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span
+                      className="text-sm font-semibold"
+                      style={{
+                        color: isRemoved ? '#9CA3AF' : '#111827',
+                        textDecoration: isRemoved ? 'line-through' : 'none',
+                      }}
+                    >
+                      {c.name}
+                    </span>
+                    {!isRemoved ? (
+                      <span
+                        className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider"
+                        style={{ background: 'rgba(92,46,212,0.10)', color: '#5C2ED4' }}
+                      >
+                        Included in {packageName}
+                      </span>
+                    ) : (
+                      <span
+                        className="text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider"
+                        style={{ background: 'rgba(245,158,11,0.16)', color: '#B45309' }}
+                      >
+                        Removed · +${c.priceImpact}/yr
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-500 leading-snug mt-0.5">{c.description}</p>
+                </div>
+                <div className="shrink-0 pt-0.5">
+                  <Toggle on={!isRemoved} onClick={() => togglePackageItem(c.id)} />
+                </div>
+              </div>
+            )
+          })}
         </div>
       </Collapsible>
 
@@ -229,7 +323,7 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
               key={cov.id}
               cov={cov}
               on={selected.includes(cov.id)}
-              onToggle={() => toggle(cov.id)}
+              onToggle={() => toggleOptional(cov.id)}
               last={i === optionals.length - 1}
             />
           ))}
