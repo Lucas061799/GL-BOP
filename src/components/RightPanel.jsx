@@ -109,10 +109,16 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
   const completedCount = Object.values(completion).filter(Boolean).length
   const progressPct = Math.round((completedCount / 7) * 100)
 
-  // Show estimates as soon as the user has picked a class code. The premium
-  // formula falls back to a base value when financials are empty, then
-  // refines live as revenue / payroll / employees get filled in.
+  // Show the carrier *list* (logos + names, no prices) as soon as a class
+  // code is picked. Prices only appear once we have at least one financial
+  // input to base the estimate on (revenue, payroll, or employee count).
   const readyToQuote = !!formData.smartStart?.classId
+  const hasAnyFinancial = !!(
+    Number(String(b.annualRevenue   || '').replace(/[^0-9]/g, '')) ||
+    Number(String(b.annualPayroll   || '').replace(/[^0-9]/g, '')) ||
+    Number(String(b.numberOfEmployees || '').replace(/[^0-9]/g, ''))
+  )
+  const showPrices = readyToQuote && hasAnyFinancial
 
   // Pre-quote shimmer: re-trigger briefly after the readiness threshold flips, or on Refresh click.
   const [primingQuotes, setPrimingQuotes] = useState(false)
@@ -186,12 +192,12 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           <button
             type="button"
             onClick={handleRefresh}
-            disabled={!readyToQuote || refreshing}
+            disabled={!showPrices || refreshing}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition mb-3 disabled:cursor-not-allowed"
             style={{
               background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
               border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
-              color: readyToQuote ? (isDark ? '#D8B4FE' : '#374151') : '#9CA3AF',
+              color: showPrices ? (isDark ? '#D8B4FE' : '#374151') : '#9CA3AF',
             }}
           >
             <svg
@@ -252,26 +258,37 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   </div>
                 )}
                 <CarrierMark name={top.name} logo={top.logo} size="lg" />
-                <div className="mt-3">
-                  <span
-                    className="text-3xl font-bold"
-                    style={{
-                      background: BRAND_GRADIENT,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
-                    {money(top.premium)}
-                  </span>
-                </div>
-                <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
-                <p
-                  className="text-[10px] font-semibold mt-2"
-                  style={{ color: isSelected ? '#5C2ED4' : '#9CA3AF' }}
-                >
-                  {isSelected ? '✓ Selected' : 'Tap to select'}
-                </p>
+                {showPrices ? (
+                  <>
+                    <div className="mt-3">
+                      <span
+                        className="text-3xl font-bold"
+                        style={{
+                          background: BRAND_GRADIENT,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        {money(top.premium)}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
+                    <p
+                      className="text-[10px] font-semibold mt-2"
+                      style={{ color: isSelected ? '#5C2ED4' : '#9CA3AF' }}
+                    >
+                      {isSelected ? '✓ Selected' : 'Tap to select'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold text-gray-800 mt-3">{top.name}</p>
+                    <p className="text-[11px] text-gray-400 mt-1 leading-snug max-w-[200px]">
+                      Add revenue, payroll, or employees to see a price.
+                    </p>
+                  </>
+                )}
               </button>
             )
           })()}
@@ -311,10 +328,12 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           </p>
                         )}
                       </div>
-                      <div className="text-right shrink-0">
-                        <div className="text-sm font-bold text-gray-900 leading-tight">{money(q.premium)}</div>
-                        <div className="text-[9px] text-gray-400">per year</div>
-                      </div>
+                      {showPrices && (
+                        <div className="text-right shrink-0">
+                          <div className="text-sm font-bold text-gray-900 leading-tight">{money(q.premium)}</div>
+                          <div className="text-[9px] text-gray-400">per year</div>
+                        </div>
+                      )}
                     </button>
                   )
                 })
@@ -328,7 +347,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           )}
 
           {/* Download Quote Proposal — enabled once a carrier is selected */}
-          {readyToQuote && !showSkeleton && (
+          {showPrices && !showSkeleton && (
             <button
               type="button"
               disabled={!selectedCarrier}
