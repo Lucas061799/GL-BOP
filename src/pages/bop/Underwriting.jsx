@@ -201,7 +201,10 @@ function PreviewModal({ formData, onClose, onConfirm }) {
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                Confirm your details below. We'll send them to 4 carriers — or tap the printer icon to save a copy first.
+                Confirm your details below. We'll send them to 4 carriers.
+              </p>
+              <p className="text-[11px] text-gray-400 mt-0.5 leading-relaxed">
+                Need a copy first? Tap the printer icon.
               </p>
             </div>
             <button
