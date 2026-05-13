@@ -249,16 +249,25 @@ function ConsentRow({ item, checked, onChange, open, onToggle }) {
           onClick={() => onChange(!checked)}
           className="flex-1 flex items-center gap-3 px-3.5 py-3 transition hover:bg-black/[0.02] text-left min-w-0"
         >
+          {/* Status icon — alert circle while unconfirmed, gradient
+              check once the user has accepted. */}
           <span
-            className="w-4 h-4 rounded flex items-center justify-center shrink-0 transition"
-            style={{
-              background: checked ? BRAND_GRADIENT : 'white',
-              border: `1.5px solid ${checked ? 'transparent' : '#D1D5DB'}`,
-            }}
+            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition"
+            style={
+              checked
+                ? { background: BRAND_GRADIENT }
+                : { background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }
+            }
           >
-            {checked && (
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+            {checked ? (
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            ) : (
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
             )}
           </span>
@@ -304,6 +313,15 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
   const carrier = formData.bind?.selectedCarrier
   const quote = SAMPLE_PREMIUMS[carrier] || SAMPLE_PREMIUMS.Coterie
 
+  // Read the live running total from formData (set by Compare → Package
+  // → Add-Ons). Falls back to the hardcoded sample if the flow hasn't
+  // populated it yet, so this page still renders during dev / direct
+  // navigation.
+  const carrierPremiumLive = Number(formData.bind?.carrierPremium || 0)
+  const packagePremiumLive = Number(formData.bind?.packagePremium || 0)
+  const addonsPremiumLive  = Number(formData.bind?.addonsPremium  || 0)
+  const liveAnnual         = carrierPremiumLive + packagePremiumLive + addonsPremiumLive
+
   const [frequency, setFrequency] = useState('Annual')
   const [brokerFee, setBrokerFee] = useState(0)
   const [showPayment, setShowPayment] = useState(false)
@@ -322,10 +340,13 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
   const brokerFeeNum = Number(brokerFee) || 0
   const totalFees = btisServiceFee + brokerFeeNum
 
-  const annualPremium = quote.total
+  // Prefer the live total from the flow; fall back to the sample
+  // total if nothing came through (direct nav / dev).
+  const annualPremium = liveAnnual > 0 ? liveAnnual : quote.total
+  const monthlyPremium = Math.round(annualPremium / 12)
   const isAnnual = frequency === 'Annual'
   const installmentFee = !isAnnual ? (quote.installmentFee || 0) : 0
-  const premiumPortion = isAnnual ? annualPremium : (quote.monthly + installmentFee)
+  const premiumPortion = isAnnual ? annualPremium : (monthlyPremium + installmentFee)
   const dueToday = totalFees + premiumPortion
 
   const allConsented = useMemo(() => CONSENTS.every(c => consents[c.key]), [consents])
@@ -402,7 +423,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
             <div className="grid grid-cols-2 gap-3">
               {PAYMENT_PLANS.map(plan => {
                 const active = frequency === plan.value
-                const amt = plan.value === 'Annual' ? annualPremium : quote.monthly
+                const amt = plan.value === 'Annual' ? annualPremium : monthlyPremium
                 return (
                   <button
                     key={plan.value}
@@ -508,13 +529,22 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
               </div>
               {isAnnual ? (
                 <>
-                  <FieldRow label="Base Premium (Annual)" value={money(quote.basePremium)} />
-                  {quote.policyFee > 0 && <FieldRow label="Policy Fee" value={money(quote.policyFee)} />}
-                  {quote.riskProgram > 0 && <FieldRow label="Manage My Risk Program" value={money2(quote.riskProgram)} />}
+                  {/* Match the right-rail breakdown — carrier base,
+                      package premium, optional add-ons. */}
+                  <FieldRow label={`${carrier} Base`} value={money(carrierPremiumLive > 0 ? carrierPremiumLive : quote.basePremium)} />
+                  {packagePremiumLive > 0 && (() => {
+                    const PACKAGE_LABEL = { base: 'Base', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' }
+                    const lbl = PACKAGE_LABEL[formData.bind?.packageId] || 'Package'
+                    return <FieldRow label={`${lbl} Package`} value={money(packagePremiumLive)} />
+                  })()}
+                  {addonsPremiumLive > 0 && <FieldRow label="Add-ons" value={money(addonsPremiumLive)} />}
+                  {/* Fallbacks from the sample data if no live numbers came through */}
+                  {liveAnnual <= 0 && quote.policyFee > 0 && <FieldRow label="Policy Fee" value={money(quote.policyFee)} />}
+                  {liveAnnual <= 0 && quote.riskProgram > 0 && <FieldRow label="Manage My Risk Program" value={money2(quote.riskProgram)} />}
                 </>
               ) : (
                 <>
-                  <FieldRow label="Base Premium (Monthly)" value={money(quote.monthly)} />
+                  <FieldRow label="Base Premium (Monthly)" value={money(monthlyPremium)} />
                   {installmentFee > 0 && <FieldRow label="Installment Fee" value={money(installmentFee)} />}
                 </>
               )}
