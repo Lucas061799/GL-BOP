@@ -198,11 +198,17 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
             borderRight: isDark ? '1px solid rgba(255,255,255,0.12)' : '1px solid #F3F4F6',
           }}
         >
-          <div className="px-5 pt-5 pb-3 relative z-10">
-            <h2 className="text-base font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : undefined }}>GL-BOP</h2>
-            <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>Quote Number: {quoteId}</p>
-            <div className="mt-3" style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
-          </div>
+          {(() => {
+            const productType = formData.pageZero?.productType || 'bop'
+            const productName = productType === 'gl' ? 'General Liability' : 'Business Owners Policy'
+            return (
+              <div className="px-5 pt-5 pb-3 relative z-10">
+                <h2 className="text-base font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : undefined }}>{productName}</h2>
+                <p className="text-xs mt-0.5" style={{ color: '#9CA3AF' }}>Quote Number: {quoteId}</p>
+                <div className="mt-3" style={{ borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
+              </div>
+            )
+          })()}
 
           <nav className="flex-1 py-1 px-3 overflow-y-auto sidebar-nav relative z-10">
             {[...STEP_LABELS, 'Application Summary'].map((label, i) => {

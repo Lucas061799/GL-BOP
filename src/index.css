@@ -482,10 +482,13 @@ button.force-white-text,
   #submission-print-area,
   #submission-print-area *,
   #uw-preview-print-area,
-  #uw-preview-print-area * { visibility: visible !important; }
+  #uw-preview-print-area *,
+  #bop-submission-print-area,
+  #bop-submission-print-area * { visibility: visible !important; }
 
   #submission-print-area,
-  #uw-preview-print-area {
+  #uw-preview-print-area,
+  #bop-submission-print-area {
     position: fixed !important;
     inset: 0 !important;
     overflow: visible !important;
@@ -502,11 +505,13 @@ button.force-white-text,
 
   /* Show print-only elements */
   #submission-print-area .print-only,
-  #uw-preview-print-area .print-only { display: flex !important; }
+  #uw-preview-print-area .print-only,
+  #bop-submission-print-area .print-only { display: flex !important; }
 
   /* Hide screen-only elements inside print area */
   #submission-print-area .screen-only,
   #uw-preview-print-area .screen-only,
+  #bop-submission-print-area .screen-only,
   .no-print { display: none !important; }
 
   /* Kill the dimmed backdrop on the Underwriting preview modal */
