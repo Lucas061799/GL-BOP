@@ -285,13 +285,16 @@ button.force-white-text,
 /* Inline gradient-text pattern (style={{ background: BRAND_GRADIENT,
    WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }})
    — match any element where the inline BRAND_GRADIENT is paired with
-   background-clip: text so we only swap *text* gradients, not solid
-   gradient backgrounds (buttons, pills, accent bars). */
-[data-dark="true"] [style*="linear-gradient(88.09deg, rgb(92, 46, 212)"][style*="background-clip: text"],
-[data-dark="true"] [style*="linear-gradient(88.09deg, rgb(92, 46, 212)"][style*="-webkit-background-clip: text"],
-[data-dark="true"] [style*="linear-gradient(88.09deg, #5C2ED4"][style*="background-clip: text"],
-[data-dark="true"] [style*="linear-gradient(88.09deg, #5C2ED4"][style*="-webkit-background-clip: text"] {
-  background: linear-gradient(88.09deg, #A78BFA 0.11%, #E879F9 63.8%) !important;
+   webkit-text-fill-color: transparent so we only swap *text* gradients,
+   not solid gradient backgrounds (buttons, pills, accent bars).
+   We use -webkit-text-fill-color: transparent (not background-clip:
+   text) as the scope marker, because browsers fold background-clip
+   into the `background` shorthand at serialization time and the
+   substring 'background-clip: text' disappears from the rendered
+   style attribute. */
+[data-dark="true"] [style*="linear-gradient(88.09deg, rgb(92, 46, 212)"][style*="-webkit-text-fill-color: transparent"],
+[data-dark="true"] [style*="linear-gradient(88.09deg, #5C2ED4"][style*="-webkit-text-fill-color: transparent"] {
+  background: linear-gradient(88.09deg, #A78BFA 0.11%, #E879F9 63.8%) text !important;
 }
 
 /* Upload card outer glow pulse after popup dismiss */
