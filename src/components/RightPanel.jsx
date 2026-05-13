@@ -157,8 +157,6 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
     updateFormData('bind', { selectedCarrier: selectedCarrier === id ? null : id })
   }
 
-  const [refreshing, setRefreshing] = useState(false)
-
   const completion = useMemo(() => getSectionCompletion(formData), [formData])
   const completedCount = Object.values(completion).filter(Boolean).length
   const progressPct = Math.round((completedCount / 7) * 100)
@@ -192,12 +190,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
       .sort((a, b) => a.premium - b.premium)
   }, [baseEstimate])
 
-  const handleRefresh = () => {
-    setRefreshing(true)
-    setTimeout(() => setRefreshing(false), 1100)
-  }
-
-  const showSkeleton = !readyToQuote || primingQuotes || refreshing
+  const showSkeleton = !readyToQuote || primingQuotes
 
   return (
     <aside
@@ -244,30 +237,6 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
         {/* ============================ Live Quotes (form pages) ============================ */}
         {!inQuoteFlow && (
         <div className="mb-5">
-          {/* Refresh My Quote */}
-          <button
-            type="button"
-            onClick={handleRefresh}
-            disabled={!showPrices || refreshing}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition mb-3 disabled:cursor-not-allowed"
-            style={{
-              background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
-              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
-              color: showPrices ? (isDark ? '#D8B4FE' : '#374151') : '#9CA3AF',
-            }}
-          >
-            <svg
-              width="14" height="14" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              className={refreshing ? 'animate-spin' : ''}
-            >
-              <polyline points="23 4 23 10 17 10"/>
-              <polyline points="1 20 1 14 7 14"/>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-            </svg>
-            {refreshing ? 'Refreshing…' : 'Refresh My Quote'}
-          </button>
-
           {/* Highlighted top carrier */}
           {showSkeleton ? (
             <div
@@ -360,14 +329,21 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                       onClick={showPrices ? () => selectCarrier(q.id) : undefined}
                       className={`w-full rounded-xl px-3 py-3 flex items-center gap-3 transition text-left ${showPrices ? 'cursor-pointer' : 'cursor-default'}`}
                       style={{
-                        background: isSelected ? 'rgba(124,58,237,0.06)' : 'white',
-                        border: `1.5px solid ${isSelected ? '#7C3AED' : '#E5E7EB'}`,
+                        background: isSelected
+                          ? (isDark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.06)')
+                          : (isDark ? 'rgba(255,255,255,0.04)' : 'white'),
+                        border: `1.5px solid ${isSelected ? '#7C3AED' : (isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB')}`,
                         boxShadow: isSelected ? '0 4px 14px rgba(92,46,212,0.10)' : 'none',
                       }}
                     >
                       <CarrierMark name={q.name} logo={q.logo} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-gray-700 truncate">{q.name}</p>
+                        <p
+                          className="text-[11px] font-semibold truncate"
+                          style={{ color: isDark ? '#F9FAFB' : '#374151' }}
+                        >
+                          {q.name}
+                        </p>
                         {isSelected && (
                           <p
                             className="text-[9px] font-semibold mt-0.5"
@@ -384,7 +360,12 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                       </div>
                       {showPrices ? (
                         <div className="text-right shrink-0">
-                          <div className="text-sm font-bold text-gray-900 leading-tight">{money(q.premium)}</div>
+                          <div
+                            className="text-sm font-bold leading-tight"
+                            style={{ color: isDark ? '#F9FAFB' : '#111827' }}
+                          >
+                            {money(q.premium)}
+                          </div>
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
                       ) : (
