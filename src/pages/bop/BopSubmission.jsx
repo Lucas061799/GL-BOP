@@ -412,9 +412,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                 <div
                   className="flex items-center gap-4 flex-wrap px-6 py-4"
                   style={{
-                    background: isDark
-                      ? 'rgba(92,46,212,0.10)'
-                      : 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)',
+                    background: isDark ? '#1A1E38' : 'white',
                     borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
                   }}
                 >
