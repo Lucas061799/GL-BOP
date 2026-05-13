@@ -71,17 +71,19 @@ function CarrierMark({ name, logo, size = 'sm' }) {
   )
 }
 
-// Loading "$" placeholder — a shimmer gradient sweeps through the
-// glyph so it reads as actively refreshing without adding any text
-// or motion of the character itself.
-function LoadingPriceTicker() {
+// Loading price placeholder — a small skeleton bar with the same
+// left-to-right shimmer used everywhere else in the rail. Standard
+// 'still loading' pattern; the row already shows the carrier logo
+// and name, so this just stands in for the price.
+function LoadingPriceTicker({ isDark = false }) {
   return (
     <div
-      className="shrink-0 flex items-baseline text-sm font-bold"
+      className="shrink-0 flex items-center"
+      style={{ minWidth: 56, justifyContent: 'flex-end' }}
       title="Calculating quote…"
       aria-label="Calculating quote"
     >
-      <span className="rp-dollar-shimmer">$</span>
+      <div className={`${isDark ? 'skel-dark' : 'skel'} h-3.5 w-14 rounded`} />
     </div>
   )
 }
@@ -105,14 +107,6 @@ function SkeletonRow({ isDark = false }) {
         .skel { background: linear-gradient(90deg, #EEF2F7 0%, #F8FAFC 50%, #EEF2F7 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         .skel-dark { background: linear-gradient(90deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 100%); background-size: 200% 100%; animation: skelShimmer 1.4s ease-in-out infinite; }
         @keyframes skelShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        .rp-dollar-shimmer {
-          color: #E5E7EB;
-          animation: rpDollarShimmer 1.6s ease-in-out infinite;
-        }
-        @keyframes rpDollarShimmer {
-          0%, 100% { color: #E5E7EB }  /* very light gray */
-          50%      { color: #9CA3AF }  /* gray */
-        }
       `}</style>
     </div>
   )
@@ -366,10 +360,9 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                           <div className="text-[9px] text-gray-400">per year</div>
                         </div>
                       ) : (
-                        /* Quotes are still loading — show a ticker
-                           cycling random gray values so the row reads
-                           as actively calculating. */
-                        <LoadingPriceTicker />
+                        /* Quotes are still loading — small shimmer
+                           bar where the price will land. */
+                        <LoadingPriceTicker isDark={isDark} />
                       )}
                     </Wrapper>
                   )
