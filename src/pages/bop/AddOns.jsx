@@ -52,23 +52,62 @@ function Toggle({ on, onClick }) {
   )
 }
 
-// Compact label above each section. Same style we use elsewhere.
-function SectionLabel({ children }) {
+// Collapsible section card — clicking the header expands or collapses
+// the body. We use this for both 'Included in Gold' and 'Optional
+// Add-Ons' so the page stays short until the user opens one.
+function Collapsible({ title, badge, defaultOpen = false, children }) {
+  const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-2.5 pl-0.5">
-      {children}
+    <div
+      className="rounded-xl overflow-hidden transition"
+      style={{
+        background: 'white',
+        border: `1px solid ${open ? 'rgba(124,58,237,0.25)' : '#E5E7EB'}`,
+        boxShadow: open ? '0 2px 8px rgba(92,46,212,0.06)' : 'none',
+      }}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="w-full px-4 py-3.5 flex items-center justify-between gap-3 transition hover:bg-gray-50 text-left"
+        aria-expanded={open}
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="text-sm font-bold text-gray-900">{title}</span>
+          {badge}
+        </div>
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#6B7280"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="shrink-0 transition-transform"
+          style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+        >
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      {open && (
+        <div className="border-t" style={{ borderColor: '#F3F4F6' }}>
+          {children}
+        </div>
+      )}
     </div>
   )
 }
 
 // Optional add-on row — the only items on this page that still toggle.
-function OptionalCard({ cov, on, onToggle }) {
+function OptionalRow({ cov, on, onToggle, last }) {
   return (
     <div
-      className="rounded-xl px-4 py-3.5 transition"
+      className="px-4 py-3.5 transition"
       style={{
-        background: on ? 'linear-gradient(135deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)' : 'white',
-        border: `1px solid ${on ? 'rgba(124,58,237,0.25)' : '#E5E7EB'}`,
+        background: on ? 'linear-gradient(135deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)' : 'transparent',
+        borderBottom: last ? 'none' : '1px solid #F3F4F6',
       }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -115,8 +154,10 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
     if (onContinue) onContinue()
   }
 
+  const selectedCount = selected.length
+
   return (
-    <div className="w-full space-y-5">
+    <div className="w-full space-y-4">
       <p className="text-sm text-gray-500 -mt-2">
         Customize optional coverages for{' '}
         <span className="font-semibold text-gray-700">{carrier}</span>{' '}
@@ -128,14 +169,22 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
         </span>
       </p>
 
-      {/* Included with the package — informational, no toggles. Going back
-          to the Package step is how the user changes any of these. */}
-      <div>
-        <SectionLabel>Included in your {packageName} package</SectionLabel>
-        <div
-          className="rounded-xl divide-y overflow-hidden"
-          style={{ background: 'white', border: '1px solid #E5E7EB', borderColor: '#E5E7EB' }}
-        >
+      {/* Included with the package — collapsed by default. Mostly
+          reassurance content; the user opens it only if they want to
+          inspect what they're already getting. */}
+      <Collapsible
+        title={`Included in your ${packageName} package`}
+        badge={
+          <span
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{ background: 'rgba(52,211,153,0.16)', color: '#059669' }}
+          >
+            {included.length} included
+          </span>
+        }
+        defaultOpen={false}
+      >
+        <div className="divide-y" style={{ borderColor: '#F3F4F6' }}>
           {included.map(c => (
             <div key={c.id} className="px-4 py-3.5 flex items-start gap-3" style={{ borderColor: '#F3F4F6' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
@@ -148,22 +197,44 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue })
             </div>
           ))}
         </div>
-      </div>
+      </Collapsible>
 
-      {/* Optional add-ons — the only place toggles live now */}
-      <div>
-        <SectionLabel>Optional Add-Ons</SectionLabel>
-        <div className="space-y-2.5">
-          {optionals.map(cov => (
-            <OptionalCard
+      {/* Optional add-ons — open by default since this is the action
+          area. The badge tracks how many they've turned on so they can
+          see selection state without expanding. */}
+      <Collapsible
+        title="Optional Add-Ons"
+        badge={
+          selectedCount > 0 ? (
+            <span
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+              style={{ background: 'rgba(92,46,212,0.12)', color: '#5C2ED4' }}
+            >
+              {selectedCount} of {optionals.length} selected
+            </span>
+          ) : (
+            <span
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+              style={{ background: '#F3F4F6', color: '#6B7280' }}
+            >
+              {optionals.length} available
+            </span>
+          )
+        }
+        defaultOpen
+      >
+        <div>
+          {optionals.map((cov, i) => (
+            <OptionalRow
               key={cov.id}
               cov={cov}
               on={selected.includes(cov.id)}
               onToggle={() => toggle(cov.id)}
+              last={i === optionals.length - 1}
             />
           ))}
         </div>
-      </div>
+      </Collapsible>
 
       {/* Footer actions */}
       <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: '#E5E7EB' }}>
