@@ -160,7 +160,10 @@ export default function Package({ formData, updateFormData, onBack, onContinue }
   const businessName = formData.business?.name
 
   const selectPackage = (pkgId) => {
-    updateFormData('bind', { packageId: pkgId })
+    // Stash the package premium so the right-rail summary can add it
+    // to the carrier premium without having to know the package data.
+    const pkg = PACKAGES.find(p => p.id === pkgId)
+    updateFormData('bind', { packageId: pkgId, packagePremium: pkg?.price || 0 })
   }
 
   const goBack = () => { onBack && onBack() }

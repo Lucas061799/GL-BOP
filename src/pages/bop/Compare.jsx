@@ -402,7 +402,16 @@ export default function Compare({ formData, updateFormData, quotesReady, onGoToS
 
   const toggle = (c) => setExpanded(prev => ({ ...prev, [c]: !prev[c] }))
   const select = (c) => {
-    updateFormData('bind', { selectedCarrier: c, packageId: undefined, addonsConfirmed: false })
+    // Remember the carrier's premium too, so the right-rail summary
+    // and the Package/Add-Ons pages can reflect the live price without
+    // re-deriving it.
+    const q = quotes.find(x => x.carrier === c)
+    updateFormData('bind', {
+      selectedCarrier: c,
+      carrierPremium: q?.premium || 0,
+      packageId: undefined,
+      addonsConfirmed: false,
+    })
     if (onSelectCarrier) setTimeout(() => onSelectCarrier(), 150)
   }
 

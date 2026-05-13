@@ -95,7 +95,16 @@ function SkeletonRow({ isDark = false }) {
   )
 }
 
-export default function RightPanel({ formData = {}, updateFormData, isDark = false }) {
+// Steps shown in the right rail while the user is moving through
+// the quote flow (Compare → Package → Add-Ons → Bind & Pay).
+const QUOTE_STEPS = [
+  { id: 'compare',  n: 1, label: 'Compare Quotes' },
+  { id: 'package',  n: 2, label: 'Choose Package' },
+  { id: 'addons',   n: 3, label: 'Add-Ons' },
+  { id: 'bind',     n: 4, label: 'Bind & Pay' },
+]
+
+export default function RightPanel({ formData = {}, updateFormData, isDark = false, inQuoteFlow = false, quoteStep = 'compare' }) {
   const selectedCarrier = formData.bind?.selectedCarrier
   const selectCarrier = (id) => {
     if (!updateFormData) return
@@ -187,7 +196,8 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
         {/* Divider */}
         <div className="mb-5" style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
 
-        {/* ============================ Live Quotes ============================ */}
+        {/* ============================ Live Quotes (form pages) ============================ */}
+        {!inQuoteFlow && (
         <div className="mb-5">
           {/* Refresh My Quote */}
           <button
@@ -393,7 +403,181 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
             </p>
           )}
         </div>
+        )}
 
+        {/* ============================ Quote-flow summary ============================ */}
+        {/* Compare → Package → Add-Ons → Bind. The right rail switches from
+            the carrier list to a focused 'selected carrier' summary so the
+            user can see their choice and the running total while they
+            tune packages and add-ons on the main canvas. */}
+        {inQuoteFlow && (() => {
+          const carrierName     = formData.bind?.selectedCarrier
+          const carrierLogo     = CARRIERS.find(c => c.name === carrierName)?.logo
+          const carrierPremium  = Number(formData.bind?.carrierPremium || 0)
+          const packageId       = formData.bind?.packageId
+          const packagePremium  = Number(formData.bind?.packagePremium || 0)
+          const totalPremium    = carrierPremium + packagePremium
+          const PACKAGE_LABEL   = { base: 'Base', silver: 'Silver', gold: 'Gold', platinum: 'Platinum' }
+          const packageLabel    = packageId ? PACKAGE_LABEL[packageId] : null
+
+          // Done state for each step in the flow
+          const isStepDone = (id) => {
+            if (id === 'compare') return !!carrierName
+            if (id === 'package') return !!packageId
+            if (id === 'addons')  return !!formData.bind?.addonsConfirmed
+            if (id === 'bind')    return !!formData.bind?.bound
+            return false
+          }
+
+          return (
+            <div className="mb-5">
+              {/* Selected carrier card */}
+              {carrierName ? (
+                <div
+                  className="rounded-2xl px-5 py-5 mb-5 flex flex-col items-center text-center relative"
+                  style={{
+                    background: 'white',
+                    border: '1.5px solid #7C3AED',
+                    boxShadow: '0 4px 20px rgba(92,46,212,0.10)',
+                  }}
+                >
+                  <div
+                    className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider text-white"
+                    style={{ background: BRAND_GRADIENT }}
+                  >
+                    SELECTED
+                  </div>
+                  {carrierLogo && <CarrierMark name={carrierName} logo={carrierLogo} size="lg" />}
+                  <div className="mt-3 text-sm font-semibold text-gray-900">{carrierName}</div>
+                  <div className="mt-2">
+                    <span
+                      className="text-3xl font-bold"
+                      style={{
+                        background: BRAND_GRADIENT,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      {money(totalPremium)}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
+
+                  {/* Carrier + package breakdown (only when a package is chosen) */}
+                  {packageLabel && (
+                    <div
+                      className="w-full mt-4 pt-3 text-[11px] text-gray-500 space-y-1"
+                      style={{ borderTop: '1px solid #F3F4F6' }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{carrierName} base</span>
+                        <span className="font-semibold text-gray-700">{money(carrierPremium)}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>{packageLabel} package</span>
+                        <span className="font-semibold text-gray-700">+{money(packagePremium)}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div
+                  className="rounded-2xl px-5 py-8 mb-5 text-center"
+                  style={{
+                    background: isDark ? 'rgba(255,255,255,0.03)' : '#FAFAFB',
+                    border: `1px dashed ${isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB'}`,
+                  }}
+                >
+                  <p className="text-[12px] text-gray-500 leading-relaxed">
+                    Select a carrier on the left to see your quote here.
+                  </p>
+                </div>
+              )}
+
+              {/* Steps */}
+              <div className="mb-5">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-3 pl-0.5">
+                  Where you are
+                </div>
+                <div className="space-y-3">
+                  {QUOTE_STEPS.map(step => {
+                    const current = step.id === quoteStep
+                    const done    = isStepDone(step.id) && !current
+                    return (
+                      <div key={step.id} className="flex items-center gap-3">
+                        <span
+                          className="w-7 h-7 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0"
+                          style={
+                            current
+                              ? { background: BRAND_GRADIENT, color: 'white' }
+                              : done
+                                ? { background: 'linear-gradient(88.09deg, rgba(92,46,212,0.18) 0%, rgba(166,20,195,0.18) 100%)', color: '#5C2ED4' }
+                                : { background: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6', color: '#9CA3AF' }
+                          }
+                        >
+                          {done ? (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          ) : (
+                            step.n
+                          )}
+                        </span>
+                        <span
+                          className="text-[13px]"
+                          style={{
+                            fontWeight: current ? 700 : done ? 600 : 500,
+                            color: current
+                              ? (isDark ? '#F9FAFB' : '#111827')
+                              : done
+                                ? (isDark ? '#D1D5DB' : '#4B5563')
+                                : '#9CA3AF',
+                          }}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Download Quote Proposal */}
+              <button
+                type="button"
+                disabled={!carrierName}
+                onClick={() => { /* hook up real proposal download here */ }}
+                className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
+                style={carrierName
+                  ? {
+                      background: BRAND_GRADIENT,
+                      color: 'white',
+                      boxShadow: '0 4px 14px rgba(92,46,212,0.22)',
+                    }
+                  : {
+                      background: isDark ? 'rgba(255,255,255,0.04)' : '#FAFAFB',
+                      color: isDark ? '#6B7280' : '#9CA3AF',
+                      border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+                    }
+                }
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="11" x2="12" y2="17"/>
+                  <polyline points="9 14 12 17 15 14"/>
+                </svg>
+                Download Quote Proposal
+              </button>
+              {!carrierName && (
+                <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
+                  Pick a carrier to download the quote proposal.
+                </p>
+              )}
+            </div>
+          )
+        })()}
 
       </div>
     </aside>
