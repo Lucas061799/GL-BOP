@@ -113,10 +113,11 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
   // code is picked. Prices only appear once we have at least one financial
   // input to base the estimate on (revenue, payroll, or employee count).
   const readyToQuote = !!formData.smartStart?.classId
+  const biz = formData.business || {}
   const hasAnyFinancial = !!(
-    Number(String(b.annualRevenue   || '').replace(/[^0-9]/g, '')) ||
-    Number(String(b.annualPayroll   || '').replace(/[^0-9]/g, '')) ||
-    Number(String(b.numberOfEmployees || '').replace(/[^0-9]/g, ''))
+    Number(String(biz.annualRevenue     || '').replace(/[^0-9]/g, '')) ||
+    Number(String(biz.annualPayroll     || '').replace(/[^0-9]/g, '')) ||
+    Number(String(biz.numberOfEmployees || '').replace(/[^0-9]/g, ''))
   )
   const showPrices = readyToQuote && hasAnyFinancial
 
