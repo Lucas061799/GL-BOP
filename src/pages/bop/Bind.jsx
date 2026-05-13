@@ -465,18 +465,26 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
             <div className="flex items-center justify-between py-1 text-sm">
               <span className="text-gray-500 flex items-center gap-2">
                 Broker Fee
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={brokerFee}
-                  onChange={e => {
-                    const v = e.target.value.replace(/[^0-9]/g, '')
-                    const n = v === '' ? 0 : Math.min(10000, Number(v))
-                    setBrokerFee(n)
-                  }}
-                  className="rounded px-2 py-1 text-sm w-16 outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]/40 transition"
-                  style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}
-                />
+                <span className="relative inline-block">
+                  <span
+                    className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none select-none"
+                    aria-hidden="true"
+                  >
+                    $
+                  </span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={brokerFee}
+                    onChange={e => {
+                      const v = e.target.value.replace(/[^0-9]/g, '')
+                      const n = v === '' ? 0 : Math.min(10000, Number(v))
+                      setBrokerFee(n)
+                    }}
+                    className="rounded pl-5 pr-2 py-1 text-sm w-20 outline-none focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]/40 transition"
+                    style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}
+                  />
+                </span>
               </span>
               <span className="text-gray-800 font-medium">{money(brokerFeeNum)}</span>
             </div>
