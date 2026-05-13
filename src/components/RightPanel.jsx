@@ -226,7 +226,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
               <div className={`${isDark ? 'skel-dark' : 'skel'} h-8 w-32 rounded`} />
               <div className={`${isDark ? 'skel-dark' : 'skel'} h-3 w-20 rounded`} />
             </div>
-          ) : (() => {
+          ) : showPrices ? (() => {
             const top = quotes[0]
             const isSelected = selectedCarrier === top.id
             return (
@@ -259,46 +259,43 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   </div>
                 )}
                 <CarrierMark name={top.name} logo={top.logo} size="lg" />
-                {showPrices ? (
-                  <>
-                    <div className="mt-3">
-                      <span
-                        className="text-3xl font-bold"
-                        style={{
-                          background: BRAND_GRADIENT,
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
-                      >
-                        {money(top.premium)}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
-                    <p
-                      className="text-[10px] font-semibold mt-2"
-                      style={{ color: isSelected ? '#5C2ED4' : '#9CA3AF' }}
-                    >
-                      {isSelected ? '✓ Selected' : 'Tap to select'}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm font-semibold text-gray-800 mt-3">{top.name}</p>
-                    <p className="text-[11px] text-gray-400 mt-1 leading-snug max-w-[200px]">
-                      Add revenue, payroll, or employees to see a price.
-                    </p>
-                  </>
-                )}
+                <div className="mt-3">
+                  <span
+                    className="text-3xl font-bold"
+                    style={{
+                      background: BRAND_GRADIENT,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    {money(top.premium)}
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-500 mt-0.5">Annual Premium</p>
+                <p
+                  className="text-[10px] font-semibold mt-2"
+                  style={{ color: isSelected ? '#5C2ED4' : '#9CA3AF' }}
+                >
+                  {isSelected ? '✓ Selected' : 'Tap to select'}
+                </p>
               </button>
             )
-          })()}
+          })() : (
+            /* No prices yet — show a small caption above the carrier list */
+            <p className="text-[11px] text-gray-400 mb-3 leading-snug">
+              Add revenue, payroll, or employees to see prices.
+            </p>
+          )}
 
-          {/* Remaining carriers */}
+          {/* Carrier list — when prices are showing this is just the
+              non-best carriers; otherwise it's the full list so the BEST
+              card doesn't get singled out before there's anything to
+              compare. */}
           <div className="space-y-2">
             {showSkeleton
               ? Array.from({ length: 3 }).map((_, i) => <SkeletonRow key={i} isDark={isDark} />)
-              : quotes.slice(1).map(q => {
+              : (showPrices ? quotes.slice(1) : quotes).map(q => {
                   const isSelected = selectedCarrier === q.id
                   return (
                     <button
