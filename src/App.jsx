@@ -498,7 +498,7 @@ function App() {
               { id: 4, title: 'Coverage Limits',         el: <Coverage formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
               { id: 5, title: 'Underwriting Questions', el: <Underwriting formData={formData} updateFormData={updateFormData} isDark={darkMode} onGetQuotes={handleGetQuotes} quoting={quoting} quotesReady={quotesReady} />, show: !inQuoteFlow },
               { id: 6,
-                title: quoteStep === 'package' ? 'Choose your package' : quoteStep === 'addons' ? 'Add-on Coverages' : 'Select Carrier',
+                title: quoteStep === 'package' ? 'Choose Your Package' : quoteStep === 'addons' ? 'Add-On Coverages' : 'Select Carrier',
                 el: quoteStep === 'package'
                   ? <Package formData={formData} updateFormData={updateFormData} isDark={darkMode} onBack={() => setQuoteStep('compare')} onContinue={() => setQuoteStep('addons')} />
                   : quoteStep === 'addons'
