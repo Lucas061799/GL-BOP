@@ -494,7 +494,7 @@ function App() {
             {[
               { id: 1, title: 'Class Code',             el: <SmartStart formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
               { id: 2, title: 'Applicant Information',  el: <Business formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
-              { id: 3, title: 'Location',               el: <Location formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
+              { id: 3, title: 'Location Information',   el: <Location formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
               { id: 4, title: 'Coverage Limits',         el: <Coverage formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
               { id: 5, title: 'Underwriting Questions', el: <Underwriting formData={formData} updateFormData={updateFormData} isDark={darkMode} onGetQuotes={handleGetQuotes} quoting={quoting} quotesReady={quotesReady} />, show: !inQuoteFlow },
               { id: 6,
