@@ -346,16 +346,15 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                         </div>
                       ) : (
                         /* Quotes are still loading — a gently pulsing
-                           "$" placeholder where the price will land.
-                           Same visual weight as the eventual price
-                           number, so the row doesn't jump when the
-                           value arrives. */
+                           gray "$" placeholder where the price will
+                           land. Gray reads as 'waiting' instead of
+                           competing with the brand color for attention. */
                         <div
                           className="shrink-0 flex items-baseline text-sm font-bold tabular-nums"
                           title="Calculating quote…"
                           aria-label="Calculating quote"
                         >
-                          <span className="rp-dollar-pulse" style={{ color: '#5C2ED4' }}>$</span>
+                          <span className="rp-dollar-pulse" style={{ color: '#9CA3AF' }}>$</span>
                         </div>
                       )}
                     </Wrapper>
