@@ -398,39 +398,20 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
         </div>
       )}
 
-      {/* Answers ready banner */}
-      {allAnswered && (
-        <div
-          className="rounded-xl px-5 py-3.5 flex items-center justify-between gap-3"
-          style={{
-            background: 'linear-gradient(135deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
-            border: '1px solid rgba(124,58,237,0.18)',
-          }}
-        >
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-              style={{ background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)' }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-bold" style={{ color: '#1B0750' }}>Answers ready.</p>
-              <p className="text-xs" style={{ color: '#6B21A8' }}>Verify the list below, then click Get Quotes.</p>
-            </div>
-          </div>
-          {quickFilled && (
-            <button
-              type="button"
-              onClick={handleReset}
-              className="text-xs font-semibold hover:underline shrink-0"
-              style={{ color: '#5C2ED4' }}
-            >
-              Reset
-            </button>
-          )}
+      {/* Standard answers applied — single-line note (matches Commercial Auto) */}
+      {allAnswered && quickFilled && (
+        <div className="flex items-center justify-between gap-3 mb-1">
+          <p className="text-xs font-medium" style={{ color: '#5C2ED4' }}>
+            Standard answers applied — expand each group to review or adjust.
+          </p>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="text-[10px] underline shrink-0"
+            style={{ color: '#6B7280' }}
+          >
+            Reset all
+          </button>
         </div>
       )}
 
