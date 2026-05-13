@@ -209,6 +209,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
   const [showPayment, setShowPayment] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
   const [fraudOpen, setFraudOpen] = useState(false)
+  const [showChargeConfirm, setShowChargeConfirm] = useState(false)
 
   const contact = formData.bindContact || {}
   const setContact = (id) => (val) => updateFormData('bindContact', { [id]: val })
@@ -668,7 +669,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
         </p>
         <button
           type="button"
-          onClick={() => setShowPayment(true)}
+          onClick={() => setShowChargeConfirm(true)}
           disabled={!canBind}
           className="inline-flex items-center gap-3 pl-6 pr-5 py-3 rounded-xl text-white transition hover:opacity-90 disabled:cursor-not-allowed"
           style={{
@@ -687,6 +688,125 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
           </svg>
         </button>
       </div>
+
+      {/* Charge authorization confirmation — opens BEFORE the Input 1 modal */}
+      {showChargeConfirm && (
+        <div
+          className="fixed inset-0 z-[90] flex items-center justify-center p-4"
+          style={{ background: 'rgba(15,18,40,0.55)', backdropFilter: 'blur(3px)' }}
+          onClick={() => setShowChargeConfirm(false)}
+        >
+          <div
+            className="relative w-full max-w-md rounded-2xl overflow-hidden flex flex-col"
+            style={{ background: 'white', boxShadow: '0 32px 80px rgba(0,0,0,0.22)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-6 pt-6 pb-2">
+              <div className="flex items-start gap-3">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
+                  style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-lg font-bold text-gray-900 leading-snug">Confirm payment authorization</h2>
+                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+                    You'll see <span className="font-semibold text-gray-700">two separate charges</span> on the card on file. The premium is processed separately from the fees.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowChargeConfirm(false)}
+                  className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition hover:bg-gray-50"
+                  style={{ border: '1px solid #E5E7EB', background: 'white' }}
+                  aria-label="Close"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Charge breakdown */}
+            <div className="px-6 pt-3 pb-4">
+              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #E5E7EB' }}>
+                <div className="flex items-center justify-between px-4 py-3">
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charge 1</div>
+                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Policy fees</div>
+                  </div>
+                  <div className="text-lg font-bold text-gray-900">{money(totalFees)}</div>
+                </div>
+                <div className="border-t" style={{ borderColor: '#F3F4F6' }} />
+                <div className="flex items-center justify-between px-4 py-3">
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charge 2</div>
+                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Annual premium</div>
+                  </div>
+                  <div className="text-lg font-bold text-gray-900">{money(premiumPortion)}</div>
+                </div>
+                <div className="border-t" style={{ borderColor: '#E5E7EB' }} />
+                <div
+                  className="flex items-center justify-between px-4 py-3"
+                  style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)' }}
+                >
+                  <div className="text-sm font-bold text-gray-800">Total authorized</div>
+                  <div
+                    className="text-xl font-bold"
+                    style={{
+                      background: BRAND_GRADIENT,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    {money(dueToday)}
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-gray-400 italic mt-3 leading-relaxed">
+                By continuing, you authorize both charges to be placed on the card on file. The two amounts will appear as separate transactions on your statement.
+              </p>
+            </div>
+
+            {/* Footer actions */}
+            <div
+              className="flex items-center justify-end gap-2 px-5 py-3 shrink-0"
+              style={{ background: '#FAFAFB', borderTop: '1px solid #F3F4F6' }}
+            >
+              <button
+                type="button"
+                onClick={() => setShowChargeConfirm(false)}
+                className="px-4 py-2 rounded-lg text-xs font-semibold text-gray-700 transition hover:bg-white"
+                style={{ border: '1px solid #E5E7EB', background: 'white' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowChargeConfirm(false)
+                  setShowPayment(true)
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white transition hover:opacity-90"
+                style={{ background: BRAND_GRADIENT, boxShadow: '0 4px 14px rgba(92,46,212,0.25)' }}
+              >
+                Continue to Payment
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Input 1 Payments modal */}
       <Input1Modal
