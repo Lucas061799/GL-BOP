@@ -261,8 +261,8 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
 
   return (
     <div className="w-full space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* ============ LEFT COLUMN ============ */}
+      <div className="grid grid-cols-1 gap-6">
+        {/* ============ TOP STACK ============ */}
         <div className="space-y-5">
           {/* Carrier + price */}
           <div className="rounded-xl p-6 text-center" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
@@ -431,7 +431,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound }) 
           </div>
         </div>
 
-        {/* ============ RIGHT COLUMN ============ */}
+        {/* ============ BOTTOM STACK ============ */}
         <div className="space-y-5">
           {/* Fraud warning */}
           <div
