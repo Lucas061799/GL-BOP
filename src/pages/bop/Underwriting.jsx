@@ -401,25 +401,33 @@ function SectionLabel({ label, count }) {
   )
 }
 
-function CollapsibleGroup({ title, count, color = '#5C2ED4', defaultOpen = false, children }) {
+function CollapsibleGroup({ title, count, color = '#5C2ED4', defaultOpen = false, children, isDark = false }) {
   const [open, setOpen] = useState(defaultOpen)
+  // Same color treatment Commercial Auto's EligibilityInformation
+  // uses: tint the bg + border with the accent color, and brighten
+  // the title/chevron so they pop against the dark sidebar.
+  const darkAccent = color === '#5C2ED4' ? '#A78BFA' : '#F0ABFC'
+  const titleColor = isDark ? darkAccent : color
   return (
     <div>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-left transition"
-        style={{ background: '#F9FAFB', border: '1px solid #E5E7EB' }}
+        style={{
+          background: isDark ? `${color}22` : '#F9FAFB',
+          border: `1px solid ${isDark ? `${color}44` : '#E5E7EB'}`,
+        }}
       >
         <div className="flex items-center gap-2">
-          <span className="text-xs font-bold" style={{ color }}>{title}</span>
+          <span className="text-xs font-bold" style={{ color: titleColor }}>{title}</span>
           {count !== undefined && (
-            <span className="text-[11px] font-medium text-gray-400">({count} {count === 1 ? 'question' : 'questions'})</span>
+            <span className="text-[11px] font-medium" style={{ color: isDark ? '#6B7280' : '#9CA3AF' }}>({count} {count === 1 ? 'question' : 'questions'})</span>
           )}
         </div>
         <svg
           className="w-4 h-4 transition-transform shrink-0"
-          style={{ color, transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          style={{ color: titleColor, transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
           fill="none" stroke="currentColor" viewBox="0 0 24 24"
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
@@ -430,7 +438,7 @@ function CollapsibleGroup({ title, count, color = '#5C2ED4', defaultOpen = false
   )
 }
 
-export default function Underwriting({ formData, updateFormData, onGetQuotes, quoting, quotesReady }) {
+export default function Underwriting({ formData, updateFormData, onGetQuotes, quoting, quotesReady, isDark = false }) {
   const data = formData.underwriting || {}
   const set = (key, val) => updateFormData('underwriting', { [key]: val })
 
@@ -535,7 +543,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
 
       {quickFilled ? (
         <div className="space-y-3">
-          <CollapsibleGroup title="Insurance History — standard answers applied" count={HISTORY_QS.length} color="#5C2ED4">
+          <CollapsibleGroup title="Insurance History — standard answers applied" count={HISTORY_QS.length} color="#5C2ED4" isDark={isDark}>
             {HISTORY_QS.map(q => (
               <QuestionRow
                 key={q.key}
@@ -547,7 +555,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
             ))}
           </CollapsibleGroup>
 
-          <CollapsibleGroup title="Risk Profile — standard answer applied" count={RISK_QS.length} color="#A614C3">
+          <CollapsibleGroup title="Risk Profile — standard answer applied" count={RISK_QS.length} color="#A614C3" isDark={isDark}>
             {RISK_QS.map(q => (
               <QuestionRow
                 key={q.key}
