@@ -475,6 +475,14 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                     boxShadow: '0 4px 20px rgba(92,46,212,0.10)',
                   }}
                 >
+                  {/* SELECTED tag — small brand-gradient pill anchored
+                      at the top-right of the card */}
+                  <span
+                    className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider text-white"
+                    style={{ background: BRAND_GRADIENT }}
+                  >
+                    SELECTED
+                  </span>
                   {carrierLogo && <CarrierMark name={carrierName} logo={carrierLogo} size="xl" />}
 
                   {/* Bind & Pay — selection summary (no price; the page
