@@ -36,17 +36,24 @@ const COVERAGES = [
 
 const money = (n) => '$' + n.toLocaleString()
 
-function Toggle({ on, onClick }) {
+function Toggle({ on, onClick, isDark = false }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className="w-11 h-6 rounded-full relative transition shrink-0"
-      style={{ background: on ? BRAND_GRADIENT : '#D1D5DB' }}
+      style={{
+        background: on
+          ? BRAND_GRADIENT
+          : (isDark ? 'rgba(255,255,255,0.14)' : '#D1D5DB'),
+      }}
     >
       <div
         className="absolute top-0.5 w-5 h-5 rounded-full shadow transition-all"
-        style={{ left: on ? '22px' : '2px', background: 'white' }}
+        style={{
+          left: on ? '22px' : '2px',
+          background: on ? 'white' : (isDark ? '#E5E7EB' : 'white'),
+        }}
       />
     </button>
   )
@@ -127,7 +134,7 @@ function OptionalRow({ cov, on, onToggle, last, isDark = false }) {
           <p className="text-xs leading-snug" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>{cov.description}</p>
         </div>
         <div className="shrink-0 pt-0.5">
-          <Toggle on={on} onClick={onToggle} />
+          <Toggle on={on} onClick={onToggle} isDark={isDark} />
         </div>
       </div>
     </div>
@@ -309,7 +316,7 @@ export default function AddOns({ formData, updateFormData, onBack, onContinue, i
                   <p className="text-xs leading-snug mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>{c.description}</p>
                 </div>
                 <div className="shrink-0 pt-0.5">
-                  <Toggle on={!isRemoved} onClick={() => togglePackageItem(c.id)} />
+                  <Toggle on={!isRemoved} onClick={() => togglePackageItem(c.id)} isDark={isDark} />
                 </div>
               </div>
             )
