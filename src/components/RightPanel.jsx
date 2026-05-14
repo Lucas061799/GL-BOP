@@ -476,10 +476,11 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   }}
                 >
                   {/* SELECTED tag — small brand-gradient pill anchored
-                      ON the top-right border of the card so it reads
-                      like a corner notch/ribbon. */}
+                      at the top-right rounded corner of the card. The
+                      negative offsets let it sit on the corner curve
+                      like a corner badge. */}
                   <span
-                    className="absolute -top-2.5 right-4 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider text-white"
+                    className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full text-[9px] font-bold tracking-wider text-white"
                     style={{
                       background: BRAND_GRADIENT,
                       boxShadow: '0 2px 6px rgba(92,46,212,0.25)',
