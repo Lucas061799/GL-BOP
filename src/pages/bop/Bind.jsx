@@ -808,6 +808,43 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
 
       </div>
 
+      {/* Missing-items callout — only when Bind is disabled. Lists
+          exactly what's still needed so the user isn't stuck guessing
+          why the button is grey. */}
+      {!canBind && (() => {
+        const missing = []
+        if (!contact.firstName) missing.push('Insured first name')
+        if (!contact.lastName)  missing.push('Insured last name')
+        if (!contact.email)     missing.push('Insured email')
+        const consentLeft = CONSENTS.filter(c => !consents[c.key]).length
+        if (consentLeft > 0) {
+          missing.push(`${consentLeft} acknowledgment${consentLeft === 1 ? '' : 's'} still need accepting`)
+        }
+        return (
+          <div
+            className="rounded-xl px-4 py-3 mt-2 flex items-start gap-3"
+            style={{
+              background: isDark ? 'rgba(245,158,11,0.10)' : 'rgba(245,158,11,0.08)',
+              border: `1px solid ${isDark ? 'rgba(245,158,11,0.35)' : 'rgba(245,158,11,0.30)'}`,
+            }}
+          >
+            <svg className="w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#FCD34D' : '#B45309'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div className="min-w-0 flex-1">
+              <div className="text-[12px] font-semibold leading-tight" style={{ color: isDark ? '#FCD34D' : '#92400E' }}>
+                Finish these before binding:
+              </div>
+              <ul className="mt-1 text-[12px] leading-relaxed list-disc pl-4 space-y-0.5" style={{ color: isDark ? '#FDE68A' : '#92400E' }}>
+                {missing.map(item => <li key={item}>{item}</li>)}
+              </ul>
+            </div>
+          </div>
+        )
+      })()}
+
       {/* Bind button */}
       <div className="pt-2 flex items-center justify-between gap-4 flex-wrap">
         <p className="text-[11px] text-gray-400 max-w-md">
