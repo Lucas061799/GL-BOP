@@ -238,56 +238,17 @@ export function PreviewModal({ formData, onClose, onConfirm, variant = 'review',
 
         {/* Body */}
         <div className="px-6 py-5 overflow-y-auto space-y-3">
-          {/* Print-only document header — matches Commercial Auto Submission */}
+          {/* Print-only document header — just the branding row.
+              (Applicant + product info that used to live here was
+              removed; the title card below already names everything.) */}
           <div className="print-only flex-col mb-4">
-            {/* Branding row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 8, marginBottom: 8, borderBottom: '1.5px solid #E5E7EB' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 8, borderBottom: '1.5px solid #E5E7EB' }}>
               <img src={norbielinkLogo} alt="NorbieLink" style={{ height: 22, objectFit: 'contain' }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ fontSize: 8, color: '#9CA3AF', letterSpacing: '0.08em', fontWeight: 600 }}>POWERED BY</span>
                 <img src={btisLogo} alt="btis" style={{ height: 18, objectFit: 'contain' }} />
               </div>
             </div>
-            {/* Applicant + product info row */}
-            {(() => {
-              const productType = formData.pageZero?.productType || 'bop'
-              const productLabel = productType === 'gl'
-                ? 'General Liability Application'
-                : 'Business Owners Policy Application'
-              const metaLine = [
-                biz.entityType,
-                biz.effectiveDate ? `Eff. ${biz.effectiveDate}` : null,
-                biz.phone,
-                biz.email,
-              ].filter(Boolean).join('  ·  ')
-              return (
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#111827' }}>{biz.name || '—'}</p>
-                    {metaLine && (
-                      <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>{metaLine}</p>
-                    )}
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p
-                      style={{
-                        fontSize: 9,
-                        fontWeight: 700,
-                        background: 'linear-gradient(88deg,#5C2ED4 0%,#A614C3 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}
-                    >
-                      {productLabel}
-                    </p>
-                    <p style={{ fontSize: 8, color: '#9CA3AF', marginTop: 2 }}>
-                      {ss.classId ? `#${ss.classId} · ` : ''}{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </p>
-                  </div>
-                </div>
-              )
-            })()}
           </div>
 
           {ss.description && (
