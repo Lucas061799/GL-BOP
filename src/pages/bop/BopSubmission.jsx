@@ -962,7 +962,11 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
+            {/* Header — same recipe as the shared PreviewModal: document
+                icon on the left, title + subtitle, a small inline print
+                button next to the title, and a circular close X on the
+                right. Keeps every 'preview' surface in the app
+                visually consistent. */}
             <div
               className="px-5 pt-4 pb-4 shrink-0"
               style={{
@@ -975,7 +979,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                   className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
                   style={{
                     background: isDark
-                      ? 'linear-gradient(88.09deg, rgba(92,46,212,0.45) 0%, rgba(166,20,195,0.45) 100%)'
+                      ? 'linear-gradient(88.09deg, rgba(167,139,250,0.22) 0%, rgba(232,121,249,0.22) 100%)'
                       : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
                   }}
                 >
@@ -986,18 +990,44 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                         <stop offset="100%" stopColor={isDark ? '#E879F9' : '#A614C3'}/>
                       </linearGradient>
                     </defs>
+                    {/* Document icon — matches the shared PreviewModal */}
                     <path
-                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       stroke="url(#bopPrevHdrG)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
                     />
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-lg sm:text-xl font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
-                    Print Preview
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg sm:text-xl font-bold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                      Application Summary
+                    </h2>
+                    {/* Inline print/save button — same recipe as the
+                        Underwriting PreviewModal header icon */}
+                    <button
+                      type="button"
+                      onClick={() => { setPreviewOpen(false); confirmPrint() }}
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-full shrink-0 transition"
+                      style={{ background: isDark ? 'rgba(167,139,250,0.22)' : 'rgba(92,46,212,0.08)' }}
+                      onMouseEnter={ev => { ev.currentTarget.style.background = isDark ? 'rgba(167,139,250,0.34)' : 'rgba(92,46,212,0.16)' }}
+                      onMouseLeave={ev => { ev.currentTarget.style.background = isDark ? 'rgba(167,139,250,0.22)' : 'rgba(92,46,212,0.08)' }}
+                      aria-label="Print or save a copy"
+                      title="Print or save a copy"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                        <path
+                          stroke="url(#bopPrevHdrG)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+                          d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+                        />
+                        <rect x="6" y="14" width="12" height="8" stroke="url(#bopPrevHdrG)" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
                   <p className="text-xs mt-0.5 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
-                    Review your submission before printing or saving as PDF.
+                    Preview the summary below before downloading.
+                  </p>
+                  <p className="text-[11px] mt-1 leading-relaxed" style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}>
+                    Tap the printer icon to save a copy.
                   </p>
                 </div>
                 <button
@@ -1008,6 +1038,8 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                     border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : '#E5E7EB'}`,
                     background: isDark ? 'rgba(255,255,255,0.05)' : 'white',
                   }}
+                  onMouseEnter={ev => { ev.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(92,46,212,0.06)'; ev.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.18)' : 'rgba(92,46,212,0.3)' }}
+                  onMouseLeave={ev => { ev.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.05)' : 'white'; ev.currentTarget.style.borderColor = isDark ? 'rgba(255,255,255,0.1)' : '#E5E7EB' }}
                   aria-label="Close"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -1180,13 +1212,13 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
                   setPreviewOpen(false)
                   confirmPrint()
                 }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white transition hover:opacity-90"
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold text-white transition hover:opacity-90"
                 style={{ background: BRAND_GRADIENT, boxShadow: '0 4px 14px rgba(92,46,212,0.25)' }}
               >
-                <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+                Download Summary
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3v12m0 0l-4-4m4 4 4-4M5 21h14"/>
                 </svg>
-                Print / Save as PDF
               </button>
             </div>
           </div>
