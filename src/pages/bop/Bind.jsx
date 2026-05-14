@@ -378,6 +378,10 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
   // Which individual consent rows have their details panel expanded
   const [openConsentDetails, setOpenConsentDetails] = useState({})
   const [showChargeConfirm, setShowChargeConfirm] = useState(false)
+  // Track whether the user has tried to Bind so we only surface
+  // 'required' errors after an actual submit attempt (Commercial
+  // Auto pattern) — the form doesn't scream errors on first render.
+  const [attemptedBind, setAttemptedBind] = useState(false)
 
   const contact = formData.bindContact || {}
   const setContact = (id) => (val) => updateFormData('bindContact', { [id]: val })
@@ -692,10 +696,10 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
           <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">Insured Contact</div>
           <div className="space-y-4">
             <FormGrid>
-              <Input label="First Name" value={contact.firstName} onChange={setContact('firstName')} placeholder="First name" />
-              <Input label="Last Name"  value={contact.lastName}  onChange={setContact('lastName')}  placeholder="Last name" />
+              <Input label="First Name" required value={contact.firstName} onChange={setContact('firstName')} placeholder="First name" error={attemptedBind && !contact.firstName} />
+              <Input label="Last Name"  required value={contact.lastName}  onChange={setContact('lastName')}  placeholder="Last name"  error={attemptedBind && !contact.lastName} />
             </FormGrid>
-            <Input label="Email" type="email" value={contact.email} onChange={setContact('email')} placeholder="name@company.com" />
+            <Input label="Email" required type="email" value={contact.email} onChange={setContact('email')} placeholder="name@company.com" error={attemptedBind && !contact.email} />
           </div>
         </div>
 
@@ -808,61 +812,6 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
 
       </div>
 
-      {/* Missing-items callout — only when Bind is disabled. Same
-          chip recipe we use elsewhere (soft tinted-gradient circle
-          with the alert ! icon, light card surface), so it feels
-          like the rest of the page. */}
-      {!canBind && (() => {
-        const missing = []
-        if (!contact.firstName) missing.push('Insured first name')
-        if (!contact.lastName)  missing.push('Insured last name')
-        if (!contact.email)     missing.push('Insured email')
-        const consentLeft = CONSENTS.filter(c => !consents[c.key]).length
-        if (consentLeft > 0) {
-          missing.push(`${consentLeft} acknowledgment${consentLeft === 1 ? '' : 's'} still need accepting`)
-        }
-        return (
-          <div
-            className="rounded-xl px-4 py-3 mt-2 flex items-start gap-3"
-            style={{
-              background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
-              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
-            }}
-          >
-            <span
-              className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-              style={{
-                background: isDark
-                  ? 'linear-gradient(88.09deg, rgba(167,139,250,0.22) 0%, rgba(232,121,249,0.22) 100%)'
-                  : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-            </span>
-            <div className="min-w-0 flex-1">
-              <div className="text-[13px] font-semibold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>
-                Finish these before binding
-              </div>
-              <ul className="mt-1.5 text-[12px] leading-relaxed space-y-1" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
-                {missing.map(item => (
-                  <li key={item} className="flex items-start gap-2">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full shrink-0"
-                      style={{ background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)', marginTop: 7 }}
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )
-      })()}
-
       {/* Bind button */}
       <div className="pt-2 flex items-center justify-between gap-4 flex-wrap">
         <p className="text-[11px] text-gray-400 max-w-md">
@@ -870,9 +819,17 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
         </p>
         <button
           type="button"
-          onClick={() => setShowChargeConfirm(true)}
-          disabled={!canBind}
-          className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed"
+          onClick={() => {
+            if (!canBind) {
+              // Surface inline 'required' indicators under the empty
+              // fields and scroll the user to the first one so they
+              // can see what's missing.
+              setAttemptedBind(true)
+              return
+            }
+            setShowChargeConfirm(true)
+          }}
+          className="inline-flex items-center gap-2 px-7 py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90"
           style={{
             background: canBind ? BRAND_GRADIENT : '#D1D5DB',
             boxShadow: canBind ? '0 4px 14px rgba(92,46,212,0.25)' : 'none',
