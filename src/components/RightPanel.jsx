@@ -429,11 +429,14 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
             </svg>
             Download Application Summary
           </button>
-          {!formComplete && (
-            <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
-              Finish every section through Underwriting Questions to download the application summary.
-            </p>
-          )}
+          {!formComplete && (() => {
+            const formDoneCount = [1, 2, 3, 4, 5].filter(k => completion[k]).length
+            return (
+              <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
+                {formDoneCount} of 5 sections complete. Finish all 5 to download the application summary.
+              </p>
+            )
+          })()}
         </div>
         )}
 
