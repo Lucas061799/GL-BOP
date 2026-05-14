@@ -238,17 +238,41 @@ export function PreviewModal({ formData, onClose, onConfirm, variant = 'review',
 
         {/* Body */}
         <div className="px-6 py-5 overflow-y-auto space-y-3">
-          {/* Print-only document header — just the branding row.
-              (Applicant + product info that used to live here was
-              removed; the title card below already names everything.) */}
+          {/* Print-only document header — branding row + a single
+              title line so the printed PDF clearly identifies itself. */}
           <div className="print-only flex-col mb-4">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 8, borderBottom: '1.5px solid #E5E7EB' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 8, marginBottom: 10, borderBottom: '1.5px solid #E5E7EB' }}>
               <img src={norbielinkLogo} alt="NorbieLink" style={{ height: 22, objectFit: 'contain' }} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ fontSize: 8, color: '#9CA3AF', letterSpacing: '0.08em', fontWeight: 600 }}>POWERED BY</span>
                 <img src={btisLogo} alt="btis" style={{ height: 18, objectFit: 'contain' }} />
               </div>
             </div>
+            {(() => {
+              const productType = formData.pageZero?.productType || 'bop'
+              const productLabel = productType === 'gl'
+                ? 'General Liability Application'
+                : 'Business Owners Policy Application'
+              return (
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 700,
+                      background: 'linear-gradient(88deg,#5C2ED4 0%,#A614C3 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                    }}
+                  >
+                    {productLabel}
+                  </p>
+                  <p style={{ fontSize: 9, color: '#9CA3AF' }}>
+                    {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  </p>
+                </div>
+              )
+            })()}
           </div>
 
           {ss.description && (
