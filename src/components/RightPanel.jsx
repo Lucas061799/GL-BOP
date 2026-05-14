@@ -476,64 +476,115 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   }}
                 >
                   {carrierLogo && <CarrierMark name={carrierName} logo={carrierLogo} size="xl" />}
-                  {/* Carrier name — shown on Compare / Package / Add-Ons,
-                      hidden on Bind & Pay (the page already names the
-                      carrier in its own header). */}
-                  {quoteStep !== 'bind' && (
-                    <div
-                      className="mt-2 text-sm font-semibold"
-                      style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}
-                    >
-                      {carrierName}
-                    </div>
-                  )}
-                  <div className="mt-3">
-                    <span
-                      className="text-3xl font-bold"
-                      style={{
-                        background: BRAND_GRADIENT,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}
-                    >
-                      {money(totalPremium)}
-                    </span>
-                  </div>
-                  <p
-                    className="text-[11px] mt-0.5"
-                    style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
-                  >
-                    Annual Premium
-                  </p>
 
-                  {/* Carrier + package (+ add-ons) breakdown — only once
-                      the user has reached the Package step. Before that
-                      the carrier premium IS the annual premium, so the
-                      breakdown rows would just repeat the headline. */}
-                  {packageLabel && (
-                    <div
-                      className="w-full mt-4 pt-3 text-[11px] space-y-1"
-                      style={{
-                        borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}`,
-                        color: isDark ? '#9CA3AF' : '#6B7280',
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{carrierName} base</span>
-                        <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>{money(carrierPremium)}</span>
+                  {/* Bind & Pay — selection summary (no price; the page
+                      already shows it in the top card). Compare /
+                      Package / Add-Ons — price-focused running total. */}
+                  {quoteStep === 'bind' ? (() => {
+                    const optionalCount = (formData.bind?.optionalAddons || []).length
+                    const removedCount  = (formData.bind?.removedPackageItems || []).length
+                    return (
+                      <>
+                        <div
+                          className="mt-3 text-base font-bold"
+                          style={{ color: isDark ? '#F9FAFB' : '#111827' }}
+                        >
+                          {carrierName}
+                        </div>
+                        <div
+                          className="w-full mt-4 pt-3 text-[11px] space-y-2"
+                          style={{
+                            borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}`,
+                            color: isDark ? '#9CA3AF' : '#6B7280',
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>Package</span>
+                            <span
+                              className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                              style={{
+                                background: 'rgba(92,46,212,0.14)',
+                                color: isDark ? '#C4B5FD' : '#5C2ED4',
+                              }}
+                            >
+                              {packageLabel || '—'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span>Optional add-ons</span>
+                            <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>
+                              {optionalCount === 0 ? 'None' : `${optionalCount} added`}
+                            </span>
+                          </div>
+                          {removedCount > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span>Removed from package</span>
+                              <span className="font-semibold" style={{ color: isDark ? '#FCD34D' : '#B45309' }}>
+                                {removedCount}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )
+                  })() : (
+                    <>
+                      {/* Carrier name — shown on Compare / Package / Add-Ons */}
+                      <div
+                        className="mt-2 text-sm font-semibold"
+                        style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}
+                      >
+                        {carrierName}
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span>{packageLabel} package</span>
-                        <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>+{money(packagePremium)}</span>
+                      <div className="mt-3">
+                        <span
+                          className="text-3xl font-bold"
+                          style={{
+                            background: BRAND_GRADIENT,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                          }}
+                        >
+                          {money(totalPremium)}
+                        </span>
                       </div>
-                      {addonsPremium > 0 && (
-                        <div className="flex items-center justify-between">
-                          <span>Add-ons</span>
-                          <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>+{money(addonsPremium)}</span>
+                      <p
+                        className="text-[11px] mt-0.5"
+                        style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}
+                      >
+                        Annual Premium
+                      </p>
+
+                      {/* Carrier + package (+ add-ons) breakdown — only once
+                          the user has reached the Package step. Before that
+                          the carrier premium IS the annual premium, so the
+                          breakdown rows would just repeat the headline. */}
+                      {packageLabel && (
+                        <div
+                          className="w-full mt-4 pt-3 text-[11px] space-y-1"
+                          style={{
+                            borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}`,
+                            color: isDark ? '#9CA3AF' : '#6B7280',
+                          }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span>{carrierName} base</span>
+                            <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>{money(carrierPremium)}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span>{packageLabel} package</span>
+                            <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>+{money(packagePremium)}</span>
+                          </div>
+                          {addonsPremium > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span>Add-ons</span>
+                              <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>+{money(addonsPremium)}</span>
+                            </div>
+                          )}
                         </div>
                       )}
-                    </div>
+                    </>
                   )}
                 </div>
               ) : (
