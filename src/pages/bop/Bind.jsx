@@ -793,7 +793,10 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
         >
           <div
             className="relative w-full max-w-md rounded-2xl overflow-hidden flex flex-col"
-            style={{ background: 'white', boxShadow: '0 32px 80px rgba(0,0,0,0.22)' }}
+            style={{
+              background: isDark ? '#1A1E38' : 'white',
+              boxShadow: '0 32px 80px rgba(0,0,0,0.22)',
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -801,27 +804,36 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
               <div className="flex items-start gap-3">
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)' }}
+                  style={{
+                    background: isDark
+                      ? 'linear-gradient(88.09deg, rgba(167,139,250,0.22) 0%, rgba(232,121,249,0.22) 100%)'
+                      : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+                  }}
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2"/>
                     <line x1="2" y1="10" x2="22" y2="10"/>
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-lg font-bold text-gray-900 leading-snug">Confirm Payment Authorization</h2>
-                  <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                    Please confirm by selecting <span className="font-semibold text-gray-700">Continue</span> for the <span className="font-semibold text-gray-700">two separate charges</span> below to your card.
+                  <h2 className="text-lg font-bold leading-snug" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>Confirm Payment Authorization</h2>
+                  <p className="text-xs mt-1 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+                    Please confirm by selecting <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>Continue</span> for the <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>two separate charges</span> below to your card.
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowChargeConfirm(false)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition hover:bg-gray-50"
-                  style={{ border: '1px solid #E5E7EB', background: 'white' }}
+                  className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition"
+                  style={{
+                    border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB'}`,
+                    background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.02)' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'white' }}
                   aria-label="Close"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                 </button>
@@ -830,28 +842,35 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
 
             {/* Charge breakdown */}
             <div className="px-6 pt-3 pb-4">
-              <div className="rounded-xl overflow-hidden" style={{ border: '1px solid #E5E7EB' }}>
+              <div
+                className="rounded-xl overflow-hidden"
+                style={{ border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB'}` }}
+              >
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charge 1</div>
-                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Policy Fees</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>Charge 1</div>
+                    <div className="text-sm font-semibold mt-0.5" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>Policy Fees</div>
                   </div>
-                  <div className="text-lg font-bold text-gray-900">{money(totalFees)}</div>
+                  <div className="text-lg font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{money(totalFees)}</div>
                 </div>
-                <div className="border-t" style={{ borderColor: '#F3F4F6' }} />
+                <div className="border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6' }} />
                 <div className="flex items-center justify-between px-4 py-3">
                   <div className="min-w-0">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Charge 2</div>
-                    <div className="text-sm font-semibold text-gray-800 mt-0.5">Annual Premium</div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>Charge 2</div>
+                    <div className="text-sm font-semibold mt-0.5" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>Annual Premium</div>
                   </div>
-                  <div className="text-lg font-bold text-gray-900">{money(premiumPortion)}</div>
+                  <div className="text-lg font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{money(premiumPortion)}</div>
                 </div>
-                <div className="border-t" style={{ borderColor: '#E5E7EB' }} />
+                <div className="border-t" style={{ borderColor: isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB' }} />
                 <div
                   className="flex items-center justify-between px-4 py-3"
-                  style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)' }}
+                  style={{
+                    background: isDark
+                      ? 'linear-gradient(88.09deg, rgba(167,139,250,0.10) 0%, rgba(232,121,249,0.10) 100%)'
+                      : 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)',
+                  }}
                 >
-                  <div className="text-sm font-bold text-gray-800">Total Authorized</div>
+                  <div className="text-sm font-bold" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>Total Authorized</div>
                   <div
                     className="text-xl font-bold"
                     style={{
@@ -870,13 +889,22 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
             {/* Footer actions — Cancel on left, primary CTA on right */}
             <div
               className="flex items-center justify-between gap-2 px-5 py-3 shrink-0"
-              style={{ background: '#FAFAFB', borderTop: '1px solid #F3F4F6' }}
+              style={{
+                background: isDark ? 'rgba(255,255,255,0.02)' : '#FAFAFB',
+                borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
+              }}
             >
               <button
                 type="button"
                 onClick={() => setShowChargeConfirm(false)}
-                className="px-4 py-2 rounded-lg text-xs font-semibold text-gray-700 transition hover:bg-white"
-                style={{ border: '1px solid #E5E7EB', background: 'white' }}
+                className="px-4 py-2 rounded-lg text-xs font-semibold transition"
+                style={{
+                  color: isDark ? '#F9FAFB' : '#374151',
+                  border: `1px solid ${isDark ? 'rgba(255,255,255,0.10)' : '#E5E7EB'}`,
+                  background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.02)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = isDark ? 'rgba(255,255,255,0.04)' : 'white' }}
               >
                 Cancel
               </button>
