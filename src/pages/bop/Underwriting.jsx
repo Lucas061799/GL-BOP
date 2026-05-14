@@ -254,11 +254,12 @@ export function PreviewModal({ formData, onClose, onConfirm, variant = 'review',
               const productType = formData.pageZero?.productType || 'bop'
               const productLabel = productType === 'gl' ? 'General Liability' : 'Business Owners Policy'
               const carrier = formData.bind?.selectedCarrier
+              // Until the application is actually submitted/bound this
+              // is just a reference snapshot — don't imply it's been
+              // sent to carriers.
               const subtitle = carrier
                 ? <>Application bound with <span style={{ fontWeight: 700 }}>{carrier}</span>.</>
-                : variant === 'download'
-                  ? 'Snapshot of your application as it stands today.'
-                  : "Confirm your details below. We'll send them to our carriers."
+                : 'Reference copy — your application has not been submitted yet.'
               return (
                 <div style={{ borderRadius: 12, overflow: 'hidden', border: '1px solid #F3F4F6', display: 'block' }}>
                   <div style={{ height: 4, background: 'linear-gradient(88.09deg,#5C2ED4 0%,#A614C3 100%)' }} />
