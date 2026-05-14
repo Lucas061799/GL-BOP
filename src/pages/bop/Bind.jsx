@@ -652,7 +652,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
                   Charge 2
                 </span>
                 <span className="text-[11px] text-gray-400">
-                  {carrier === 'Coterie' ? 'Gold premium' : 'Carrier premium'}
+                  Policy Premium
                 </span>
               </div>
               {isAnnual ? (
