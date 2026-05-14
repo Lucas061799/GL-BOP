@@ -148,7 +148,7 @@ function PSection({ title, icon = 'briefcase', children }) {
 //   'download' → just a 'Close' button; the user downloads via the
 //                printer icon in the header. Used from the right rail
 //                'Download Application Summary' button.
-export function PreviewModal({ formData, onClose, onConfirm, variant = 'review' }) {
+export function PreviewModal({ formData, onClose, onConfirm, variant = 'review', isDark = false }) {
   const ss = formData.smartStart || {}
   const biz = formData.business || {}
   const loc = formData.location || {}
@@ -194,9 +194,9 @@ export function PreviewModal({ formData, onClose, onConfirm, variant = 'review' 
                   type="button"
                   onClick={() => window.print()}
                   className="no-print inline-flex items-center justify-center w-7 h-7 rounded-full shrink-0 transition"
-                  style={{ background: 'rgba(92,46,212,0.08)' }}
-                  onMouseEnter={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.16)' }}
-                  onMouseLeave={ev => { ev.currentTarget.style.background = 'rgba(92,46,212,0.08)' }}
+                  style={{ background: isDark ? 'rgba(167,139,250,0.22)' : 'rgba(92,46,212,0.08)' }}
+                  onMouseEnter={ev => { ev.currentTarget.style.background = isDark ? 'rgba(167,139,250,0.34)' : 'rgba(92,46,212,0.16)' }}
+                  onMouseLeave={ev => { ev.currentTarget.style.background = isDark ? 'rgba(167,139,250,0.22)' : 'rgba(92,46,212,0.08)' }}
                   aria-label="Print or save a copy"
                   title="Print or save a copy"
                 >
@@ -606,6 +606,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
           formData={formData}
           onClose={() => setShowPreview(false)}
           onConfirm={onGetQuotes}
+          isDark={isDark}
         />
       )}
 

@@ -429,14 +429,11 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
             </svg>
             Download Application Summary
           </button>
-          {!formComplete && (() => {
-            const formDoneCount = [1, 2, 3, 4, 5].filter(k => completion[k]).length
-            return (
-              <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
-                {formDoneCount} of 5 sections complete. Finish all 5 to download the application summary.
-              </p>
-            )
-          })()}
+          {!formComplete && (
+            <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
+              Finish your application to download the summary.
+            </p>
+          )}
         </div>
         )}
 
@@ -631,6 +628,7 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
           formData={formData}
           onClose={() => setSummaryPreviewOpen(false)}
           variant="download"
+          isDark={isDark}
         />
       )}
     </aside>

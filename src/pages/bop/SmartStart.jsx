@@ -64,7 +64,7 @@ const TagIcon = ({ size = 14 }) => (
   </svg>
 )
 
-export default function SmartStart({ formData, updateFormData }) {
+export default function SmartStart({ formData, updateFormData, isDark = false }) {
   const [query, setQuery] = useState('')
   const selected = formData.smartStart?.classId
 
@@ -188,8 +188,10 @@ export default function SmartStart({ formData, updateFormData }) {
         <div
           className="rounded-xl px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3"
           style={{
-            background: 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
-            border: '1px solid rgba(92,46,212,0.22)',
+            background: isDark
+              ? 'linear-gradient(88.09deg, rgba(167,139,250,0.18) 0%, rgba(232,121,249,0.18) 100%)'
+              : 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
+            border: `1px solid ${isDark ? 'rgba(167,139,250,0.45)' : 'rgba(92,46,212,0.22)'}`,
           }}
         >
           <div
@@ -201,9 +203,9 @@ export default function SmartStart({ formData, updateFormData }) {
             </svg>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold text-gray-800">{selectedClass.description}</div>
-            <div className="text-xs text-gray-500 mt-0.5">
-              <span className="font-mono font-semibold" style={{ color: '#5C2ED4' }}>NAICS {selectedClass.naics}</span>
+            <div className="text-sm font-semibold" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>{selectedClass.description}</div>
+            <div className="text-xs mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+              <span className="font-mono font-semibold" style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}>NAICS {selectedClass.naics}</span>
               <span className="mx-1">·</span>
               <span>type above to change</span>
             </div>
@@ -215,7 +217,7 @@ export default function SmartStart({ formData, updateFormData }) {
             aria-label="Clear selected class code"
             title="Clear selection"
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
             </svg>
           </button>
