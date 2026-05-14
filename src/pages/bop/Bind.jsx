@@ -425,19 +425,29 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
         <div
           className="rounded-xl p-6 text-center"
           style={{
-            background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
-            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+            background: isDark ? 'rgba(124,58,237,0.10)' : 'white',
+            border: `1px solid ${isDark ? 'rgba(124,58,237,0.30)' : '#E5E7EB'}`,
           }}
         >
           <div className="flex items-center justify-center mb-4">
             <span
               className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase"
               style={{
-                background: isDark ? 'rgba(167,139,250,0.18)' : 'rgba(124,58,237,0.08)',
-                color: isDark ? '#C4B5FD' : '#5C2ED4',
+                background: isDark ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.08)',
+                // Brand-gradient text in both modes
+                backgroundImage: undefined,
               }}
             >
-              {carrier}
+              <span
+                style={{
+                  background: BRAND_GRADIENT,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                {carrier}
+              </span>
             </span>
           </div>
           <div className="flex items-baseline justify-center gap-1 mb-3">
@@ -447,7 +457,13 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
           <button
             type="button"
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
-            style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
+            style={{
+              // Brand-gradient text matches the 'CHARGE 1' header
+              background: BRAND_GRADIENT,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
