@@ -141,7 +141,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
   // Stable quote id for the session
   const quoteId = useMemo(() => 'SGL' + Math.floor(20000000 + Math.random() * 80000000), [])
   const generatedAt = useMemo(
-    () => new Date().toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
+    () => new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
     [],
   )
 
