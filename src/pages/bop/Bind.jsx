@@ -457,21 +457,31 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
           <button
             type="button"
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
-            style={{
-              // Brand-gradient text matches the 'CHARGE 1' header
-              background: BRAND_GRADIENT,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="12" y1="11" x2="12" y2="17"/>
-              <polyline points="9 14 12 17 15 14"/>
+            {/* Gradient-stroked download icon — matches the gradient text */}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <defs>
+                <linearGradient id="bindDownloadG" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%"   stopColor="#5C2ED4"/>
+                  <stop offset="100%" stopColor="#A614C3"/>
+                </linearGradient>
+              </defs>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="url(#bindDownloadG)"/>
+              <polyline points="14 2 14 8 20 8" stroke="url(#bindDownloadG)"/>
+              <line x1="12" y1="11" x2="12" y2="17" stroke="url(#bindDownloadG)"/>
+              <polyline points="9 14 12 17 15 14" stroke="url(#bindDownloadG)"/>
             </svg>
-            Download Quote Proposal
+            <span
+              style={{
+                // Brand-gradient text matches the 'CHARGE 1' header
+                background: BRAND_GRADIENT,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              Download Quote Proposal
+            </span>
           </button>
         </div>
 
