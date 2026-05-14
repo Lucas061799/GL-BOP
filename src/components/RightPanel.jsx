@@ -476,6 +476,17 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
                   }}
                 >
                   {carrierLogo && <CarrierMark name={carrierName} logo={carrierLogo} size="xl" />}
+                  {/* Carrier name — shown on Compare / Package / Add-Ons,
+                      hidden on Bind & Pay (the page already names the
+                      carrier in its own header). */}
+                  {quoteStep !== 'bind' && (
+                    <div
+                      className="mt-2 text-sm font-semibold"
+                      style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}
+                    >
+                      {carrierName}
+                    </div>
+                  )}
                   <div className="mt-3">
                     <span
                       className="text-3xl font-bold"
