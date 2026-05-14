@@ -97,7 +97,7 @@ const money2 = (n) => '$' + Number(n).toLocaleString(undefined, { minimumFractio
 // In production the iframe from Input 1 would render inside this dialog; we
 // stub it here with a labeled placeholder + a single Complete Payment button.
 // =============================================================================
-function Input1Modal({ open, amount, onClose, onComplete }) {
+function Input1Modal({ open, amount, onClose, onComplete, isDark = false }) {
   const [submitting, setSubmitting] = useState(false)
 
   if (!open) return null
@@ -117,23 +117,34 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[92vh] overflow-y-auto"
+        className="rounded-2xl shadow-2xl w-full max-w-md max-h-[92vh] overflow-y-auto"
+        style={{ background: isDark ? '#1A1E38' : 'white' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div
           className="flex items-center justify-between px-5 py-3.5 sticky top-0 z-10"
-          style={{ background: '#F5F3FF', borderBottom: '1px solid #E5E7EB' }}
+          style={{
+            background: isDark ? 'rgba(167,139,250,0.18)' : '#F5F3FF',
+            borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
+          }}
         >
           <div className="flex items-center gap-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
             </svg>
-            <span className="text-sm font-semibold text-gray-800">
+            <span className="text-sm font-semibold" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>
               Card payment
             </span>
           </div>
-          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-700 transition">
+          <button
+            type="button"
+            onClick={onClose}
+            className="transition"
+            style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = isDark ? '#F9FAFB' : '#374151' }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = '#9CA3AF' }}
+          >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
@@ -152,10 +163,10 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
             <span className="text-white font-bold italic" style={{ fontFamily: 'Georgia, serif', fontSize: 18 }}>i1</span>
           </div>
           <div>
-            <div className="text-2xl font-bold italic text-gray-900 leading-none" style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.02em' }}>
+            <div className="text-2xl font-bold italic leading-none" style={{ fontFamily: 'Georgia, serif', letterSpacing: '0.02em', color: isDark ? '#F9FAFB' : '#111827' }}>
               INPUT 1
             </div>
-            <div className="text-[10px] font-semibold tracking-[0.3em] text-right" style={{ color: '#0EA5E9' }}>
+            <div className="text-[10px] font-semibold tracking-[0.3em] text-right" style={{ color: isDark ? '#7DD3FC' : '#0EA5E9' }}>
               PAYMENTS
             </div>
           </div>
@@ -166,22 +177,24 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
           <div
             className="rounded-lg p-6 text-center"
             style={{
-              border: '1.5px dashed #C7D2FE',
-              background: 'linear-gradient(135deg, rgba(14,165,233,0.04) 0%, rgba(92,46,212,0.04) 100%)',
+              border: `1.5px dashed ${isDark ? 'rgba(199,210,254,0.30)' : '#C7D2FE'}`,
+              background: isDark
+                ? 'linear-gradient(135deg, rgba(14,165,233,0.12) 0%, rgba(124,58,237,0.12) 100%)'
+                : 'linear-gradient(135deg, rgba(14,165,233,0.04) 0%, rgba(92,46,212,0.04) 100%)',
             }}
           >
             <div
               className="inline-flex w-10 h-10 items-center justify-center rounded-full mb-2"
-              style={{ background: 'rgba(14,165,233,0.12)' }}
+              style={{ background: isDark ? 'rgba(14,165,233,0.22)' : 'rgba(14,165,233,0.12)' }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0EA5E9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#7DD3FC' : '#0EA5E9'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
               </svg>
             </div>
-            <p className="text-sm font-semibold text-gray-800 mb-1">
+            <p className="text-sm font-semibold mb-1" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>
               Input 1 Payments interface
             </p>
-            <p className="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
+            <p className="text-xs leading-relaxed max-w-xs mx-auto" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
               The real Input 1 card form is embedded here in production. Click below to simulate the payment.
             </p>
           </div>
@@ -210,7 +223,10 @@ function Input1Modal({ open, amount, onClose, onComplete }) {
           </button>
 
           {/* Secure footer */}
-          <div className="flex items-center justify-center gap-1.5 mt-3 text-[11px] text-gray-400">
+          <div
+            className="flex items-center justify-center gap-1.5 mt-3 text-[11px]"
+            style={{ color: isDark ? '#6B7280' : '#9CA3AF' }}
+          >
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
@@ -848,7 +864,31 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
                 <div className="flex-1 min-w-0">
                   <h2 className="text-lg font-bold leading-snug" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>Confirm Payment Authorization</h2>
                   <p className="text-xs mt-1 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
-                    Please confirm by selecting <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>Continue</span> for the <span className="font-semibold" style={{ color: isDark ? '#F9FAFB' : '#374151' }}>two separate charges</span> below to your card.
+                    Please confirm by selecting{' '}
+                    <span
+                      className="font-semibold"
+                      style={{
+                        background: BRAND_GRADIENT,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      Continue
+                    </span>{' '}
+                    for the{' '}
+                    <span
+                      className="font-semibold"
+                      style={{
+                        background: BRAND_GRADIENT,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                      }}
+                    >
+                      two separate charges
+                    </span>{' '}
+                    below to your card.
                   </p>
                 </div>
                 <button
@@ -961,6 +1001,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
       <Input1Modal
         open={showPayment}
         amount={totalFees}
+        isDark={isDark}
         onClose={() => setShowPayment(false)}
         onComplete={() => {
           setShowPayment(false)
