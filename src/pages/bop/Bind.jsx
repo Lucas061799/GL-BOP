@@ -421,12 +421,14 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
       <div className="space-y-5">
         {/* ============ PRICING ============ */}
 
-        {/* Carrier + price + single proposal action */}
+        {/* Carrier + price + single proposal action — match the dark
+            #252948 surface that the rest of the page picks up via the
+            global [data-dark] CSS override on background: white. */}
         <div
           className="rounded-xl p-6 text-center"
           style={{
-            background: isDark ? 'rgba(124,58,237,0.10)' : 'white',
-            border: `1px solid ${isDark ? 'rgba(124,58,237,0.30)' : '#E5E7EB'}`,
+            background: isDark ? '#252948' : 'white',
+            border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
           }}
         >
           <div className="flex items-center justify-center mb-4">
