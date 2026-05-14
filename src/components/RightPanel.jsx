@@ -162,6 +162,10 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
   const completion = useMemo(() => getSectionCompletion(formData), [formData])
   const completedCount = Object.values(completion).filter(Boolean).length
   const progressPct = Math.round((completedCount / 7) * 100)
+  // All 5 form sections (Class Code → Underwriting) finished. Used
+  // to gate the Application Summary download — no point handing the
+  // user a half-filled PDF.
+  const formComplete = !!(completion[1] && completion[2] && completion[3] && completion[4] && completion[5])
 
   // Show the carrier *list* (logos + names, no prices) as soon as a class
   // code is picked. Prices only appear once we have at least one financial
@@ -394,15 +398,16 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
 
 
           {/* Download Application Summary — the form-page version of
-              the right-rail download. The 'Quote Proposal' download
-              only unlocks at the Bind & Pay step (rendered in the
-              quote-flow branch below). */}
+              the right-rail download. Only enabled once every form
+              section (Class Code → Underwriting) is filled in; the
+              'Quote Proposal' download only unlocks at the Bind & Pay
+              step (rendered in the quote-flow branch below). */}
           <button
             type="button"
-            disabled={!readyToQuote}
+            disabled={!formComplete}
             onClick={openSummaryPreview}
             className="w-full inline-flex items-center justify-center gap-1.5 mt-4 py-2.5 rounded-xl text-xs font-bold transition disabled:cursor-not-allowed"
-            style={readyToQuote
+            style={formComplete
               ? {
                   background: BRAND_GRADIENT,
                   color: 'white',
@@ -424,9 +429,9 @@ export default function RightPanel({ formData = {}, updateFormData, isDark = fal
             </svg>
             Download Application Summary
           </button>
-          {!readyToQuote && (
+          {!formComplete && (
             <p className="text-[10px] text-gray-400 text-left mt-2 leading-relaxed">
-              Pick a class code to download the application summary.
+              Finish every section through Underwriting Questions to download the application summary.
             </p>
           )}
         </div>
