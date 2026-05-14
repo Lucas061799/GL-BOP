@@ -235,10 +235,20 @@ function App() {
   // URL param shortcuts for Builder.io / Figma import
   // ?page=main → skip PageZero
   // ?page=submission → go straight to submission
+  // ?product=gl|bop → pre-seed the product when skipping PageZero so
+  //   the Sidebar title + submission ID + PDF title reflect the right
+  //   coverage (otherwise productType is undefined and everything
+  //   defaults to BOP).
   const urlParams = new URLSearchParams(window.location.search)
   const pageParam = urlParams.get('page')
+  const productParam = urlParams.get('product')
+  const initialProductType = productParam === 'gl' ? 'gl'
+                            : productParam === 'bop' ? 'bop'
+                            : null
 
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState(
+    initialProductType ? { pageZero: { productType: initialProductType } } : {}
+  )
   const [activeStep, setActiveStep] = useState(1)
   const [submitted, setSubmitted] = useState(pageParam === 'submission')
   const [bindSummary, setBindSummary] = useState(null)
