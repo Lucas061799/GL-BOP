@@ -903,57 +903,10 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
             {/* Divider */}
             <div className="mb-5" style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
 
-            {/* Where you are — same numbered-circle pattern as the
-                'What's Next?' block on this page. Soft tinted circle
-                with the step number in brand-gradient text. */}
-            <div className="mb-6">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-4 pl-0.5">
-                Where you are
-              </div>
-              <div className="space-y-5">
-                {[
-                  { n: 1, label: 'Select Carrier' },
-                  { n: 2, label: 'Choose Package' },
-                  { n: 3, label: 'Add-Ons'        },
-                  { n: 4, label: 'Bind & Pay'     },
-                ].map(step => (
-                  <div key={step.n} className="flex items-center gap-4">
-                    <span
-                      className="w-9 h-9 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
-                      style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)' }}
-                    >
-                      <span
-                        style={{
-                          background: BRAND_GRADIENT,
-                          WebkitBackgroundClip: 'text',
-                          WebkitTextFillColor: 'transparent',
-                          backgroundClip: 'text',
-                        }}
-                      >
-                        {step.n}
-                      </span>
-                    </span>
-                    <span
-                      className="text-sm leading-tight"
-                      style={{
-                        fontWeight: 500,
-                        color: isDark ? '#D1D5DB' : '#4B5563',
-                      }}
-                    >
-                      {step.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Divider between 'Where you are' (past) and 'What's
-                Next' (post-bind). */}
-            <div className="mb-5" style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
-
-            {/* What's Next — the three post-bind steps that used to
-                live in the page body. Same numbered-circle look as
-                'Where you are' above. */}
+            {/* What's Next — the three post-bind steps shown on the
+                submission page right rail. (The 'Where you are'
+                stepper that lives in the in-flow RightPanel is not
+                shown here — the user has already finished the flow.) */}
             <div className="mb-6">
               <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-4 pl-0.5">
                 What's Next?
