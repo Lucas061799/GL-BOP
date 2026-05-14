@@ -947,6 +947,48 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
               </div>
             </div>
 
+            {/* Divider between 'Where you are' (past) and 'What's
+                Next' (post-bind). */}
+            <div className="mb-5" style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#F3F4F6'}` }} />
+
+            {/* What's Next — the three post-bind steps that used to
+                live in the page body. Same numbered-circle look as
+                'Where you are' above. */}
+            <div className="mb-6">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-4 pl-0.5">
+                What's Next?
+              </div>
+              <div className="space-y-5">
+                {[
+                  { n: 1, t: 'Review & Processing',  d: 'Your application will be reviewed as soon as possible.' },
+                  { n: 2, t: 'Email Confirmation',   d: "You'll receive detailed policy confirmation via email." },
+                  { n: 3, t: 'Policy in Force',      d: 'Coverage starts on the effective date you selected.' },
+                ].map(step => (
+                  <div key={step.n} className="flex gap-3">
+                    <span
+                      className="w-9 h-9 rounded-full text-sm font-bold flex items-center justify-center shrink-0"
+                      style={{ background: 'linear-gradient(88.09deg, rgba(92,46,212,0.25) 0%, rgba(166,20,195,0.25) 100%)' }}
+                    >
+                      <span
+                        style={{
+                          background: BRAND_GRADIENT,
+                          WebkitBackgroundClip: 'text',
+                          WebkitTextFillColor: 'transparent',
+                          backgroundClip: 'text',
+                        }}
+                      >
+                        {step.n}
+                      </span>
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-[13px] font-semibold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{step.t}</p>
+                      <p className="text-[11px] mt-1 leading-relaxed" style={{ color: isDark ? '#9CA3AF' : '#9CA3AF' }}>{step.d}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
         </aside>
       </div>
