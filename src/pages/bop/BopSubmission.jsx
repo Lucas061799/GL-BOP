@@ -861,7 +861,7 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
           <div className="p-5 flex-1 overflow-y-auto custom-scroll">
 
             {/* Title */}
-            <h2 className="text-lg font-bold mb-3" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>Quote Submitted</h2>
+            <h2 className="text-lg font-bold mb-3" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>Bind Received</h2>
 
             {/* Auto-saved + % row */}
             <div className="flex items-center justify-between mb-2">
