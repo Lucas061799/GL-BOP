@@ -433,7 +433,7 @@ function CollapsibleGroup({ title, count, color = '#5C2ED4', defaultOpen = false
   )
 }
 
-export default function Underwriting({ formData, updateFormData, onGetQuotes, quoting, quotesReady, isDark = false, showErrors = false }) {
+export default function Underwriting({ formData, updateFormData, onGetQuotes, quoting, quotesReady, isDark = false, showErrors = false, onValidateAll }) {
   const data = formData.underwriting || {}
   const set = (key, val) => updateFormData('underwriting', { [key]: val })
 
@@ -613,14 +613,20 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
       <div className="pt-3">
         <button
           type="button"
-          onClick={() => setShowPreview(true)}
-          disabled={quoting || !allAnswered}
+          onClick={() => {
+            if (quoting) return
+            // First check ALL form sections (not just UW). If anything
+            // upstream is missing, the parent flips its showErrors
+            // state and scrolls to the first incomplete section
+            // instead of opening the review modal.
+            if (typeof onValidateAll === 'function' && !onValidateAll()) return
+            setShowPreview(true)
+          }}
+          disabled={quoting}
           className="inline-flex items-center gap-2 px-7 py-2.5 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed"
           style={{
-            background: !allAnswered
-              ? '#D1D5DB'
-              : 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
-            boxShadow: !quoting && allAnswered ? '0 4px 14px rgba(92,46,212,0.25)' : 'none',
+            background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)',
+            boxShadow: !quoting ? '0 4px 14px rgba(92,46,212,0.25)' : 'none',
           }}
         >
           {quoting ? (

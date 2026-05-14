@@ -323,10 +323,12 @@ function App() {
     setErrorFields([])
   }, [])
 
-  const handleGetQuotes = useCallback(() => {
-    if (quoting) return
-    // Validate all 5 form sections before kicking off quoting.
-    // Mirrors getSectionCompletion in RightPanel.jsx.
+  // Returns true if every required field across all 5 sections is
+  // filled. Side effect: if not, flips attemptedQuote on so inline
+  // 'required' hints surface and scrolls to the first incomplete
+  // section. Shared by the Underwriting Get Quotes button (gate)
+  // and handleGetQuotes (Confirm in the review modal).
+  const validateAllForms = useCallback(() => {
     const sm   = formData.smartStart   || {}
     const biz  = formData.business     || {}
     const loc  = formData.location     || {}
@@ -338,14 +340,16 @@ function App() {
     const ok3 = !!(loc.address && loc.city && loc.state && loc.zip)
     const ok4 = !!(cov && Object.keys(cov).length > 0)
     const ok5 = REQUIRED_UW.every(k => uw[k] !== undefined && uw[k] !== null && uw[k] !== '')
-    if (!(ok1 && ok2 && ok3 && ok4 && ok5)) {
-      // Show inline required hints + scroll to the first incomplete
-      // section so the user sees what's missing.
-      setAttemptedQuote(true)
-      const firstMissing = !ok1 ? 1 : !ok2 ? 2 : !ok3 ? 3 : !ok4 ? 4 : 5
-      goToStep(firstMissing)
-      return
-    }
+    if (ok1 && ok2 && ok3 && ok4 && ok5) return true
+    setAttemptedQuote(true)
+    const firstMissing = !ok1 ? 1 : !ok2 ? 2 : !ok3 ? 3 : !ok4 ? 4 : 5
+    goToStep(firstMissing)
+    return false
+  }, [formData, goToStep])
+
+  const handleGetQuotes = useCallback(() => {
+    if (quoting) return
+    if (!validateAllForms()) return
     setQuoting(true)
     setQuoteStep('compare')
     setTimeout(() => {
@@ -358,7 +362,7 @@ function App() {
         scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }, 1500)
-  }, [quoting, formData, goToStep])
+  }, [quoting, validateAllForms])
 
   const handleMainScroll = useCallback(() => {
     if (isScrollingToRef.current) return
@@ -531,7 +535,7 @@ function App() {
               { id: 2, title: 'Applicant Information',  el: <Business formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
               { id: 3, title: 'Location Information',   el: <Location formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
               { id: 4, title: 'Coverage Limits',         el: <Coverage formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
-              { id: 5, title: 'Underwriting Questions', el: <Underwriting formData={formData} updateFormData={updateFormData} isDark={darkMode} onGetQuotes={handleGetQuotes} quoting={quoting} quotesReady={quotesReady} showErrors={attemptedQuote} />, show: !inQuoteFlow },
+              { id: 5, title: 'Underwriting Questions', el: <Underwriting formData={formData} updateFormData={updateFormData} isDark={darkMode} onGetQuotes={handleGetQuotes} quoting={quoting} quotesReady={quotesReady} showErrors={attemptedQuote} onValidateAll={validateAllForms} />, show: !inQuoteFlow },
               { id: 6,
                 title: quoteStep === 'package' ? 'Choose Your Package' : quoteStep === 'addons' ? 'Add-On Coverages' : 'Select Carrier',
                 el: quoteStep === 'package'
