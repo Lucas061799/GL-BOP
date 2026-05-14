@@ -1153,9 +1153,10 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
               </SectionCard>
             </div>
 
-            {/* Footer actions */}
+            {/* Footer actions — Close on the left, primary CTA on
+                the right. */}
             <div
-              className="flex items-center justify-end gap-2 px-5 py-3 shrink-0"
+              className="flex items-center justify-between gap-2 px-5 py-3 shrink-0"
               style={{
                 background: isDark ? '#252948' : 'white',
                 borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.06)' : '#F3F4F6'}`,
