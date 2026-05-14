@@ -808,9 +808,10 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
 
       </div>
 
-      {/* Missing-items callout — only when Bind is disabled. Lists
-          exactly what's still needed so the user isn't stuck guessing
-          why the button is grey. */}
+      {/* Missing-items callout — only when Bind is disabled. Same
+          chip recipe we use elsewhere (soft tinted-gradient circle
+          with the alert ! icon, light card surface), so it feels
+          like the rest of the page. */}
       {!canBind && (() => {
         const missing = []
         if (!contact.firstName) missing.push('Insured first name')
@@ -824,21 +825,38 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
           <div
             className="rounded-xl px-4 py-3 mt-2 flex items-start gap-3"
             style={{
-              background: isDark ? 'rgba(245,158,11,0.10)' : 'rgba(245,158,11,0.08)',
-              border: `1px solid ${isDark ? 'rgba(245,158,11,0.35)' : 'rgba(245,158,11,0.30)'}`,
+              background: isDark ? 'rgba(255,255,255,0.04)' : 'white',
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}`,
             }}
           >
-            <svg className="w-4 h-4 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#FCD34D' : '#B45309'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
+            <span
+              className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+              style={{
+                background: isDark
+                  ? 'linear-gradient(88.09deg, rgba(167,139,250,0.22) 0%, rgba(232,121,249,0.22) 100%)'
+                  : 'linear-gradient(88.09deg, rgba(92,46,212,0.12) 0%, rgba(166,20,195,0.12) 100%)',
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[12px] font-semibold leading-tight" style={{ color: isDark ? '#FCD34D' : '#92400E' }}>
-                Finish these before binding:
+              <div className="text-[13px] font-semibold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>
+                Finish these before binding
               </div>
-              <ul className="mt-1 text-[12px] leading-relaxed list-disc pl-4 space-y-0.5" style={{ color: isDark ? '#FDE68A' : '#92400E' }}>
-                {missing.map(item => <li key={item}>{item}</li>)}
+              <ul className="mt-1.5 text-[12px] leading-relaxed space-y-1" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+                {missing.map(item => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span
+                      className="w-1.5 h-1.5 rounded-full shrink-0"
+                      style={{ background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)', marginTop: 7 }}
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
