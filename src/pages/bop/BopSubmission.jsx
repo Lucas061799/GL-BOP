@@ -139,7 +139,13 @@ export default function BopSubmission({ formData, summary, onBack, isDark = fals
   }
 
   // Stable quote id for the session
-  const quoteId = useMemo(() => 'SGL' + Math.floor(20000000 + Math.random() * 80000000), [])
+  // Quote ID prefix mirrors the product so a GL flow shows 'GL…' and
+  // a BOP flow shows 'BOP…' instead of always 'SGL…'.
+  const quoteId = useMemo(() => {
+    const prefix = formData.pageZero?.productType === 'gl' ? 'GL' : 'BOP'
+    return prefix + Math.floor(20000000 + Math.random() * 80000000)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const generatedAt = useMemo(
     () => new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
     [],
