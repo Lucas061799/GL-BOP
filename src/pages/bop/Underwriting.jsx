@@ -56,32 +56,40 @@ function ColoredYesNo({ value, onChange }) {
   )
 }
 
-function QuestionRow({ q, value, onChange, autoFilled }) {
+function QuestionRow({ q, value, onChange, autoFilled, hasError = false }) {
   return (
     <div
-      className="rounded-xl p-4 transition flex items-center justify-between gap-3"
+      className="rounded-xl p-4 transition"
       style={{
         background: '#F9FAFB',
-        border: '1px solid #E5E7EB',
+        border: hasError ? '1px solid #FCA5A5' : '1px solid #E5E7EB',
+        boxShadow: hasError ? '0 0 0 2px rgba(252,165,165,0.3)' : 'none',
       }}
     >
-      <div className="min-w-0 flex-1">
-        <div className="flex items-start gap-2 flex-wrap">
-          <p className="text-sm font-medium text-gray-800 leading-snug">{q.label}</p>
-          {autoFilled && (
-            <span
-              className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
-              style={{ background: 'rgba(243,240,255,1)', color: '#5C2ED4' }}
-            >
-              Auto-Filled
-            </span>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start gap-2 flex-wrap">
+            <p className="text-sm font-medium text-gray-800 leading-snug">{q.label}</p>
+            {autoFilled && (
+              <span
+                className="text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"
+                style={{ background: 'rgba(243,240,255,1)', color: '#5C2ED4' }}
+              >
+                Auto-Filled
+              </span>
+            )}
+          </div>
+          {q.subtext && (
+            <p className="text-xs text-gray-500 mt-1 leading-snug">{q.subtext}</p>
           )}
         </div>
-        {q.subtext && (
-          <p className="text-xs text-gray-500 mt-1 leading-snug">{q.subtext}</p>
-        )}
+        <ColoredYesNo value={value} onChange={onChange} />
       </div>
-      <ColoredYesNo value={value} onChange={onChange} />
+      {hasError && (
+        <p className="text-[10px] text-red-500 mt-2 flex items-center gap-1">
+          <span>⚠</span> Please answer this question
+        </p>
+      )}
     </div>
   )
 }
@@ -425,7 +433,7 @@ function CollapsibleGroup({ title, count, color = '#5C2ED4', defaultOpen = false
   )
 }
 
-export default function Underwriting({ formData, updateFormData, onGetQuotes, quoting, quotesReady, isDark = false }) {
+export default function Underwriting({ formData, updateFormData, onGetQuotes, quoting, quotesReady, isDark = false, showErrors = false }) {
   const data = formData.underwriting || {}
   const set = (key, val) => updateFormData('underwriting', { [key]: val })
 
@@ -538,6 +546,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
                 value={data[q.key]}
                 onChange={(v) => set(q.key, v)}
                 autoFilled={data[q.key] === RECOMMENDED[q.key]}
+                hasError={showErrors && (data[q.key] === undefined || data[q.key] === null || data[q.key] === '')}
               />
             ))}
           </CollapsibleGroup>
@@ -550,6 +559,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
                 value={data[q.key]}
                 onChange={(v) => set(q.key, v)}
                 autoFilled={data[q.key] === RECOMMENDED[q.key]}
+                hasError={showErrors && (data[q.key] === undefined || data[q.key] === null || data[q.key] === '')}
               />
             ))}
           </CollapsibleGroup>
@@ -566,6 +576,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
                   value={data[q.key]}
                   onChange={(v) => set(q.key, v)}
                   autoFilled={false}
+                  hasError={showErrors && (data[q.key] === undefined || data[q.key] === null || data[q.key] === '')}
                 />
               ))}
             </div>
@@ -581,6 +592,7 @@ export default function Underwriting({ formData, updateFormData, onGetQuotes, qu
                   value={data[q.key]}
                   onChange={(v) => set(q.key, v)}
                   autoFilled={false}
+                  hasError={showErrors && (data[q.key] === undefined || data[q.key] === null || data[q.key] === '')}
                 />
               ))}
             </div>

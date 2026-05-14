@@ -64,7 +64,7 @@ const TagIcon = ({ size = 14 }) => (
   </svg>
 )
 
-export default function SmartStart({ formData, updateFormData, isDark = false }) {
+export default function SmartStart({ formData, updateFormData, isDark = false, showErrors = false }) {
   const [query, setQuery] = useState('')
   const selected = formData.smartStart?.classId
 
@@ -137,13 +137,23 @@ export default function SmartStart({ formData, updateFormData, isDark = false })
       </p>
 
       {/* Search section — no SECTION LABEL, no empty-state box, no extra magnifying glasses */}
+      {(() => {
+        // Required-field error: showErrors flips on after the user
+        // tries to Get Quotes; we surface a red border + 'required'
+        // hint when no class has been picked.
+        const showRequiredError = showErrors && !selectedClass
+        return (
       <div>
         <div
           className="flex items-center gap-3 rounded-xl px-4 py-3 transition"
           style={{
             background: 'white',
-            border: '1.5px solid #EAEAEA',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            border: showRequiredError
+              ? '1.5px solid #FCA5A5'
+              : '1.5px solid #EAEAEA',
+            boxShadow: showRequiredError
+              ? '0 0 0 2px rgba(252,165,165,0.3)'
+              : '0 1px 3px rgba(0,0,0,0.04)',
           }}
         >
           <span className="text-gray-400 shrink-0"><SearchIcon size={18} /></span>
@@ -181,7 +191,14 @@ export default function SmartStart({ formData, updateFormData, isDark = false })
             </button>
           )}
         </div>
+        {showRequiredError && (
+          <p className="text-[10px] text-red-500 mt-1.5 ml-1 flex items-center gap-1">
+            <span>⚠</span> Pick a class code to continue
+          </p>
+        )}
       </div>
+        )
+      })()}
 
       {/* Selected class banner — shows below the search input as current state */}
       {selectedClass && (

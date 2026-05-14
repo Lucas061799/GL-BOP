@@ -149,9 +149,10 @@ function standardize({ address, city, state, zip }) {
   }
 }
 
-export default function Location({ formData, updateFormData }) {
+export default function Location({ formData, updateFormData, showErrors = false }) {
   const data = formData.location || {}
   const set = (key) => (val) => updateFormData('location', { [key]: val })
+  const err = (key) => showErrors && (data[key] === undefined || data[key] === null || data[key] === '')
 
   const [usps, setUsps] = useState(null)
 
@@ -182,12 +183,13 @@ export default function Location({ formData, updateFormData }) {
             value={data.address || ''}
             onChange={set('address')}
             onSelect={handleAddressSelect}
+            error={err('address') ? 'This field is required' : ''}
           />
 
           <FormGrid cols={3}>
-            <Input label="City" required value={data.city} onChange={set('city')} placeholder="City" />
-            <Select label="State" required options={US_STATES} value={data.state} onChange={set('state')} placeholder="State" />
-            <Input label="Zip Code" required value={data.zip} onChange={set('zip')} placeholder="12345" />
+            <Input label="City" required value={data.city} onChange={set('city')} placeholder="City" error={err('city')} />
+            <Select label="State" required options={US_STATES} value={data.state} onChange={set('state')} placeholder="State" error={err('state')} />
+            <Input label="Zip Code" required value={data.zip} onChange={set('zip')} placeholder="12345" error={err('zip')} />
           </FormGrid>
         </div>
       </FieldGroup>
@@ -195,7 +197,7 @@ export default function Location({ formData, updateFormData }) {
       <FieldGroup label="Premises">
         <FormGrid>
           <Select label="Where do you operate from?" options={LOCATION_TYPE_OPTIONS} value={data.locationType} onChange={set('locationType')} placeholder="Select location type..." />
-          <Input label="Square Feet Occupied" required value={data.squareFeet} onChange={set('squareFeet')} placeholder="e.g. 1500" />
+          <Input label="Square Feet Occupied" required value={data.squareFeet} onChange={set('squareFeet')} placeholder="e.g. 1500" error={err('squareFeet')} />
         </FormGrid>
       </FieldGroup>
 

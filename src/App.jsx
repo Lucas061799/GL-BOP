@@ -261,6 +261,10 @@ function App() {
   }, [darkMode])
   const [pulseUpload, setPulseUpload] = useState(false)
   const [errorFields, setErrorFields] = useState([])
+  // Surfaces inline 'required' hints under every empty required
+  // field on the form pages. Flipped to true the first time the
+  // user tries to Get Quotes with something missing.
+  const [attemptedQuote, setAttemptedQuote] = useState(false)
   const [quoting, setQuoting] = useState(false)
   const [quotesReady, setQuotesReady] = useState(false)
   const [quoteStep, setQuoteStep] = useState('compare') // 'compare' | 'package' | 'addons'
@@ -321,6 +325,27 @@ function App() {
 
   const handleGetQuotes = useCallback(() => {
     if (quoting) return
+    // Validate all 5 form sections before kicking off quoting.
+    // Mirrors getSectionCompletion in RightPanel.jsx.
+    const sm   = formData.smartStart   || {}
+    const biz  = formData.business     || {}
+    const loc  = formData.location     || {}
+    const cov  = formData.coverage     || {}
+    const uw   = formData.underwriting || {}
+    const REQUIRED_UW = ['prior_losses','pending_claims','declined_coverage','criminal_bankruptcy','manufactures_goods','subcontracts','tangible_goods']
+    const ok1 = !!sm.classId
+    const ok2 = !!(biz.name && biz.entityType && biz.effectiveDate && biz.annualRevenue && biz.annualPayroll && biz.numberOfEmployees && biz.phone && biz.email)
+    const ok3 = !!(loc.address && loc.city && loc.state && loc.zip)
+    const ok4 = !!(cov && Object.keys(cov).length > 0)
+    const ok5 = REQUIRED_UW.every(k => uw[k] !== undefined && uw[k] !== null && uw[k] !== '')
+    if (!(ok1 && ok2 && ok3 && ok4 && ok5)) {
+      // Show inline required hints + scroll to the first incomplete
+      // section so the user sees what's missing.
+      setAttemptedQuote(true)
+      const firstMissing = !ok1 ? 1 : !ok2 ? 2 : !ok3 ? 3 : !ok4 ? 4 : 5
+      goToStep(firstMissing)
+      return
+    }
     setQuoting(true)
     setQuoteStep('compare')
     setTimeout(() => {
@@ -333,7 +358,7 @@ function App() {
         scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }, 1500)
-  }, [quoting])
+  }, [quoting, formData, goToStep])
 
   const handleMainScroll = useCallback(() => {
     if (isScrollingToRef.current) return
@@ -502,11 +527,11 @@ function App() {
             </div>
 
             {[
-              { id: 1, title: 'Class Code',             el: <SmartStart formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
-              { id: 2, title: 'Applicant Information',  el: <Business formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
-              { id: 3, title: 'Location Information',   el: <Location formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
-              { id: 4, title: 'Coverage Limits',         el: <Coverage formData={formData} updateFormData={updateFormData} isDark={darkMode} />, show: !inQuoteFlow },
-              { id: 5, title: 'Underwriting Questions', el: <Underwriting formData={formData} updateFormData={updateFormData} isDark={darkMode} onGetQuotes={handleGetQuotes} quoting={quoting} quotesReady={quotesReady} />, show: !inQuoteFlow },
+              { id: 1, title: 'Class Code',             el: <SmartStart formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
+              { id: 2, title: 'Applicant Information',  el: <Business formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
+              { id: 3, title: 'Location Information',   el: <Location formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
+              { id: 4, title: 'Coverage Limits',         el: <Coverage formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
+              { id: 5, title: 'Underwriting Questions', el: <Underwriting formData={formData} updateFormData={updateFormData} isDark={darkMode} onGetQuotes={handleGetQuotes} quoting={quoting} quotesReady={quotesReady} showErrors={attemptedQuote} />, show: !inQuoteFlow },
               { id: 6,
                 title: quoteStep === 'package' ? 'Choose Your Package' : quoteStep === 'addons' ? 'Add-On Coverages' : 'Select Carrier',
                 el: quoteStep === 'package'
