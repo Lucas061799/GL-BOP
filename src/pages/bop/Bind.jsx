@@ -456,35 +456,43 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
             <span className="text-4xl font-bold" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>{money(annualPremium)}</span>
             <span className="text-sm text-gray-400">/year</span>
           </div>
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
-          >
-            {/* Gradient-stroked download icon — matches the gradient text */}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <defs>
-                <linearGradient id="bindDownloadG" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%"   stopColor="#5C2ED4"/>
-                  <stop offset="100%" stopColor="#A614C3"/>
-                </linearGradient>
-              </defs>
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="url(#bindDownloadG)"/>
-              <polyline points="14 2 14 8 20 8" stroke="url(#bindDownloadG)"/>
-              <line x1="12" y1="11" x2="12" y2="17" stroke="url(#bindDownloadG)"/>
-              <polyline points="9 14 12 17 15 14" stroke="url(#bindDownloadG)"/>
-            </svg>
-            <span
-              style={{
-                // Brand-gradient text matches the 'CHARGE 1' header
-                background: BRAND_GRADIENT,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              Download Quote Proposal
-            </span>
-          </button>
+          {(() => {
+            // Use the same gradient stops on both the icon and the
+            // text so they render as one continuous color. In dark
+            // mode lighten to #C4B5FD → #E879F9 for legibility.
+            const gradFrom = isDark ? '#C4B5FD' : '#5C2ED4'
+            const gradTo   = isDark ? '#E879F9' : '#A614C3'
+            const textGradient = `linear-gradient(88.09deg, ${gradFrom} 0%, ${gradTo} 100%)`
+            return (
+              <button
+                type="button"
+                className="inline-flex items-center gap-1.5 text-[13px] font-semibold hover:underline"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <defs>
+                    <linearGradient id="bindDownloadG" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%"   stopColor={gradFrom}/>
+                      <stop offset="100%" stopColor={gradTo}/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="url(#bindDownloadG)"/>
+                  <polyline points="14 2 14 8 20 8" stroke="url(#bindDownloadG)"/>
+                  <line x1="12" y1="11" x2="12" y2="17" stroke="url(#bindDownloadG)"/>
+                  <polyline points="9 14 12 17 15 14" stroke="url(#bindDownloadG)"/>
+                </svg>
+                <span
+                  style={{
+                    background: textGradient,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  Download Quote Proposal
+                </span>
+              </button>
+            )
+          })()}
         </div>
 
           {/* Payment plan */}
