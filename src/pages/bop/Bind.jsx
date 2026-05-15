@@ -815,7 +815,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
       {/* Bind button */}
       <div className="pt-2 flex items-center justify-between gap-4 flex-wrap">
         <p className="text-[11px] text-gray-400 max-w-md">
-          By clicking Bind, you authorize the two charges shown above to be placed on the card on file. Your policy will be issued immediately.
+          By clicking Bind, you authorize the two charges shown above to be placed on your credit card. Your policy will be issued immediately.
         </p>
         <button
           type="button"
