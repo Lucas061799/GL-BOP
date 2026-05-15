@@ -615,7 +615,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
               </span>
               <div className="min-w-0">
                 <div className="text-[13px] font-semibold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>Two Separate Charges</div>
-                <div className="text-[11px] leading-tight mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>Both will be made to your card on file</div>
+                <div className="text-[11px] leading-tight mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>Both will be made to your credit card</div>
               </div>
             </div>
 
