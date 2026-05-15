@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Input, Select, FormGrid } from '../../components/FormField'
 
 const GL_LIMIT_OPTIONS = [
@@ -31,6 +32,18 @@ export default function Coverage({ formData, updateFormData }) {
 
   const glLimit = data.glLimit ?? DEFAULTS.glLimit
   const aggregate = glLimit * 2
+
+  // Seed the default GL limit into formData on first render so the
+  // value the user sees on screen is the value the validator reads.
+  // Otherwise the user can fill everything else, see '$1,000,000'
+  // here, and still hit 'Coverage incomplete' on Get Quotes because
+  // they never opened this dropdown.
+  useEffect(() => {
+    if (data.glLimit === undefined || data.glLimit === null || data.glLimit === '') {
+      updateFormData('coverage', { glLimit: DEFAULTS.glLimit })
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="w-full space-y-6">
