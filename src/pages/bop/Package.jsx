@@ -121,12 +121,12 @@ function PackageCard({ pkg, selected, onSelect }) {
             {pkg.items.map((it, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between gap-2 text-[13px] py-2.5 border-b last:border-b-0"
+                className="flex items-center justify-between gap-3 text-[13px] py-2.5 border-b last:border-b-0"
                 style={{ borderColor: '#F3F4F6', minHeight: 48 }}
               >
-                <span className="text-gray-500 leading-tight min-w-0">{it.label}</span>
+                <span className="text-gray-500 leading-tight">{it.label}</span>
                 <span
-                  className="font-semibold text-right shrink-0 leading-tight whitespace-nowrap"
+                  className="font-semibold text-right shrink-0 leading-tight"
                   style={{ color: it.dim ? '#9CA3AF' : '#1F2937', fontStyle: it.dim ? 'italic' : 'normal' }}
                 >
                   {it.value}
@@ -175,11 +175,12 @@ export default function Package({ formData, updateFormData, onBack, onContinue }
         Select a coverage tier.
       </p>
 
-      {/* 4-col only at 2xl (≥1536px). Below that we keep the comfortable
-          2×2 layout so the dollar amounts don't get cropped — at xl
-          (1280–1535px) the cards are otherwise too narrow once the
-          sidebar + right rail eat ~600px of viewport. */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4 pt-3">
+      {/* 4-col only kicks in at ≥1800px. Below that the sidebar +
+          right rail (~600px combined) leave too little room for four
+          cards to each fit a label like "Backup of Sewers & Drains"
+          beside its dollar amount — so we hold the comfortable 2×2
+          layout for the entire normal-laptop range. */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 [@media(min-width:1800px)]:grid-cols-4 gap-4 pt-3">
         {PACKAGES.map(pkg => (
           <PackageCard
             key={pkg.id}
