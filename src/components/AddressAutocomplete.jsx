@@ -1,5 +1,31 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 
+// Nominatim returns state as a full name ("Illinois"); the State <Select>
+// expects USPS 2-letter abbreviations ("IL"). Map both directions so we
+// don't silently dump a string the dropdown can't match.
+const STATE_NAME_TO_ABBR = {
+  alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA',
+  colorado: 'CO', connecticut: 'CT', delaware: 'DE', florida: 'FL', georgia: 'GA',
+  hawaii: 'HI', idaho: 'ID', illinois: 'IL', indiana: 'IN', iowa: 'IA',
+  kansas: 'KS', kentucky: 'KY', louisiana: 'LA', maine: 'ME', maryland: 'MD',
+  massachusetts: 'MA', michigan: 'MI', minnesota: 'MN', mississippi: 'MS', missouri: 'MO',
+  montana: 'MT', nebraska: 'NE', nevada: 'NV', 'new hampshire': 'NH', 'new jersey': 'NJ',
+  'new mexico': 'NM', 'new york': 'NY', 'north carolina': 'NC', 'north dakota': 'ND',
+  ohio: 'OH', oklahoma: 'OK', oregon: 'OR', pennsylvania: 'PA', 'rhode island': 'RI',
+  'south carolina': 'SC', 'south dakota': 'SD', tennessee: 'TN', texas: 'TX', utah: 'UT',
+  vermont: 'VT', virginia: 'VA', washington: 'WA', 'west virginia': 'WV',
+  wisconsin: 'WI', wyoming: 'WY', 'district of columbia': 'DC',
+}
+
+function normalizeState(raw) {
+  if (!raw) return ''
+  const trimmed = String(raw).trim()
+  // Already an abbreviation
+  if (trimmed.length === 2) return trimmed.toUpperCase()
+  const hit = STATE_NAME_TO_ABBR[trimmed.toLowerCase()]
+  return hit || trimmed
+}
+
 export default function AddressAutocomplete({ value, onChange, onSelect, label = 'Address', required, error }) {
   const [query, setQuery] = useState(value || '')
   const [suggestions, setSuggestions] = useState([])
@@ -90,7 +116,7 @@ export default function AddressAutocomplete({ value, onChange, onSelect, label =
     const houseNo = a.house_number ? `${a.house_number} ` : ''
     const street  = `${houseNo}${road}`.trim()
     const city    = a.city || a.town || a.village || a.county || ''
-    const state   = a.state || ''
+    const state   = normalizeState(a['ISO3166-2-lvl4']?.split('-')[1] || a.state || '')
     const zip     = a.postcode || ''
     setQuery(street)
     setOpen(false)
@@ -151,7 +177,7 @@ export default function AddressAutocomplete({ value, onChange, onSelect, label =
             const road    = a.road || a.pedestrian || a.footway || ''
             const houseNo = a.house_number ? `${a.house_number} ` : ''
             const city    = a.city || a.town || a.village || ''
-            const state   = a.state || ''
+            const state   = normalizeState(a['ISO3166-2-lvl4']?.split('-')[1] || a.state || '')
             const zip     = a.postcode || ''
             const line1   = `${houseNo}${road}`.trim() || item.display_name.split(',')[0]
             const line2   = [city, state, zip].filter(Boolean).join(', ')
