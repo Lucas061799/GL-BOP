@@ -615,7 +615,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
               </span>
               <div className="min-w-0">
                 <div className="text-[13px] font-semibold leading-tight" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>Two Separate Charges</div>
-                <div className="text-[11px] leading-tight mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>Both will be made to your credit card</div>
+                <div className="text-[11px] leading-tight mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>Both will be made to your card</div>
               </div>
             </div>
 
@@ -815,7 +815,7 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
       {/* Bind button */}
       <div className="pt-2 flex items-center justify-between gap-4 flex-wrap">
         <p className="text-[11px] text-gray-400 max-w-md">
-          By clicking Bind, you authorize the two charges shown above to be placed on your credit card. Your policy will be issued immediately.
+          By clicking Bind, you authorize the two charges shown above to be placed on your card. Your policy will be issued immediately.
         </p>
         <button
           type="button"
