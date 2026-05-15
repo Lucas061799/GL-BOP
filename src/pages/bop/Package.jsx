@@ -121,16 +121,18 @@ function PackageCard({ pkg, selected, onSelect }) {
             {pkg.items.map((it, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between gap-3 text-[13px] py-2.5 border-b last:border-b-0"
-                style={{ borderColor: '#F3F4F6', minHeight: 48 }}
+                className="py-2.5 border-b last:border-b-0"
+                style={{ borderColor: '#F3F4F6', minHeight: 56 }}
               >
-                <span className="text-gray-500 leading-tight">{it.label}</span>
-                <span
-                  className="font-semibold text-right shrink-0 leading-tight"
+                <div className="text-[11px] font-semibold uppercase tracking-wide text-gray-400 leading-tight mb-1">
+                  {it.label}
+                </div>
+                <div
+                  className="text-sm font-semibold leading-tight"
                   style={{ color: it.dim ? '#9CA3AF' : '#1F2937', fontStyle: it.dim ? 'italic' : 'normal' }}
                 >
                   {it.value}
-                </span>
+                </div>
               </div>
             ))}
           </div>
@@ -175,12 +177,12 @@ export default function Package({ formData, updateFormData, onBack, onContinue }
         Select a coverage tier.
       </p>
 
-      {/* 4-col only kicks in at ≥1800px. Below that the sidebar +
-          right rail (~600px combined) leave too little room for four
-          cards to each fit a label like "Backup of Sewers & Drains"
-          beside its dollar amount — so we hold the comfortable 2×2
-          layout for the entire normal-laptop range. */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 [@media(min-width:1800px)]:grid-cols-4 gap-4 pt-3">
+      {/* 4-col is the default look on regular desktops. The switch
+          DOWN to 2-col happens earlier than Tailwind's xl (1280px) —
+          at 1400px — so cards never get cramped: as soon as the four
+          cards would dip under ~200px of content width, we fall back
+          to the comfortable 2×2 grid. Mobile (<640px) is 1-col. */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 [@media(min-width:1400px)]:grid-cols-4 gap-4 pt-3">
         {PACKAGES.map(pkg => (
           <PackageCard
             key={pkg.id}
