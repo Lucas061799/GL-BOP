@@ -101,13 +101,13 @@ function PackageCard({ pkg, selected, onSelect }) {
         }}
       >
         {/* Header */}
-        <div className="px-6 pt-6 pb-3">
+        <div className="px-5 pt-6 pb-3">
           <div className="text-lg font-bold text-gray-900 mb-1">{pkg.name}</div>
           <div className="text-xs text-gray-500 leading-relaxed min-h-[40px]">{pkg.tagline}</div>
         </div>
 
         {/* Price */}
-        <div className="px-6 pb-5 text-center">
+        <div className="px-5 pb-5 text-center">
           <div className="flex items-baseline justify-center gap-1">
             <span className="text-4xl font-bold text-gray-900">{money(pkg.price)}</span>
             <span className="text-xs text-gray-400">/{pkg.period}</span>
@@ -116,17 +116,17 @@ function PackageCard({ pkg, selected, onSelect }) {
         </div>
 
         {/* Items */}
-        <div className="px-6 pb-4 flex-1">
+        <div className="px-5 pb-4 flex-1">
           <div>
             {pkg.items.map((it, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between gap-3 text-[13px] py-2.5 border-b last:border-b-0"
+                className="flex items-center justify-between gap-2 text-[13px] py-2.5 border-b last:border-b-0"
                 style={{ borderColor: '#F3F4F6', minHeight: 48 }}
               >
-                <span className="text-gray-500 leading-tight">{it.label}</span>
+                <span className="text-gray-500 leading-tight min-w-0">{it.label}</span>
                 <span
-                  className="font-semibold text-right shrink-0 leading-tight"
+                  className="font-semibold text-right shrink-0 leading-tight whitespace-nowrap"
                   style={{ color: it.dim ? '#9CA3AF' : '#1F2937', fontStyle: it.dim ? 'italic' : 'normal' }}
                 >
                   {it.value}
@@ -175,7 +175,11 @@ export default function Package({ formData, updateFormData, onBack, onContinue }
         Select a coverage tier.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 pt-3">
+      {/* 4-col only at 2xl (≥1536px). Below that we keep the comfortable
+          2×2 layout so the dollar amounts don't get cropped — at xl
+          (1280–1535px) the cards are otherwise too narrow once the
+          sidebar + right rail eat ~600px of viewport. */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-4 gap-4 pt-3">
         {PACKAGES.map(pkg => (
           <PackageCard
             key={pkg.id}
