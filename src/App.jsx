@@ -492,64 +492,6 @@ function App() {
 
           <div className={`mx-auto px-4 md:px-10 py-6 md:py-8 space-y-6 md:space-y-8 ${inQuoteFlow ? 'max-w-7xl' : 'max-w-5xl 2xl:max-w-6xl'}`}>
 
-            {/* Mobile + narrow-desktop upload + form review block. Stays
-                visible until the right rail kicks in at 2xl, so users
-                on standard laptop widths don't lose the Upload card.
-                Hidden during the carrier flow (Compare / Package /
-                Add-Ons / Bind) — those steps don't need the upload
-                or the form-review checker. The extra px-4 md:px-10
-                matches the inner padding of each section below so
-                the rounded card lines up with the section content. */}
-            <div className={`2xl:hidden space-y-3 px-4 md:px-10 ${inQuoteFlow ? 'hidden' : ''}`}>
-              <div
-                className="rounded-2xl overflow-hidden"
-                style={{
-                  border: darkMode ? '1px solid rgba(92,46,212,0.25)' : '1px solid #E5E7EB',
-                  background: darkMode ? 'rgba(92,46,212,0.12)' : 'white',
-                }}
-              >
-                <div className="px-4 pt-4 pb-4">
-                  <h3 className="text-base font-bold text-navy leading-tight mb-0.5">Upload &amp; Save Time!</h3>
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <p className="text-[11px] text-gray-500 font-medium whitespace-nowrap">Competitor quote or ACORD form?</p>
-                    <div className="w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 text-white text-[8px] font-bold" style={{ background: '#73C9B7' }}>i</div>
-                  </div>
-                  <div
-                    onClick={() => setShowUpload(true)}
-                    className="cursor-pointer rounded-xl border-2 border-dashed transition-all px-3 pt-3 pb-3"
-                    style={{ borderColor: 'rgba(166,20,195,0.25)' }}
-                  >
-                    <p className="text-center text-[10px] text-gray-400 mb-2">
-                      Drop a file or <span className="font-semibold text-gray-500">drag &amp; drop</span> · PDF, JPG, PNG · Max 10MB
-                    </p>
-                    <button
-                      onClick={() => setShowUpload(true)}
-                      className="w-full py-2.5 rounded-lg text-sm font-bold text-white transition-all hover:opacity-90 active:scale-[0.98]"
-                      style={{ background: 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)' }}
-                    >
-                      Upload Here
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Form Review button — same style as RightPanel */}
-              <button
-                onClick={handleCheckErrors}
-                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition"
-                style={{
-                  color: darkMode ? '#D8B4FE' : '#A614C3',
-                  border: darkMode ? '1px solid rgba(216,180,254,0.35)' : '1px solid rgba(166,20,195,0.3)',
-                  background: darkMode ? 'rgba(167,139,250,0.08)' : 'white',
-                }}
-              >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Form Review
-              </button>
-            </div>
-
             {[
               { id: 1, title: 'Class Code',             el: <SmartStart formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
               { id: 2, title: 'Applicant Information',  el: <Business formData={formData} updateFormData={updateFormData} isDark={darkMode} showErrors={attemptedQuote} />, show: !inQuoteFlow },
