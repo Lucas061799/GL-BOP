@@ -110,17 +110,17 @@ export default function PageZero({ onStart }) {
       <div className="flex flex-1">
 
         {/* Left — form panel */}
-        <div className="flex-1 md:w-1/2 md:flex-none overflow-y-auto relative"
+        <div className="flex-1 lg:w-1/2 lg:flex-none overflow-y-auto relative"
           style={{ borderRight: '1px solid #F3F4F6' }}>
 
-          {/* Mobile: faint jungle bg */}
+          {/* Faint jungle bg shown until the right-side illustration kicks in */}
           <img
             src={jungleImg} alt=""
-            className="md:hidden absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+            className="lg:hidden absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
             style={{ opacity: 0.06 }}
           />
 
-          <div className="relative z-10 min-h-full flex flex-col justify-center items-center py-10 px-6 md:px-[10%]">
+          <div className="relative z-10 min-h-full flex flex-col justify-center items-center py-10 px-6 md:px-[8%] lg:px-[10%]">
             <div className="w-full max-w-xl">
 
               {/* Heading */}
@@ -176,8 +176,9 @@ export default function PageZero({ onStart }) {
           </div>
         </div>
 
-        {/* Right — illustration (desktop only) */}
-        <div className="hidden md:flex relative overflow-hidden shrink-0 items-center justify-center"
+        {/* Right — illustration (wide desktop only — hides at <1024px so
+            the left panel doesn't get squeezed on narrow laptop windows). */}
+        <div className="hidden lg:flex relative overflow-hidden shrink-0 items-center justify-center"
           style={{ width: '50%', background: 'white' }}>
           <img src={jungleImg} alt="" className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" style={{ opacity: 0.25 }} />
           <img
