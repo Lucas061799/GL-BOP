@@ -481,8 +481,13 @@ function App() {
 
             {/* Mobile + narrow-desktop upload + form review block. Stays
                 visible until the right rail kicks in at 2xl, so users
-                on standard laptop widths don't lose the Upload card. */}
-            <div className="2xl:hidden space-y-3">
+                on standard laptop widths don't lose the Upload card.
+                Hidden during the carrier flow (Compare / Package /
+                Add-Ons / Bind) — those steps don't need the upload
+                or the form-review checker. The extra px-4 md:px-10
+                matches the inner padding of each section below so
+                the rounded card lines up with the section content. */}
+            <div className={`2xl:hidden space-y-3 px-4 md:px-10 ${inQuoteFlow ? 'hidden' : ''}`}>
               <div
                 className="rounded-2xl overflow-hidden"
                 style={{
