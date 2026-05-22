@@ -3,10 +3,42 @@ import { Input, FormGrid } from '../../components/FormField'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
+// Four agency-billing plans. `installments` is how many payments the
+// customer makes total; the monthly plan uses a 2-month down payment +
+// 10 installments structure (the standard for monthly agency billing).
 const PAYMENT_PLANS = [
-  { value: 'Annual',  label: 'Pay in Full', period: 'year' },
-  { value: 'Monthly', label: 'Monthly',     period: 'mo', subtitle: 'Includes installment fees' },
+  { value: 'Annual',     label: 'Pay in Full', period: 'year', installments: 1  },
+  { value: 'SemiAnnual', label: 'Semi-Annual', period: '6mo',  installments: 2  },
+  { value: 'Quarterly',  label: 'Quarterly',   period: 'qtr',  installments: 4  },
+  { value: 'Monthly',    label: 'Monthly',     period: 'mo',   installments: 12, downMonths: 2 },
 ]
+
+// Returns the per-installment premium amount (no fees), the premium
+// portion due today (first installment or down payment), and a short
+// description of what's left to pay after today.
+function planAmounts(plan, annual, installmentFee = 0) {
+  if (plan.value === 'Annual') {
+    return { perInstallment: annual, dueTodayPremium: annual, remainingLabel: '' }
+  }
+  if (plan.value === 'Monthly') {
+    const monthly = Math.round(annual / 12)
+    const down = monthly * plan.downMonths
+    const remaining = plan.installments - plan.downMonths
+    return {
+      perInstallment: monthly + installmentFee,
+      dueTodayPremium: down + installmentFee,
+      remainingLabel: `${'$' + down.toLocaleString()} down + ${remaining} installments`,
+    }
+  }
+  // Semi-Annual / Quarterly: equal installments, first one due today.
+  const per = Math.round(annual / plan.installments)
+  const remaining = plan.installments - 1
+  return {
+    perInstallment: per + installmentFee,
+    dueTodayPremium: per + installmentFee,
+    remainingLabel: `${'$' + per.toLocaleString()} today + ${remaining} more`,
+  }
+}
 
 // Carrier sample premiums — broken down to mirror the Coterie reference
 const SAMPLE_PREMIUMS = {
@@ -398,8 +430,10 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
   const annualPremium = liveAnnual > 0 ? liveAnnual : quote.total
   const monthlyPremium = Math.round(annualPremium / 12)
   const isAnnual = frequency === 'Annual'
+  const currentPlan = PAYMENT_PLANS.find(p => p.value === frequency) || PAYMENT_PLANS[0]
   const installmentFee = !isAnnual ? (quote.installmentFee || 0) : 0
-  const premiumPortion = isAnnual ? annualPremium : (monthlyPremium + installmentFee)
+  const planAmt = planAmounts(currentPlan, annualPremium, installmentFee)
+  const premiumPortion = planAmt.dueTodayPremium
   const dueToday = totalFees + premiumPortion
 
   const allConsented = useMemo(() => CONSENTS.every(c => consents[c.key]), [consents])
@@ -509,40 +543,69 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
           </button>
         </div>
 
-          {/* Payment plan */}
+          {/* Payment plan — 4 options. On narrow viewports the grid
+              collapses to 2×2 so the cards never get cramped. */}
           <div className="rounded-xl p-5" style={{ background: 'white', border: '1px solid #E5E7EB' }}>
             <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-3">Payment Plan</div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {PAYMENT_PLANS.map(plan => {
                 const active = frequency === plan.value
-                const amt = plan.value === 'Annual' ? annualPremium : monthlyPremium
+                const amt = planAmounts(plan, annualPremium, plan.value === 'Annual' ? 0 : (quote.installmentFee || 0))
+                const cardDueToday = totalFees + amt.dueTodayPremium
                 return (
                   <button
                     key={plan.value}
                     type="button"
                     onClick={() => setFrequency(plan.value)}
-                    className="text-left rounded-lg px-4 py-3 transition relative"
+                    className="text-left rounded-lg px-4 py-3 transition relative flex flex-col"
                     style={{
                       background: active ? 'rgba(124,58,237,0.06)' : 'white',
                       border: `1.5px solid ${active ? '#7C3AED' : '#E5E7EB'}`,
+                      minHeight: 160,
                     }}
                   >
+                    {/* Top — label + per-installment price */}
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                      {plan.label}
+                    </div>
+                    <div className="text-lg font-bold text-gray-900 leading-tight">
+                      {money(amt.perInstallment)}
+                      {plan.value !== 'Annual' && (
+                        <span className="text-[11px] font-normal text-gray-400 ml-0.5">/{plan.period}</span>
+                      )}
+                    </div>
+                    {amt.remainingLabel && (
+                      <div className="text-[11px] text-gray-400 mt-1 leading-snug">
+                        {amt.remainingLabel}
+                      </div>
+                    )}
+
+                    {/* Dotted divider */}
+                    <div
+                      className="my-3"
+                      style={{ borderTop: '1px dashed #E5E7EB' }}
+                    />
+
+                    {/* Bottom — Due Today */}
+                    <div className="mt-auto">
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-0.5">
+                        Due Today
+                      </div>
+                      <div className="text-lg font-bold text-gray-900 leading-tight">
+                        {money(cardDueToday)}
+                      </div>
+                    </div>
+
+                    {/* Selected check icon — bottom-right per reference */}
                     {active && (
                       <div
-                        className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full flex items-center justify-center"
+                        className="absolute bottom-2.5 right-2.5 w-5 h-5 rounded-full flex items-center justify-center"
                         style={{ background: BRAND_GRADIENT }}
                       >
                         <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                           <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       </div>
-                    )}
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1">{plan.label}</div>
-                    <div className="text-lg font-bold text-gray-900">
-                      {money(amt)}<span className="text-[11px] font-normal text-gray-400 ml-0.5">/{plan.period}</span>
-                    </div>
-                    {plan.subtitle && (
-                      <div className="text-[11px] text-gray-400 mt-0.5">{plan.subtitle}</div>
                     )}
                   </button>
                 )
@@ -676,7 +739,16 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
                 </>
               ) : (
                 <>
-                  <FieldRow label="Base Premium (Monthly)" value={money(monthlyPremium)} />
+                  {/* Non-annual: label adapts to the chosen plan so the
+                      customer can see what this first payment covers. */}
+                  <FieldRow
+                    label={
+                      currentPlan.value === 'Monthly'
+                        ? `Down Payment (${currentPlan.downMonths} mo)`
+                        : `First Installment (${currentPlan.period === '6mo' ? '6 mo' : currentPlan.period === 'qtr' ? 'Quarter' : currentPlan.period})`
+                    }
+                    value={money(planAmt.dueTodayPremium - installmentFee)}
+                  />
                   {installmentFee > 0 && <FieldRow label="Installment Fee" value={money(installmentFee)} />}
                 </>
               )}
