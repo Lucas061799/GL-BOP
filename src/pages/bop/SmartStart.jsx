@@ -446,13 +446,19 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
                 </p>
               )}
               {/* Keep-current escape hatch — only meaningful if we
-                  already have a class on file to fall back to. */}
+                  already have a class on file to fall back to. Styled
+                  as a subtle outlined chip so it has visual structure
+                  instead of floating as an orphan text link. */}
               {selectedClass && (
                 <button
                   type="button"
                   onClick={cancelSearch}
-                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold mt-2 transition hover:opacity-70"
-                  style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold mt-3 transition hover:-translate-y-px"
+                  style={{
+                    color: isDark ? '#C4B5FD' : '#5C2ED4',
+                    border: isDark ? '1px solid rgba(167,139,250,0.35)' : '1px solid rgba(124,58,237,0.22)',
+                    background: isDark ? 'rgba(167,139,250,0.08)' : 'rgba(124,58,237,0.04)',
+                  }}
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
