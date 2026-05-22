@@ -407,6 +407,24 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
         const showRequiredError = showErrors && !selectedClass
         return (
           <>
+            {/* Keep-current escape hatch lives ABOVE the search input so
+                the user sees a way back at the top of the section,
+                not buried under the bar they're actively using. Only
+                rendered if we have a previous class to fall back to. */}
+            {selectedClass && (
+              <button
+                type="button"
+                onClick={cancelSearch}
+                className="inline-flex items-center gap-1.5 text-[12px] font-semibold transition hover:opacity-70 -mb-2"
+                style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Keep current class
+              </button>
+            )}
+
             <div>
               <div
                 className="flex items-center gap-3 rounded-xl px-4 py-3 transition"
@@ -444,21 +462,6 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
                 <p className="text-[10px] text-red-500 mt-1.5 ml-1 flex items-center gap-1">
                   <span>⚠</span> Pick a class code to continue
                 </p>
-              )}
-              {/* Keep-current escape hatch — only meaningful if we
-                  already have a class on file to fall back to. */}
-              {selectedClass && (
-                <button
-                  type="button"
-                  onClick={cancelSearch}
-                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold mt-2 transition hover:opacity-70"
-                  style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                  </svg>
-                  Keep current class
-                </button>
               )}
             </div>
 
