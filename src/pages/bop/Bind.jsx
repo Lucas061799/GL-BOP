@@ -564,7 +564,12 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
                       minHeight: 160,
                     }}
                   >
-                    {/* Top — label + per-installment price */}
+                    {/* Top — label + per-installment price. The sub-line
+                        row is always rendered with a reserved height
+                        (even on Pay in Full, which has no copy) so the
+                        dotted divider lands on the same Y across all
+                        four cards. The height (32px) accommodates the
+                        2-line wrap on Monthly's "$X down + 10 installments". */}
                     <div className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1.5">
                       {plan.label}
                     </div>
@@ -574,13 +579,15 @@ export default function Bind({ formData, updateFormData, onGoToStep, onBound, is
                         <span className="text-[11px] font-normal text-gray-400 ml-0.5">/{plan.period}</span>
                       )}
                     </div>
-                    {amt.remainingLabel && (
-                      <div className="text-[11px] text-gray-400 mt-1 leading-snug">
-                        {amt.remainingLabel}
-                      </div>
-                    )}
+                    <div
+                      className="text-[11px] text-gray-400 mt-1 leading-snug"
+                      style={{ minHeight: 32 }}
+                    >
+                      {amt.remainingLabel}
+                    </div>
 
-                    {/* Dotted divider */}
+                    {/* Dotted divider — sits at the same Y on every card
+                        because the rows above all reserve identical height. */}
                     <div
                       className="my-3"
                       style={{ borderTop: '1px dashed #E5E7EB' }}
