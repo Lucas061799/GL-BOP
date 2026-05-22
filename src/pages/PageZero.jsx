@@ -184,9 +184,11 @@ export default function PageZero({ onStart }) {
 
               {step === 'questions' ? (
                 <>
-                  {/* Step 1 — class code + state. Both required before
-                      we'll let the user reveal the product picker. */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                  {/* Step 1 — class code + state. Stacked vertically
+                      (matching Commercial Auto's intake) so each field
+                      gets the full width of the form column and the
+                      Class Code labels don't get truncated. */}
+                  <div className="space-y-4 mb-6">
                     <Select
                       label="Main Class Code"
                       required
