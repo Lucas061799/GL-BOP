@@ -270,7 +270,7 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-4">
       {/* Strip every browser-applied fill from the search input —
           Chrome paints autofill chips with a yellow/blue background
           even when bg-transparent is set, and the typed text color
@@ -297,7 +297,7 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
       `}</style>
 
       {/* Subtitle adapts to whether we're in refine mode or search mode */}
-      <p className="text-sm text-gray-500 -mt-2">
+      <p className="text-sm text-gray-500 -mt-3">
         {searchMode
           ? "Type a class code or describe your client's business."
           : "We pulled these based on what you selected — pick the one that best describes the business."}
