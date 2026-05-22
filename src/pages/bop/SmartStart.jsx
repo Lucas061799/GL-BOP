@@ -1,21 +1,164 @@
 import { useState, useMemo } from 'react'
+import { Select } from '../../components/FormField'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
 
+// subClasses are the more specific business-type variations that sit
+// under each NAICS main class. After the user picks a main class on
+// PageZero we land here showing only the matching sub-options for
+// that class — the user picks the most specific match so we can
+// route the underwriting correctly.
 const SAMPLE_CLASSES = [
-  { id: '722511', description: 'Full-Service Restaurants',         naics: '722511', naicsDescription: 'Restaurants offering full service to seated patrons', carriers: ['Coterie', 'Hiscox', 'CNA'] },
-  { id: '812111', description: 'Barber Shops',                     naics: '812111', naicsDescription: 'Personal grooming services',                          carriers: ['Coterie', 'Hiscox'] },
-  { id: '561730', description: 'Landscaping Services',             naics: '561730', naicsDescription: 'Landscape installation and maintenance',              carriers: ['Coterie', 'Great American'] },
-  { id: '541611', description: 'Management Consulting Services',   naics: '541611', naicsDescription: 'Administrative and general management consulting',     carriers: ['Coterie', 'Hiscox', 'CNA', 'Great American'] },
-  { id: '541330', description: 'Engineering Services',             naics: '541330', naicsDescription: 'Applying engineering principles to design',            carriers: ['Hiscox', 'CNA'] },
-  { id: '541110', description: 'Offices of Lawyers',               naics: '541110', naicsDescription: 'Legal services',                                       carriers: ['Coterie', 'Hiscox', 'CNA', 'Great American'] },
-  { id: '238210', description: 'Electrical Contractors',           naics: '238210', naicsDescription: 'Installing and servicing electrical wiring',           carriers: ['CNA', 'Great American'] },
-  { id: '238220', description: 'Plumbing, Heating & A/C Contractors', naics: '238220', naicsDescription: 'Installing and servicing plumbing and HVAC',         carriers: ['CNA', 'Great American'] },
-  { id: '454110', description: 'Electronic Shopping & Mail-Order', naics: '454110', naicsDescription: 'Retailers selling online or by mail-order',            carriers: ['Coterie', 'Hiscox'] },
-  { id: '812112', description: 'Beauty Salons',                    naics: '812112', naicsDescription: 'Hair, nail, and skin care services',                  carriers: ['Coterie', 'Hiscox'] },
-  { id: '624410', description: 'Child Day Care Services',          naics: '624410', naicsDescription: 'Day care of infants and children',                    carriers: ['Great American'] },
-  { id: '722513', description: 'Limited-Service Restaurants',      naics: '722513', naicsDescription: 'Quick-service restaurants',                            carriers: ['Coterie', 'Hiscox', 'CNA'] },
-  { id: '541211', description: 'Offices of CPAs',                  naics: '541211', naicsDescription: 'Accounting and bookkeeping services',                  carriers: ['Coterie', 'Hiscox', 'CNA', 'Great American'] },
+  {
+    id: '722511', description: 'Full-Service Restaurants', naics: '722511',
+    naicsDescription: 'Restaurants offering full service to seated patrons',
+    carriers: ['Coterie', 'Hiscox', 'CNA'],
+    subClasses: [
+      { value: '722511-cd', label: 'Casual dining — mid-tier sit-down' },
+      { value: '722511-fd', label: 'Fine dining — upscale with table service' },
+      { value: '722511-fs', label: 'Family-style restaurant' },
+      { value: '722511-et', label: 'Ethnic or specialty cuisine' },
+      { value: '722511-bg', label: 'Bar & grill — restaurant with full bar' },
+    ],
+  },
+  {
+    id: '812111', description: 'Barber Shops', naics: '812111',
+    naicsDescription: 'Personal grooming services',
+    carriers: ['Coterie', 'Hiscox'],
+    subClasses: [
+      { value: '812111-tr', label: 'Traditional barber shop' },
+      { value: '812111-md', label: "Modern men's grooming lounge" },
+      { value: '812111-bs', label: 'Combination barber & beauty shop' },
+    ],
+  },
+  {
+    id: '561730', description: 'Landscaping Services', naics: '561730',
+    naicsDescription: 'Landscape installation and maintenance',
+    carriers: ['Coterie', 'Great American'],
+    subClasses: [
+      { value: '561730-rl', label: 'Residential lawn care & maintenance' },
+      { value: '561730-cl', label: 'Commercial landscaping' },
+      { value: '561730-li', label: 'Landscape installation / hardscaping' },
+      { value: '561730-tr', label: 'Tree trimming & removal' },
+      { value: '561730-ir', label: 'Irrigation system installation' },
+    ],
+  },
+  {
+    id: '541611', description: 'Management Consulting Services', naics: '541611',
+    naicsDescription: 'Administrative and general management consulting',
+    carriers: ['Coterie', 'Hiscox', 'CNA', 'Great American'],
+    subClasses: [
+      { value: '541611-gm', label: 'General management consulting' },
+      { value: '541611-st', label: 'Strategy consulting' },
+      { value: '541611-hr', label: 'Human resources consulting' },
+      { value: '541611-op', label: 'Operations / process consulting' },
+    ],
+  },
+  {
+    id: '541330', description: 'Engineering Services', naics: '541330',
+    naicsDescription: 'Applying engineering principles to design',
+    carriers: ['Hiscox', 'CNA'],
+    subClasses: [
+      { value: '541330-ci', label: 'Civil engineering' },
+      { value: '541330-me', label: 'Mechanical engineering' },
+      { value: '541330-el', label: 'Electrical engineering' },
+      { value: '541330-st', label: 'Structural engineering' },
+      { value: '541330-en', label: 'Environmental engineering' },
+    ],
+  },
+  {
+    id: '541110', description: 'Offices of Lawyers', naics: '541110',
+    naicsDescription: 'Legal services',
+    carriers: ['Coterie', 'Hiscox', 'CNA', 'Great American'],
+    subClasses: [
+      { value: '541110-gp', label: 'General practice' },
+      { value: '541110-cl', label: 'Corporate / business law' },
+      { value: '541110-fa', label: 'Family law' },
+      { value: '541110-cr', label: 'Criminal defense' },
+      { value: '541110-pi', label: 'Personal injury' },
+      { value: '541110-re', label: 'Real estate / transactional' },
+    ],
+  },
+  {
+    id: '238210', description: 'Electrical Contractors', naics: '238210',
+    naicsDescription: 'Installing and servicing electrical wiring',
+    carriers: ['CNA', 'Great American'],
+    subClasses: [
+      { value: '238210-rs', label: 'Residential electrical' },
+      { value: '238210-cm', label: 'Commercial electrical' },
+      { value: '238210-ld', label: 'Low-voltage / data wiring' },
+      { value: '238210-sl', label: 'Solar / renewable installation' },
+    ],
+  },
+  {
+    id: '238220', description: 'Plumbing, Heating & A/C Contractors', naics: '238220',
+    naicsDescription: 'Installing and servicing plumbing and HVAC',
+    carriers: ['CNA', 'Great American'],
+    subClasses: [
+      { value: '238220-pl', label: 'Plumbing only' },
+      { value: '238220-hv', label: 'HVAC only' },
+      { value: '238220-cm', label: 'Combined plumbing & HVAC' },
+      { value: '238220-rs', label: 'Residential service' },
+      { value: '238220-cs', label: 'Commercial service' },
+    ],
+  },
+  {
+    id: '454110', description: 'Electronic Shopping & Mail-Order', naics: '454110',
+    naicsDescription: 'Retailers selling online or by mail-order',
+    carriers: ['Coterie', 'Hiscox'],
+    subClasses: [
+      { value: '454110-gn', label: 'General online retail' },
+      { value: '454110-ap', label: 'Apparel & accessories' },
+      { value: '454110-el', label: 'Electronics & tech' },
+      { value: '454110-hg', label: 'Home goods' },
+      { value: '454110-fb', label: 'Food & beverage' },
+    ],
+  },
+  {
+    id: '812112', description: 'Beauty Salons', naics: '812112',
+    naicsDescription: 'Hair, nail, and skin care services',
+    carriers: ['Coterie', 'Hiscox'],
+    subClasses: [
+      { value: '812112-hr', label: 'Hair salon' },
+      { value: '812112-nl', label: 'Nail salon' },
+      { value: '812112-sk', label: 'Skin care / facials' },
+      { value: '812112-fs', label: 'Full-service salon & spa' },
+    ],
+  },
+  {
+    id: '624410', description: 'Child Day Care Services', naics: '624410',
+    naicsDescription: 'Day care of infants and children',
+    carriers: ['Great American'],
+    subClasses: [
+      { value: '624410-hb', label: 'Home-based day care' },
+      { value: '624410-cb', label: 'Center-based day care' },
+      { value: '624410-pk', label: 'Pre-K / preschool' },
+      { value: '624410-as', label: 'After-school program' },
+    ],
+  },
+  {
+    id: '722513', description: 'Limited-Service Restaurants', naics: '722513',
+    naicsDescription: 'Quick-service restaurants',
+    carriers: ['Coterie', 'Hiscox', 'CNA'],
+    subClasses: [
+      { value: '722513-ff', label: 'Fast food / quick-service' },
+      { value: '722513-cf', label: 'Coffee shop / café' },
+      { value: '722513-fc', label: 'Food truck / mobile vendor' },
+      { value: '722513-tk', label: 'Take-out only' },
+      { value: '722513-pz', label: 'Pizzeria — delivery / pickup' },
+    ],
+  },
+  {
+    id: '541211', description: 'Offices of CPAs', naics: '541211',
+    naicsDescription: 'Accounting and bookkeeping services',
+    carriers: ['Coterie', 'Hiscox', 'CNA', 'Great American'],
+    subClasses: [
+      { value: '541211-ac', label: 'Accounting & bookkeeping' },
+      { value: '541211-tx', label: 'Tax preparation' },
+      { value: '541211-au', label: 'Auditing services' },
+      { value: '541211-fp', label: 'Financial planning' },
+    ],
+  },
 ]
 
 const ALL_CARRIERS = ['Coterie', 'Hiscox', 'CNA', 'Great American']
@@ -67,6 +210,16 @@ const TagIcon = ({ size = 14 }) => (
 export default function SmartStart({ formData, updateFormData, isDark = false, showErrors = false }) {
   const [query, setQuery] = useState('')
   const selected = formData.smartStart?.classId
+  const subSelected = formData.smartStart?.subClassId
+
+  const selectedClass = SAMPLE_CLASSES.find(c => c.id === selected)
+
+  // Search mode is off by default when we land here with a class
+  // already chosen from PageZero — the user picked the main class
+  // there, so this page now refines into a sub-classification. The
+  // "Change class code" CTA flips this on if the user realises they
+  // picked the wrong main class.
+  const [searchMode, setSearchMode] = useState(!selectedClass)
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -78,15 +231,22 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
     )
   }, [query])
 
-  const selectedClass = SAMPLE_CLASSES.find(c => c.id === selected)
-
   const selectClass = (cls) => {
     updateFormData('smartStart', {
       classId: cls.id,
       description: cls.description,
       naics: cls.naics,
       carriers: cls.carriers,
+      // Reset the sub-class whenever the parent class changes —
+      // last main class's sub-options don't apply.
+      subClassId: undefined,
     })
+    setQuery('')
+    setSearchMode(false)
+  }
+
+  const setSubClass = (subValue) => {
+    updateFormData('smartStart', { subClassId: subValue })
   }
 
   const clearClass = () => {
@@ -95,8 +255,13 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
       description: undefined,
       naics: undefined,
       carriers: undefined,
+      subClassId: undefined,
     })
+    setSearchMode(true)
   }
+
+  const openSearch = () => setSearchMode(true)
+  const cancelSearch = () => { setQuery(''); setSearchMode(false) }
 
   const sectionCardStyle = {
     background: 'white',
@@ -131,182 +296,235 @@ export default function SmartStart({ formData, updateFormData, isDark = false, s
         }
       `}</style>
 
-      {/* Subtitle */}
+      {/* Subtitle adapts to whether we're in refine mode or search mode */}
       <p className="text-sm text-gray-500 -mt-2">
-        Type a class code or describe your client's business.
+        {searchMode
+          ? "Type a class code or describe your client's business."
+          : "We pulled these based on what you selected — pick the one that best describes the business."}
       </p>
 
-      {/* Search section — no SECTION LABEL, no empty-state box, no extra magnifying glasses */}
-      {(() => {
-        // Required-field error: showErrors flips on after the user
-        // tries to Get Quotes; we surface a red border + 'required'
-        // hint when no class has been picked.
-        const showRequiredError = showErrors && !selectedClass
-        return (
-      <div>
-        <div
-          className="flex items-center gap-3 rounded-xl px-4 py-3 transition"
-          style={{
-            background: 'white',
-            border: showRequiredError
-              ? '1.5px solid #FCA5A5'
-              : '1.5px solid #EAEAEA',
-            boxShadow: showRequiredError
-              ? '0 0 0 2px rgba(252,165,165,0.3)'
-              : '0 1px 3px rgba(0,0,0,0.04)',
-          }}
-        >
-          <span className="text-gray-400 shrink-0"><SearchIcon size={18} /></span>
-          <input
-            type="text"
-            value={query}
-            onChange={e => {
-              setQuery(e.target.value)
-              // If the user starts typing while a class is already
-              // selected, drop the selection so the fresh search
-              // results show below.
-              if (e.target.value && selectedClass) {
-                clearClass()
-              }
-            }}
-            placeholder="Search by class code or business type (e.g. 722511 or restaurant)"
-            // autoComplete=off + the inline -webkit-box-shadow trick
-            // keeps Chrome from painting a yellow/blue autofill fill
-            // over our transparent input.
-            autoComplete="off"
-            spellCheck={false}
-            className="ss-search-input flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
-            autoFocus
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              className="p-1 -mr-1 rounded transition hover:bg-gray-100 shrink-0"
-              aria-label="Clear search"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
-                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-              </svg>
-            </button>
-          )}
-        </div>
-        {showRequiredError && (
-          <p className="text-[10px] text-red-500 mt-1.5 ml-1 flex items-center gap-1">
-            <span>⚠</span> Pick a class code to continue
-          </p>
-        )}
-      </div>
-        )
-      })()}
-
-      {/* Selected class banner — shows below the search input as current state */}
-      {selectedClass && (
-        <div
-          className="rounded-xl px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3"
-          style={{
-            background: isDark
-              ? 'linear-gradient(88.09deg, rgba(167,139,250,0.18) 0%, rgba(232,121,249,0.18) 100%)'
-              : 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
-            border: `1px solid ${isDark ? 'rgba(167,139,250,0.45)' : 'rgba(92,46,212,0.22)'}`,
-          }}
-        >
+      {/* === REFINE MODE === — class already chosen on PageZero, user
+          picks a more specific sub-classification. Search is hidden
+          unless they tap "Change class code" below. */}
+      {!searchMode && selectedClass && (
+        <>
+          {/* Selected (parent) class banner */}
           <div
-            className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: BRAND_GRADIENT }}
+            className="rounded-xl px-4 sm:px-5 py-3.5 flex flex-col sm:flex-row sm:items-center gap-3"
+            style={{
+              background: isDark
+                ? 'linear-gradient(88.09deg, rgba(167,139,250,0.18) 0%, rgba(232,121,249,0.18) 100%)'
+                : 'linear-gradient(88.09deg, rgba(92,46,212,0.06) 0%, rgba(166,20,195,0.06) 100%)',
+              border: `1px solid ${isDark ? 'rgba(167,139,250,0.45)' : 'rgba(92,46,212,0.22)'}`,
+            }}
           >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>{selectedClass.description}</div>
-            <div className="text-xs mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
-              <span className="font-mono font-semibold" style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}>NAICS {selectedClass.naics}</span>
-              <span className="mx-1">·</span>
-              <span>type above to change</span>
+            <div
+              className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+              style={{ background: BRAND_GRADIENT }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold" style={{ color: isDark ? '#F9FAFB' : '#1F2937' }}>{selectedClass.description}</div>
+              <div className="text-xs mt-0.5" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+                <span className="font-mono font-semibold" style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}>NAICS {selectedClass.naics}</span>
+                <span className="mx-1">·</span>
+                <span>{selectedClass.naicsDescription}</span>
+              </div>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={clearClass}
-            className="p-1 -mr-1 rounded transition hover:opacity-70 shrink-0 self-start sm:self-center"
-            aria-label="Clear selected class code"
-            title="Clear selection"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isDark ? '#C4B5FD' : '#5C2ED4'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
-            </svg>
-          </button>
-        </div>
-      )}
 
-      {/* Results — hidden once a class is selected. Clear the X on the
-          selected banner to search again. */}
-      {!selectedClass && query && results.length > 0 && (
-        <div>
-          <SectionLabel icon={<TagIcon />}>
-            {results.length} {results.length === 1 ? 'Result' : 'Results'} Found
-          </SectionLabel>
-
-          <div className="space-y-2.5">
-            {results.map(cls => {
-              const isSelected = selected === cls.id
-              return (
-                <button
-                  key={cls.id}
-                  type="button"
-                  onClick={() => selectClass(cls)}
-                  className="w-full text-left rounded-xl px-4 sm:px-5 py-3.5 transition-all hover:-translate-y-px"
-                  style={{
-                    background: isSelected
-                      ? 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)'
-                      : 'white',
-                    border: `1.5px solid ${isSelected ? '#7C3AED' : '#EAEAEA'}`,
-                    boxShadow: isSelected
-                      ? '0 4px 18px rgba(92,46,212,0.12)'
-                      : '0 1px 3px rgba(0,0,0,0.04)',
-                  }}
-                >
-                  <div className="flex items-center justify-between gap-3 sm:gap-4">
-                    {/* Left: title + NAICS + description */}
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-semibold text-gray-800 mb-1">{cls.description}</div>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 min-w-0">
-                        <span
-                          className="px-1.5 py-0.5 rounded font-mono font-semibold text-[10px] shrink-0 whitespace-nowrap"
-                          style={{ background: 'rgba(92,46,212,0.08)', color: '#5C2ED4' }}
-                        >
-                          NAICS {cls.naics}
-                        </span>
-                        <span className="truncate">{cls.naicsDescription}</span>
-                      </div>
-                    </div>
-
-                    {/* Arrow */}
-                    <svg
-                      width="18" height="18" viewBox="0 0 24 24" fill="none"
-                      stroke={isSelected ? '#5C2ED4' : '#9CA3AF'}
-                      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                      className="shrink-0"
-                    >
-                      <path d="M9 18l6-6-6-6"/>
+          {/* Refine card — "Let's dig a little deeper" + sub-class dropdown */}
+          {(() => {
+            const showSubError = showErrors && !subSelected
+            return (
+              <div
+                className="rounded-xl p-5 sm:p-6"
+                style={{ background: isDark ? 'rgba(30,33,58,0.6)' : '#F9FAFB', border: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}` }}
+              >
+                <div className="flex items-start gap-3 mb-4">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: 'rgba(124,58,237,0.10)' }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8"/>
+                      <path d="m21 21-4.35-4.35"/>
+                      <path d="M11 8v6M8 11h6"/>
                     </svg>
                   </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
+                  <div className="min-w-0">
+                    <h3 className="text-sm sm:text-base font-bold mb-0.5" style={{ color: isDark ? '#F9FAFB' : '#111827' }}>
+                      Let's dig a little deeper
+                    </h3>
+                    <p className="text-xs" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+                      Pick the option that best describes the business so we can match the right coverage.
+                    </p>
+                  </div>
+                </div>
+
+                <Select
+                  label="Specific business type"
+                  required
+                  options={selectedClass.subClasses || []}
+                  value={subSelected}
+                  onChange={setSubClass}
+                  placeholder="Select a more specific match..."
+                  error={showSubError}
+                />
+
+                <div
+                  className="flex items-center justify-between gap-3 mt-4 pt-4"
+                  style={{ borderTop: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#E5E7EB'}` }}
+                >
+                  <span className="text-[12px]" style={{ color: isDark ? '#9CA3AF' : '#6B7280' }}>
+                    Wrong class code?
+                  </span>
+                  <button
+                    type="button"
+                    onClick={openSearch}
+                    className="inline-flex items-center gap-1.5 text-[12px] font-semibold transition hover:opacity-70"
+                    style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
+                  >
+                    Change class code
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )
+          })()}
+        </>
       )}
 
-      {!selectedClass && query && results.length === 0 && (
-        <div className="rounded-xl p-10 text-center" style={sectionCardStyle}>
-          <p className="text-sm text-gray-500">
-            No class codes match "<span className="font-semibold text-gray-700">{query}</span>". Try a different keyword.
-          </p>
-        </div>
-      )}
+      {/* === SEARCH MODE === — search bar + result list. Used either when
+          no class has been seeded yet (direct nav / dev) or when the
+          user explicitly hit "Change class code" above. */}
+      {searchMode && (() => {
+        const showRequiredError = showErrors && !selectedClass
+        return (
+          <>
+            <div>
+              <div
+                className="flex items-center gap-3 rounded-xl px-4 py-3 transition"
+                style={{
+                  background: 'white',
+                  border: showRequiredError ? '1.5px solid #FCA5A5' : '1.5px solid #EAEAEA',
+                  boxShadow: showRequiredError ? '0 0 0 2px rgba(252,165,165,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
+                }}
+              >
+                <span className="text-gray-400 shrink-0"><SearchIcon size={18} /></span>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  placeholder="Search by class code or business type (e.g. 722511 or restaurant)"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="ss-search-input flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
+                  autoFocus
+                />
+                {query && (
+                  <button
+                    type="button"
+                    onClick={() => setQuery('')}
+                    className="p-1 -mr-1 rounded transition hover:bg-gray-100 shrink-0"
+                    aria-label="Clear search"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round">
+                      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+              {showRequiredError && (
+                <p className="text-[10px] text-red-500 mt-1.5 ml-1 flex items-center gap-1">
+                  <span>⚠</span> Pick a class code to continue
+                </p>
+              )}
+              {/* Keep-current escape hatch — only meaningful if we
+                  already have a class on file to fall back to. */}
+              {selectedClass && (
+                <button
+                  type="button"
+                  onClick={cancelSearch}
+                  className="inline-flex items-center gap-1.5 text-[12px] font-semibold mt-2 transition hover:opacity-70"
+                  style={{ color: isDark ? '#C4B5FD' : '#5C2ED4' }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  </svg>
+                  Keep current class
+                </button>
+              )}
+            </div>
+
+            {query && results.length > 0 && (
+              <div>
+                <SectionLabel icon={<TagIcon />}>
+                  {results.length} {results.length === 1 ? 'Result' : 'Results'} Found
+                </SectionLabel>
+                <div className="space-y-2.5">
+                  {results.map(cls => {
+                    const isSelected = selected === cls.id
+                    return (
+                      <button
+                        key={cls.id}
+                        type="button"
+                        onClick={() => selectClass(cls)}
+                        className="w-full text-left rounded-xl px-4 sm:px-5 py-3.5 transition-all hover:-translate-y-px"
+                        style={{
+                          background: isSelected
+                            ? 'linear-gradient(88.09deg, rgba(92,46,212,0.04) 0%, rgba(166,20,195,0.04) 100%)'
+                            : 'white',
+                          border: `1.5px solid ${isSelected ? '#7C3AED' : '#EAEAEA'}`,
+                          boxShadow: isSelected
+                            ? '0 4px 18px rgba(92,46,212,0.12)'
+                            : '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <div className="flex items-center justify-between gap-3 sm:gap-4">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-sm font-semibold text-gray-800 mb-1">{cls.description}</div>
+                            <div className="flex items-center gap-2 text-xs text-gray-500 min-w-0">
+                              <span
+                                className="px-1.5 py-0.5 rounded font-mono font-semibold text-[10px] shrink-0 whitespace-nowrap"
+                                style={{ background: 'rgba(92,46,212,0.08)', color: '#5C2ED4' }}
+                              >
+                                NAICS {cls.naics}
+                              </span>
+                              <span className="truncate">{cls.naicsDescription}</span>
+                            </div>
+                          </div>
+                          <svg
+                            width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke={isSelected ? '#5C2ED4' : '#9CA3AF'}
+                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                            className="shrink-0"
+                          >
+                            <path d="M9 18l6-6-6-6"/>
+                          </svg>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {query && results.length === 0 && (
+              <div className="rounded-xl p-10 text-center" style={sectionCardStyle}>
+                <p className="text-sm text-gray-500">
+                  No class codes match "<span className="font-semibold text-gray-700">{query}</span>". Try a different keyword.
+                </p>
+              </div>
+            )}
+          </>
+        )
+      })()}
     </div>
   )
 }
