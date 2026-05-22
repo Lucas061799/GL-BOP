@@ -122,7 +122,15 @@ export default function PageZero({ onStart }) {
   const [mainClass, setMainClass] = useState('')
   const [state, setState] = useState('')
 
+  // Two-step intake: 'questions' captures class + state, then 'products'
+  // shows the BOP/GL cards. Only one is visible at a time so the user
+  // sees a clean before/after instead of greyed-out cards underneath
+  // unanswered dropdowns.
+  const [step, setStep] = useState('questions')
+
   const ready = !!mainClass && !!state
+  const goToProducts = () => { if (ready) setStep('products') }
+  const goBackToQuestions = () => setStep('questions')
 
   // BOP button — manager said the real route will be the existing BOP UI
   // once we can merge the two together. For now, start the in-app flow.
@@ -159,82 +167,117 @@ export default function PageZero({ onStart }) {
           <div className="relative z-10 min-h-full flex flex-col justify-center items-center py-10 px-6 md:px-[8%] lg:px-[10%]">
             <div className="w-full max-w-xl">
 
-              {/* Heading */}
+              {/* Brand heading stays the same across both steps so the
+                  page feels stable; only the subtitle + body content
+                  swap between question intake and product picker. */}
               <div className="mb-6">
                 <h1 className="text-3xl md:text-4xl font-bold text-navy leading-tight mb-4" style={{ fontWeight: 800 }}>
                   Get Multiple Quotes.<br />
                   <span className="text-gradient">One Easy Application.</span>
                 </h1>
                 <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-                  Tell us a little about the business, then pick a policy below to start the application.
+                  {step === 'questions'
+                    ? 'First, tell us a bit about the business.'
+                    : 'Choose a policy to start your application.'}
                 </p>
               </div>
 
-              {/* Pre-questions — class code + state seed the SmartStart
-                  and Location pages further down the flow. Until both
-                  are answered, the policy CTAs stay disabled. */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                <Select
-                  label="Main Class Code"
-                  required
-                  options={MAIN_CLASS_OPTIONS}
-                  value={mainClass}
-                  onChange={setMainClass}
-                  placeholder="Select Main Class Code"
-                />
-                <Select
-                  label="State"
-                  required
-                  options={US_STATES}
-                  value={state}
-                  onChange={setState}
-                  placeholder="Select State"
-                />
-              </div>
+              {step === 'questions' ? (
+                <>
+                  {/* Step 1 — class code + state. Both required before
+                      we'll let the user reveal the product picker. */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <Select
+                      label="Main Class Code"
+                      required
+                      options={MAIN_CLASS_OPTIONS}
+                      value={mainClass}
+                      onChange={setMainClass}
+                      placeholder="Select Main Class Code"
+                    />
+                    <Select
+                      label="State"
+                      required
+                      options={US_STATES}
+                      value={state}
+                      onChange={setState}
+                      placeholder="Select State"
+                    />
+                  </div>
 
-              {/* Product choice — two cards. CTAs gated on the two
-                  pre-questions above so we never start the flow without
-                  the basics. */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
-                <ProductCard
-                  title="Business Owners Policy"
-                  tagline="Property + Liability bundled into one easy policy."
-                  bullets={BOP_INCLUDES}
-                  ctaLabel="Start BOP Quote"
-                  onClick={startBop}
-                  disabled={!ready}
-                  disabledHint="Select a class code and state to continue"
-                  accent={{
-                    bg: 'rgba(124,58,237,0.10)',
-                    stroke: '#5C2ED4',
-                  }}
-                  icon={(
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      {/* Briefcase — universal 'business' icon */}
-                      <rect x="2" y="7" width="20" height="14" rx="2"/>
-                      <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                  {/* Continue — disabled until both answers are in. */}
+                  <button
+                    type="button"
+                    onClick={goToProducts}
+                    disabled={!ready}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition ${ready ? 'hover:opacity-90' : 'cursor-not-allowed'}`}
+                    style={{
+                      background: ready ? BRAND_GRADIENT : '#D1D5DB',
+                      boxShadow: ready ? '0 4px 14px rgba(92,46,212,0.22)' : 'none',
+                    }}
+                    title={ready ? undefined : 'Select a class code and state to continue'}
+                  >
+                    Continue
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
-                  )}
-                />
-                <ProductCard
-                  title="General Liability"
-                  tagline="Standalone liability protection for your business."
-                  bullets={GL_INCLUDES}
-                  ctaLabel="Start GL Quote"
-                  onClick={startGl}
-                  disabled={!ready}
-                  disabledHint="Select a class code and state to continue"
-                  accent={{
-                    bg: 'rgba(166,20,195,0.10)',
-                    stroke: '#A614C3',
-                  }}
-                  icon={(
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A614C3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Step 2 — product picker. A small "Edit answers"
+                      affordance lets the user step back if they picked
+                      the wrong class/state. */}
+                  <button
+                    type="button"
+                    onClick={goBackToQuestions}
+                    className="inline-flex items-center gap-1.5 text-[12px] font-semibold mb-4 transition hover:opacity-70"
+                    style={{ color: '#5C2ED4' }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
-                  )}
-                />
-              </div>
+                    Edit answers
+                  </button>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
+                    <ProductCard
+                      title="Business Owners Policy"
+                      tagline="Property + Liability bundled into one easy policy."
+                      bullets={BOP_INCLUDES}
+                      ctaLabel="Start BOP Quote"
+                      onClick={startBop}
+                      accent={{
+                        bg: 'rgba(124,58,237,0.10)',
+                        stroke: '#5C2ED4',
+                      }}
+                      icon={(
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5C2ED4" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          {/* Briefcase — universal 'business' icon */}
+                          <rect x="2" y="7" width="20" height="14" rx="2"/>
+                          <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                        </svg>
+                      )}
+                    />
+                    <ProductCard
+                      title="General Liability"
+                      tagline="Standalone liability protection for your business."
+                      bullets={GL_INCLUDES}
+                      ctaLabel="Start GL Quote"
+                      onClick={startGl}
+                      accent={{
+                        bg: 'rgba(166,20,195,0.10)',
+                        stroke: '#A614C3',
+                      }}
+                      icon={(
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A614C3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                      )}
+                    />
+                  </div>
+                </>
+              )}
 
             </div>
           </div>
