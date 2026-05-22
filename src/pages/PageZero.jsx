@@ -1,9 +1,31 @@
+import { useState } from 'react'
 import norbielinkLogo from '../assets/norbielink-logo.png'
 import btisLogo from '../assets/btislogo.png'
 import heroImg from '../assets/norbie-heroimg.png'
 import jungleImg from '../assets/jungle.png'
+import { Select } from '../components/FormField'
 
 const BRAND_GRADIENT = 'linear-gradient(88.09deg, #5C2ED4 0.11%, #A614C3 63.8%)'
+
+// Mirrors SmartStart's SAMPLE_CLASSES so the pre-question on PageZero
+// can hand the chosen class straight into formData.smartStart.classId.
+const MAIN_CLASS_OPTIONS = [
+  { value: '722511', label: '722511 — Full-Service Restaurants' },
+  { value: '812111', label: '812111 — Barber Shops' },
+  { value: '561730', label: '561730 — Landscaping Services' },
+  { value: '541611', label: '541611 — Management Consulting Services' },
+  { value: '541330', label: '541330 — Engineering Services' },
+  { value: '541110', label: '541110 — Offices of Lawyers' },
+  { value: '238210', label: '238210 — Electrical Contractors' },
+  { value: '238220', label: '238220 — Plumbing, Heating & A/C Contractors' },
+  { value: '454110', label: '454110 — Electronic Shopping & Mail-Order' },
+  { value: '812112', label: '812112 — Beauty Salons' },
+  { value: '624410', label: '624410 — Child Day Care Services' },
+  { value: '722513', label: '722513 — Limited-Service Restaurants' },
+  { value: '541211', label: '541211 — Offices of CPAs' },
+]
+
+const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC']
 
 // What's included in each product. Edit these lists as the real content lands.
 const BOP_INCLUDES = [
@@ -19,17 +41,17 @@ const GL_INCLUDES = [
   'Products & completed operations',
 ]
 
-function ProductCard({ accent, icon, title, tagline, bullets, ctaLabel, onClick }) {
+function ProductCard({ accent, icon, title, tagline, bullets, ctaLabel, onClick, disabled, disabledHint }) {
   // Use an outer box-shadow ring (instead of a CSS border) so the stripe child
   // can clip cleanly to the rounded corners without leaving a gray L at the top.
   const restingShadow = '0 0 0 1.5px #E5E7EB, 0 1px 2px rgba(0,0,0,0.02)'
   const hoverShadow   = '0 0 0 1.5px rgba(124,58,237,0.45), 0 12px 32px rgba(92,46,212,0.12)'
   return (
     <div
-      className="rounded-xl overflow-hidden flex flex-col transition hover:-translate-y-0.5 group cursor-pointer"
-      style={{ background: 'white', boxShadow: restingShadow }}
-      onClick={onClick}
-      onMouseEnter={e => { e.currentTarget.style.boxShadow = hoverShadow }}
+      className={`rounded-xl overflow-hidden flex flex-col transition group ${disabled ? 'cursor-not-allowed' : 'hover:-translate-y-0.5 cursor-pointer'}`}
+      style={{ background: 'white', boxShadow: restingShadow, opacity: disabled ? 0.7 : 1 }}
+      onClick={disabled ? undefined : onClick}
+      onMouseEnter={e => { if (!disabled) e.currentTarget.style.boxShadow = hoverShadow }}
       onMouseLeave={e => { e.currentTarget.style.boxShadow = restingShadow }}
     >
       <div className="px-5 pt-5 pb-5 flex flex-col flex-1">
@@ -69,15 +91,20 @@ function ProductCard({ accent, icon, title, tagline, bullets, ctaLabel, onClick 
         {/* CTA */}
         <button
           type="button"
-          onClick={(e) => { e.stopPropagation(); onClick() }}
-          className="mt-auto w-full flex items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
-          style={{ background: BRAND_GRADIENT, boxShadow: '0 4px 14px rgba(92,46,212,0.22)' }}
+          onClick={(e) => { e.stopPropagation(); if (!disabled) onClick() }}
+          disabled={disabled}
+          title={disabled ? disabledHint : undefined}
+          className={`mt-auto w-full flex items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold text-white transition ${disabled ? 'cursor-not-allowed' : 'hover:opacity-90'}`}
+          style={{
+            background: disabled ? '#D1D5DB' : BRAND_GRADIENT,
+            boxShadow: disabled ? 'none' : '0 4px 14px rgba(92,46,212,0.22)',
+          }}
         >
           {ctaLabel}
           <svg
             width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            className="transition-transform group-hover:translate-x-0.5"
+            className={`transition-transform ${disabled ? '' : 'group-hover:translate-x-0.5'}`}
           >
             <path d="M5 12h14M12 5l7 7-7 7"/>
           </svg>
@@ -88,11 +115,20 @@ function ProductCard({ accent, icon, title, tagline, bullets, ctaLabel, onClick 
 }
 
 export default function PageZero({ onStart }) {
+  // Pre-questions. We collect class code + state up front so the
+  // SmartStart and Location pages further down the flow start
+  // pre-filled with the customer's answer — matches the pattern from
+  // Commercial Auto's intake.
+  const [mainClass, setMainClass] = useState('')
+  const [state, setState] = useState('')
+
+  const ready = !!mainClass && !!state
+
   // BOP button — manager said the real route will be the existing BOP UI
   // once we can merge the two together. For now, start the in-app flow.
-  const startBop = () => onStart({ productType: 'bop' })
+  const startBop = () => { if (ready) onStart({ productType: 'bop', mainClass, state }) }
   // GL — starts the full application; class code is the first step inside.
-  const startGl = () => onStart({ productType: 'gl' })
+  const startGl = () => { if (ready) onStart({ productType: 'gl', mainClass, state }) }
 
   return (
     <div className="min-h-screen bg-white font-montserrat flex flex-col">
@@ -124,17 +160,41 @@ export default function PageZero({ onStart }) {
             <div className="w-full max-w-xl">
 
               {/* Heading */}
-              <div className="mb-7">
+              <div className="mb-6">
                 <h1 className="text-3xl md:text-4xl font-bold text-navy leading-tight mb-4" style={{ fontWeight: 800 }}>
                   Get Multiple Quotes.<br />
                   <span className="text-gradient">One Easy Application.</span>
                 </h1>
                 <p className="text-sm md:text-base text-gray-500 leading-relaxed">
-                  Which coverage do you want to quote today? Pick a policy below to start the application.
+                  Tell us a little about the business, then pick a policy below to start the application.
                 </p>
               </div>
 
-              {/* Product choice — two cards */}
+              {/* Pre-questions — class code + state seed the SmartStart
+                  and Location pages further down the flow. Until both
+                  are answered, the policy CTAs stay disabled. */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <Select
+                  label="Main Class Code"
+                  required
+                  options={MAIN_CLASS_OPTIONS}
+                  value={mainClass}
+                  onChange={setMainClass}
+                  placeholder="Select Main Class Code"
+                />
+                <Select
+                  label="State"
+                  required
+                  options={US_STATES}
+                  value={state}
+                  onChange={setState}
+                  placeholder="Select State"
+                />
+              </div>
+
+              {/* Product choice — two cards. CTAs gated on the two
+                  pre-questions above so we never start the flow without
+                  the basics. */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
                 <ProductCard
                   title="Business Owners Policy"
@@ -142,6 +202,8 @@ export default function PageZero({ onStart }) {
                   bullets={BOP_INCLUDES}
                   ctaLabel="Start BOP Quote"
                   onClick={startBop}
+                  disabled={!ready}
+                  disabledHint="Select a class code and state to continue"
                   accent={{
                     bg: 'rgba(124,58,237,0.10)',
                     stroke: '#5C2ED4',
@@ -160,6 +222,8 @@ export default function PageZero({ onStart }) {
                   bullets={GL_INCLUDES}
                   ctaLabel="Start GL Quote"
                   onClick={startGl}
+                  disabled={!ready}
+                  disabledHint="Select a class code and state to continue"
                   accent={{
                     bg: 'rgba(166,20,195,0.10)',
                     stroke: '#A614C3',

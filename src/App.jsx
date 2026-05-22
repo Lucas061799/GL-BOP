@@ -383,7 +383,20 @@ function App() {
 
 
   if (!pageZeroDone) {
-    return <PageZero onStart={(data) => { updateFormData('pageZero', data); setPageZeroDone(true) }} />
+    return (
+      <PageZero
+        onStart={(data) => {
+          // PageZero now collects productType + mainClass + state up
+          // front. Stash everything under pageZero, and seed the
+          // class/state into the slices the downstream forms read so
+          // those pages start pre-filled.
+          updateFormData('pageZero', data)
+          if (data.mainClass) updateFormData('smartStart', { classId: data.mainClass })
+          if (data.state) updateFormData('location', { state: data.state })
+          setPageZeroDone(true)
+        }}
+      />
+    )
   }
 
   if (submitted) {
