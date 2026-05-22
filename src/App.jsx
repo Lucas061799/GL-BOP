@@ -479,8 +479,10 @@ function App() {
 
           <div className={`mx-auto px-4 md:px-10 py-6 md:py-8 space-y-6 md:space-y-8 ${inQuoteFlow ? 'max-w-7xl' : 'max-w-5xl 2xl:max-w-6xl'}`}>
 
-            {/* Mobile-only upload + form review — matches RightPanel style exactly */}
-            <div className="lg:hidden space-y-3">
+            {/* Mobile + narrow-desktop upload + form review block. Stays
+                visible until the right rail kicks in at 2xl, so users
+                on standard laptop widths don't lose the Upload card. */}
+            <div className="2xl:hidden space-y-3">
               <div
                 className="rounded-2xl overflow-hidden"
                 style={{
@@ -567,7 +569,12 @@ function App() {
           </div>
         </main>
 
-        <div className="hidden lg:block">
+        {/* Right rail only at 2xl (≥1536px). On standard laptop widths
+            (1024–1535px) the content area reclaims the rail's ~320px
+            so multi-column blocks like the 4-card payment plan don't
+            get squeezed. The Upload + Form Review block above takes
+            over for those viewports. */}
+        <div className="hidden 2xl:block">
           <RightPanel onFormReview={handleCheckErrors} formData={formData} updateFormData={updateFormData} pulseUpload={pulseUpload} isDark={darkMode} inQuoteFlow={inQuoteFlow} quoteStep={quoteStep} />
         </div>
       </div>
